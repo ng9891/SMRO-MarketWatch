@@ -16,11 +16,14 @@ function scrapItemInfoByID(itemID) {
     let html = await fetch(url + itemID);
     const $ = cheerio.load(await html.text());
 
-    let itemName = $('table').eq(1).find('tr').eq(2).children().eq(1).text();
-    let itemType = $('table').eq(1).find('tr').eq(9).children('td').eq(0).text();
+    let infoTable = $('table').eq(1);
+    let itemName = infoTable.find('tr').eq(2).children('td').eq(0).text();
+    let itemType = infoTable.find('tr').eq(2).children('td').eq(-1).text();
+    let equipLocation = infoTable.find('tr').eq(9).children('td').eq(0).text();
     return resolve({
       itemName: cleanShopText(itemName),
       itemType: cleanShopText(itemType),
+      equipLocation: cleanShopText(equipLocation),
     });
   });
 }
@@ -102,7 +105,7 @@ function getVendInfoOnTable($, vendTable) {
 function scrapVendByURL(url) {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log('scrapVendByURL:', url);
+      // console.log('scrapVendByURL:', url);
       let html = await fetch(url);
       let $ = cheerio.load(await html.text());
 
@@ -156,7 +159,6 @@ function scrapVendInfo(itemID, price = utils.defaults.PRICE_THRESHOLD) {
 
       // If it is on first page(most of the time). Do not make request for all pages.
       let numberOfPages = Number(vendHeader.next().next().children().last().text());
-      console.log(price, currMaxVendPrice);
       if (price < currMaxVendPrice) numberOfPages = 1;
 
       let vendObj = {itemID: itemID, itemName: itemName, vend: []};

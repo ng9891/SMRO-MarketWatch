@@ -1,8 +1,9 @@
 const path = require('path');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const { parseInputAndRun } = require('./parseInput');
-require('toml-require').install({ toml: require('toml') });
+const {parseInputAndRun} = require('./parseInput');
+const {runInitialCronJob} = require('../scheduler/scheduler');
+require('toml-require').install({toml: require('toml')});
 const CONFIG = require(path.join(process.cwd(), 'conf/user_config.toml'));
 
 bot.on('message', (msg) => {
@@ -18,6 +19,18 @@ bot.on('error', (err) => {
   console.log(err);
 });
 
-bot.login(CONFIG.DISCORD_TOKEN).then(() => {
-  console.log('Bot is connected and ready.');
-}).catch((err) => console.log(`Loggin error: [${Date.now()}]\n ${err}`));
+bot
+  .login(CONFIG.DISCORD_TOKEN)
+  .then(() => {
+    runInitialCronJob();
+    console.log('Bot is connected and ready.');
+  })
+  .catch((err) => console.log(`Loggin error: [${Date.now()}]\n ${err}`));
+
+function sendMsg(channelID, content) {
+  bot.channels.cache.get(channelID).send(content);
+}
+
+module.exports = {
+  sendMsg,
+};
