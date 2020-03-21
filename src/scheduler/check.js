@@ -40,8 +40,10 @@ function checkForNewEntry(userID, itemID) {
 
     let newVendList = {};
     for (let i = 0; i < vendList.vend.length; i++) {
+      let vend_o = Object.assign({}, vendList.vend[i]); // Save to keep the 'amount' property
       let vend = vendList.vend[i];
       if (vend.price <= tracking.price) {
+        delete vend['amount']; // Delete amount from the hash.
         let hashVal = hash(vend);
         // New vending list.
         if (!newVendList[itemID]) newVendList[itemID] = {};
@@ -50,15 +52,14 @@ function checkForNewEntry(userID, itemID) {
         if (!globalVend[userID][itemID] || !globalVend[userID][itemID][hashVal]) {
           // Send notification.
           // globalVend[userID][itemID] = {[hashVal]:vend};
-          vendToNotify.push(vend);
+          vendToNotify.push(vend_o);
         }
       } else {
         break; // Vend are sorted by price. So, if its more than threshold we can break.
       }
     }
-    // if (!globalVend[userID]) globalVend[userID] = {};
     Object.assign(globalVend[userID], newVendList);
-    console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
+    // console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
 
     return resolve(vendToNotify);
   });
