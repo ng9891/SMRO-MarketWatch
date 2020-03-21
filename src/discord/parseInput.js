@@ -2,9 +2,10 @@ const utils = require('../utils/utils.js');
 const {helpMsg} = require('../utils/helpMsg');
 const {printTracking} = require('../utils/printTracking');
 const wl = require('../watchlist/watchlist');
+const {checkForNewEntry} = require('../scheduler/check');
 let {globalVend} = require('../globalVendObj');
 const cron = require('../scheduler/scheduler');
-const bot = require('./discord');
+// const {run} = require('./index');
 
 /**
  * Parse the command issued to the bot and extract {price, time} if available.
@@ -53,7 +54,11 @@ function getArgs(cmd) {
   return argObj;
 }
 
-async function parseInput(msg) {
+// TODO: Refactor
+async function parseInputAndRun(msg) {
+  // const notifChannel = msg.guild.channels.cache.get(utils.defaults.NOTIF_CHANNEL_ID);
+  const botChannel = msg.guild.channels.cache.get(utils.defaults.BOT_CHANNEL_ID);
+  const notifChannel = botChannel;
   const msgClean = msg.content.toLowerCase().trim();
 
   const subCommand = msg.content.split(' ')[1];
@@ -61,13 +66,13 @@ async function parseInput(msg) {
     case 'list':
       const data = await printTracking(msg.author.id).catch((e) => {
         // console.error(e);
-        return bot.sendMsg(utils.defaults.BOT_CHANNEL_ID, '@Vulty LIST CMD ' + e);
+        return botChannel.send('@Vulty LIST CMD ' + e);
       });
       return msg.reply(`\`\`\`${data}\`\`\``);
       break;
     case 'reset':
       const status = await wl.clearWatchList(msg.author.id).catch((e) => {
-        return bot.sendMsg(utils.defaults.BOT_CHANNEL_ID, '@parseInputAndRun: RESET Command ' + e);
+        return botChannel.send('@parseInputAndRun: RESET Command ' + e);
       });
 
       globalVend[msg.author.id] = {}; // Delete Global hash table
@@ -96,7 +101,7 @@ async function parseInput(msg) {
     argObj = getArgs(msgClean);
   } catch (e) {
     console.error(e);
-    return bot.sendMsg(utils.defaults.BOT_CHANNEL_ID, `<@${msg.author.id}>\n ${e}`);
+    return botChannel.send(`<@${msg.author.id}>\n ${e}`);
   }
 
   let listingInfo = {
@@ -107,10 +112,68 @@ async function parseInput(msg) {
     username: msg.author.username,
   };
 
-  if (itemID.startsWith('+')) return {command: 'add', listingInfo};
-  return {command: 'delete', listingInfo};
+  try {
+    // Decide to add or remove
+    if (itemID.startsWith('+')) {
+      const addMsg = await msg.reply(`Adding #${listingInfo.itemID} to your list...`);
+      const addedObj = await wl.addToWatchList(listingInfo);
+      addMsg.delete();
+      utils.printReply(msg, addedObj);
+      if (addedObj.status === 'notFound') return;
+      else if (addedObj.status === 'full') return;
+      else if (addedObj.status === 'overwrite' && globalVend[addedObj.by]) {
+        globalVend[addedObj.by][addedObj.itemID] = {};
+      }
+      // new CRON
+      let job = cron.createCron({
+        itemID: addedObj.itemID,
+        userID: addedObj.by,
+        startTime: addedObj.timestamp,
+        CronTime: addedObj.time,
+        itemName: addedObj.itemName,
+        itemType: addedObj.itemType,
+        equipLocation: addedObj.equipLocation,
+      });
+      const waitMsg = await msg.reply('Getting Initial Scrap...');
+      const scrappedData = await checkForNewEntry(addedObj.by, addedObj.itemID);
+      waitMsg.delete();
+
+      // TODO: Refactor
+      if (!scrappedData)
+        return notifChannel.send(
+          `<@${addedObj.by}>\`\`\`Currently there is no shop for [#${addedObj.itemID}: ${addedObj.itemName}]\`\`\``
+        );
+      if (scrappedData.length < 1)
+        return notifChannel.send(
+          `<@${addedObj.by}>\`\`\`No NEW listing found for [#${addedObj.itemID}: ${addedObj.itemName}] <= ${utils.formatPrice(
+            addedObj.price
+          )}.\`\`\``
+        );
+
+      let str = `<@${addedObj.by}>\nNEW LISTING:\`\`\`${addedObj.itemID}:${addedObj.itemName}\
+          \n${utils.printArrAsTable(
+            scrappedData,
+            addedObj.itemType,
+            addedObj.equipLocation
+          )}@ws ${addedObj.itemID}\`\`\``;
+      notifChannel.send(str);
+    } else {
+      const delMsg = await msg.reply(`Deleting #${listingInfo.itemID} in your list...`);
+      const delObj = await wl.rmFromWatchList(listingInfo.userID, listingInfo.itemID);
+      delMsg.delete();
+      utils.printReply(msg, delObj);
+      if (delObj.status === 'rm' && globalVend[delObj.by]) {
+        // delete old Cron job and delete hashed ids.
+        cron.destroyCron(`${delObj.by}${delObj.itemID}`);
+        globalVend[delObj.by][delObj.itemID] = {};
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    botChannel.send(`<@${utils.defaults.DEBUG_USER_ID}> ` + e);
+  }
 }
 
 module.exports = {
-  parseInput,
+  parseInputAndRun,
 };

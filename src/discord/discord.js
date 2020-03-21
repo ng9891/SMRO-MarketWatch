@@ -1,8 +1,7 @@
 const path = require('path');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const {parseInput} = require('./parseInput');
-const {run} = require('./run');
+const {parseInputAndRun} = require('./parseInput');
 const {runInitialCronJob} = require('../scheduler/scheduler');
 require('toml-require').install({toml: require('toml')});
 const CONFIG = require(path.join(process.cwd(), 'conf/user_config.toml'));
@@ -13,10 +12,7 @@ bot.on('message', (msg) => {
   if (msg.channel.type === 'dm') return msg.reply('Sorry commands not available on DMs');
 
   // Checking if its @wl
-  if (msg.content.trim().slice(0, 4) === '!wl '){
-    let input = parseInput(msg);
-    return run(msg, input);
-  } 
+  if (msg.content.trim().slice(0, 4) === '!wl ') return parseInputAndRun(msg);
 });
 
 bot.on('error', (err) => {
