@@ -1,5 +1,7 @@
 node_modules
 conf/*.json
 *.toml
+src/wl.json
+src/save.json
 test
 parseInput-o.js

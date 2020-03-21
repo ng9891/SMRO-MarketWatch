@@ -5,7 +5,6 @@ const wl = require('../watchlist/watchlist');
 const {checkForNewEntry} = require('../scheduler/check');
 let {globalVend} = require('../globalVendObj');
 const cron = require('../scheduler/scheduler');
-// const {run} = require('./index');
 
 /**
  * Parse the command issued to the bot and extract {price, time} if available.
@@ -66,13 +65,13 @@ async function parseInputAndRun(msg) {
     case 'list':
       const data = await printTracking(msg.author.id).catch((e) => {
         // console.error(e);
-        return botChannel.send('@Vulty LIST CMD ' + e);
+        return botChannel.send(`<@${utils.defaults.DEBUG_USER_ID}> @LIST CMD ${e}`);
       });
       return msg.reply(`\`\`\`${data}\`\`\``);
       break;
     case 'reset':
       const status = await wl.clearWatchList(msg.author.id).catch((e) => {
-        return botChannel.send('@parseInputAndRun: RESET Command ' + e);
+        return botChannel.send(`<@${utils.defaults.DEBUG_USER_ID}> @parseInputAndRun: RESET Command ${e}`);
       });
 
       globalVend[msg.author.id] = {}; // Delete Global hash table
@@ -80,7 +79,6 @@ async function parseInputAndRun(msg) {
       // Delete CRON
       let cronJobs = cron.getCronList(msg.author.id);
       for (cronID in cronJobs) {
-        console.log(cronID);
         cronJobs[cronID].cancel();
         console.log('Canceled: ', cronID);
       }
@@ -138,7 +136,6 @@ async function parseInputAndRun(msg) {
       const scrappedData = await checkForNewEntry(addedObj.by, addedObj.itemID);
       waitMsg.delete();
 
-      // TODO: Refactor
       if (!scrappedData)
         return notifChannel.send(
           `<@${addedObj.by}>\`\`\`Currently there is no shop for [#${addedObj.itemID}: ${addedObj.itemName}]\`\`\``

@@ -1,7 +1,7 @@
 const hash = require('object-hash');
-const utils = require('../utils/utils');
-const scrap = require('../scraper/scraper');
-let {globalVend} = require('../globalVendObj');
+const utils = require('./utils/utils');
+const scrap = require('./scraper/scraper');
+let {globalVend} = require('./globalVendObj');
 
 /**
  * Serves as the entry point for the CRON Job to check for new listings.
@@ -10,11 +10,9 @@ let {globalVend} = require('../globalVendObj');
  * @param {String} userID 
  * @param {String} itemID 
  * @return {Array} array of new entries.
- * @return {Null} when no vending information is found.
  */
 function checkForNewEntry(userID, itemID) {
   return new Promise(async (resolve, reject) => {
-    
     let wl = await utils.openJSONFile('../wl.json').catch((e) => {
       return reject(e);
     });
@@ -24,44 +22,53 @@ function checkForNewEntry(userID, itemID) {
     let tracking = wl[userID].tracking[itemID];
 
     if (!globalVend[userID] || Object.keys(globalVend[userID]).length < 1) {
-      globalVend[userID] = {[itemID]: {}};
+      globalVend[userID] = {[id]: {}};
     }
+
+    let id = itemID;
     let vendToNotify = [];
 
     // TODO: Catch scrapping errors.
-    let vendList = await scrap.scrapVendInfo(itemID, tracking.price); 
+    let vendList = await scrap.scrapVendInfo(id, tracking.price); 
 
     if (!vendList || Object.keys(vendList) < 1) {
-      // console.log('Nothing vending atm for id:', itemID);
+      console.log('Nothing vending atm for id:', id);
       // Set the global hash table to empty. 
-      globalVend[userID][itemID] = {};
-      return resolve(null);
+      globalVend[userID][id] = {};
+      return resolve([]);
     }
 
     let newVendList = {};
     for (let i = 0; i < vendList.vend.length; i++) {
+      let vend_o = Object.assign({}, vendList.vend[i]); // Save to keep the 'amount' property
       let vend = vendList.vend[i];
-      let vend_o = Object.assign({},vend);
-      
       if (vend.price <= tracking.price) {
-        delete vend['amount'];
+        delete vend['amount']; // Delete amount from the hash.
         let hashVal = hash(vend);
         // New vending list.
-        if (!newVendList[itemID]) newVendList[itemID] = {};
-        newVendList[itemID][hashVal] = vend;
+        if (!newVendList[id]) newVendList[id] = {};
+        newVendList[id][hashVal] = vend;
 
-        if (!globalVend[userID][itemID] || !globalVend[userID][itemID][hashVal]) {
+        if (!globalVend[userID][id][hashVal]) {
           // Send notification.
+<<<<<<< HEAD:src/scheduler/check.js
           // globalVend[userID][itemID] = {[hashVal]:vend};
           vendToNotify.push(vend_o);
+=======
+          vendToNotify.push(vend);
+>>>>>>> parent of 531ae1c... Alpha version with cron job:src/check.js
         }
       } else {
         break; // Vend are sorted by price. So, if its more than threshold we can break.
       }
     }
-    // if (!globalVend[userID]) globalVend[userID] = {};
+<<<<<<< HEAD:src/scheduler/check.js
     Object.assign(globalVend[userID], newVendList);
-    console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
+    // console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
+=======
+    if (!globalVend[userID]) globalVend[userID] = {};
+    globalVend[userID] = newVendList;
+>>>>>>> parent of 531ae1c... Alpha version with cron job:src/check.js
 
     return resolve(vendToNotify);
   });

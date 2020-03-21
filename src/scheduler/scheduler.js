@@ -21,9 +21,6 @@ function getNextTimeIntervalFromNow(timestamp, interval = 30) {
   let numberOfIntervals = Math.ceil(diffInMinutes / interval); // Ceil to get the next interval.
   let nextStartTime = firstIntervalTime.clone().add(interval * numberOfIntervals, 'minutes');
 
-  // console.log(diffInMinutes);
-  // console.log('Interval %s * %s', interval, numberOfIntervals)
-  // console.log(nextStartTime.fromNow());
   return Number(nextStartTime.format('x'));
 }
 
@@ -46,7 +43,6 @@ async function createCron({itemID, userID, startTime, CronTime, itemName, itemTy
       const bot = require('../discord/discord');
       console.log(`[${moment().format('lll')}] Started <@${userID.slice(-4)}> watch on [#${itemID}:${itemName}] every ${CronTime}min`);
       let newEntries = await checkForNewEntry(userID, itemID);
-      // console.log(newEntries);
       console.log(`[${moment().format('lll')}] Ended <@${userID.slice(-4)}> watch on [#${itemID}:${itemName}] every ${CronTime}min`);
       if (!newEntries || newEntries.length < 1) {
         // bot.sendMsg(
@@ -60,7 +56,6 @@ async function createCron({itemID, userID, startTime, CronTime, itemName, itemTy
         \n${utils.printArrAsTable(newEntries, itemType, equipLocation)}[@ws ${itemID}] Cron every ${CronTime}.\`\`\``;
       bot.sendMsg(utils.defaults.BOT_CHANNEL_ID, str);
     }
-    // .bind(null, itemID, userID, itemName, itemType, equipLocation)
   );
 
   if (!cronList[userID]) cronList[userID] = {};
@@ -95,23 +90,19 @@ async function runInitialCronJob() {
       // Calculate next start time for CRON
       let startTime = getNextTimeIntervalFromNow(itemObj.timestamp, itemObj.time);
 
-      let substractTime = moment.duration(`00:${itemObj.time}:00`);
-      let previousIntervalStartTime = moment(startTime).subtract(substractTime).format('x');
+      // let substractTime = moment.duration(`00:${itemObj.time}:00`);
+      // let previousIntervalStartTime = moment(startTime).subtract(substractTime).format('x');
 
       // Schedule CRON.
       let job = createCron({
         itemID,
         userID,
-        startTime: previousIntervalStartTime,
+        startTime: startTime,
         CronTime: itemObj.time,
         itemName: itemObj.itemName,
         itemType: itemObj.itemType,
         equipLocation: itemObj.equipLocation,
       });
-
-      //'1058998375174758404060'
-      // let test = schedule.scheduledJobs['1058998375174758404060'];
-      // if(test) console.log('SCHEDULED FOR:', await test.nextInvocation())
     }
   }
 }
