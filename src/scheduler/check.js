@@ -61,7 +61,7 @@ function checkForNewEntry(userID, itemID) {
     }
     // if (!globalVend[userID]) globalVend[userID] = {};
     Object.assign(globalVend[userID], newVendList);
-    console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
+    // console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
 
     return resolve(vendToNotify);
   });

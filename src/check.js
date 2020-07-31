@@ -51,24 +51,15 @@ function checkForNewEntry(userID, itemID) {
 
         if (!globalVend[userID][id][hashVal]) {
           // Send notification.
-<<<<<<< HEAD:src/scheduler/check.js
           // globalVend[userID][itemID] = {[hashVal]:vend};
           vendToNotify.push(vend_o);
-=======
-          vendToNotify.push(vend);
->>>>>>> parent of 531ae1c... Alpha version with cron job:src/check.js
         }
       } else {
         break; // Vend are sorted by price. So, if its more than threshold we can break.
       }
     }
-<<<<<<< HEAD:src/scheduler/check.js
     Object.assign(globalVend[userID], newVendList);
     // console.log(`globalVend[${userID.slice(-4)}]`, globalVend[userID]);
-=======
-    if (!globalVend[userID]) globalVend[userID] = {};
-    globalVend[userID] = newVendList;
->>>>>>> parent of 531ae1c... Alpha version with cron job:src/check.js
 
     return resolve(vendToNotify);
   });

@@ -24,7 +24,6 @@ function getNextTimeIntervalFromNow(timestamp, interval = 30) {
   return Number(nextStartTime.format('x'));
 }
 
-// Name should be the itemID
 async function createCron({itemID, userID, startTime, CronTime, itemName, itemType, equipLocation} = {}) {
   if (CronTime > 59) CronTime = 59;
   let rule = `*/${CronTime} * * * *`; // TODO: transform to cron time, in case user inputs min > 59.
@@ -92,6 +91,9 @@ async function runInitialCronJob() {
 
       // let substractTime = moment.duration(`00:${itemObj.time}:00`);
       // let previousIntervalStartTime = moment(startTime).subtract(substractTime).format('x');
+
+      // to offset minutes and seconds
+      // ex. 23 1/5 * * *
 
       // Schedule CRON.
       let job = createCron({
