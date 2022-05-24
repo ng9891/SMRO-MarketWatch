@@ -1,19 +1,44 @@
 import db from '../firebase';
-import {convertToUnixSecond} from '../../helpers/helpers';
+import {add} from 'date-fns';
+import getUnixTime from 'date-fns/getUnixTime';
+import fromUnixTime from 'date-fns/fromUnixTime';
+import {Watchlist} from '../../ts/interfaces/Watchlist';
+import {AppUser} from '../../ts/interfaces/AppUser';
+import {Scrape} from '../../ts/interfaces/Scrape';
+import {List} from '../../ts/interfaces/List';
 
-const watchlistRef = db.collection('watchlist');
+const watchlistRef = db.collection('Watchlist');
 
-export const addSub = async (userID: string, itemID: string, threshold: number) => {
-  const set = await watchlistRef
-    .doc(itemID.toString())
-    .collection('subs')
-    .doc(userID?.toString())
-    .set({
-      itemID,
-      userID,
-      threshold,
-      timestamp: convertToUnixSecond(new Date()),
-    });
+export const getWatchListInfo = async (itemID: string) => {
+  const snap = await watchlistRef.doc(itemID).get();
+  if (!snap.exists) return null;
+  return snap.data() as Watchlist;
+};
 
-  console.log('ADDED!');
+export const setWatchListInfo = async (recurrence: number, user: AppUser, scrape: Scrape): Promise<Watchlist> => {
+  const {itemID, name: itemName, timestamp} = scrape;
+  const {userID, userName} = user;
+
+  const now = fromUnixTime(timestamp);
+  const nextOn = getUnixTime(add(now, {minutes: recurrence}));
+  const setOn = getUnixTime(now);
+
+  const wl = {
+    recurrence,
+    itemID,
+    itemName,
+    setOn,
+    nextOn,
+    setByID: userID,
+    setByName: userName,
+  };
+
+  await watchlistRef.doc(itemID).set(wl);
+
+  return wl;
+};
+
+export const addSub = async (list: List) => {
+  const {itemID, userID} = list;
+  await watchlistRef.doc(itemID).collection('subs').doc(userID).set(list);
 };

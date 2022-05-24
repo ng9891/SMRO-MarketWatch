@@ -1,4 +1,4 @@
-import * as helpers from '../helpers/helpers';
+import * as helpers from './helpers';
 
 describe('Clean vend text', () => {
   test('Empty card slots', () => {
@@ -6,7 +6,7 @@ describe('Clean vend text', () => {
     expect(text).toBe('-');
   });
 
-  test('Empty card slots with double \\', () => {
+  test('Empty card slots with double \\n', () => {
     const text = helpers.cleanShopText('\\nNone\\n');
     expect(text).toBe('-');
   });

@@ -1,14 +1,8 @@
 import * as cheerio from 'cheerio';
+import getUnixTime from 'date-fns/getUnixTime'
 import {cleanShopPrice, cleanShopText} from '../helpers/helpers';
-import {VendInfo} from '../interfaces/VendInfo';
-import {Scrape} from '../interfaces/Scrape';
-
-const handleResponseError = (response: Response) => {
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  return response;
-};
+import {VendInfo} from '../ts/interfaces/VendInfo';
+import {Scrape} from '../ts/interfaces/Scrape';
 
 const getItemInfoFromDOM = ($: cheerio.Root) => {
   const infoTable = $('table').eq(1);
@@ -68,8 +62,8 @@ const scrapItemInfoByID = async (itemID: string): Promise<Scrape> => {
 
   const table = getTableFromDOM($);
   const vendInfoArr = parseTableInfo($, table);
-
-  return {itemID, name, type, equipLocation: location, vend: [...vendInfoArr]};
+  const timestamp = getUnixTime(new Date)
+  return {itemID, name, type, equipLocation: location, timestamp, vend: [...vendInfoArr]};
 };
 
 export default scrapItemInfoByID;

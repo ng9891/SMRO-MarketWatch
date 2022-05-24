@@ -68,7 +68,3 @@ export const formatPrice = (num: number) => {
   if (num < 1000000000) return displayInMillions(num);
   return displayInBillions(num);
 };
-
-export const convertToUnixSecond = (date: Date) => {
-  return Math.floor(date.getTime() / 1000);
-};

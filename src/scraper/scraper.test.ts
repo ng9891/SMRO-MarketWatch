@@ -4,8 +4,8 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({path: './conf/.env'});
 
-import scrapItemInfoByID from '../scraper/scraper';
-import {Scrape} from '../interfaces/Scrape';
+import scrapItemInfoByID from './scraper';
+import {Scrape} from '../ts/interfaces/Scrape';
 
 beforeAll(async () => {
   const data = await fs.readFile(path.resolve(__dirname, './scraper.mockScrappedItem.txt'), 'utf8');
@@ -25,6 +25,7 @@ describe('Scrape', () => {
       name: 'Blacksmith Blessing',
       type: 'Etc',
       equipLocation: '-',
+      timestamp: 2654564,
       vend: [
         {
           shopID: '2123',
