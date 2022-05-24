@@ -1,8 +1,5 @@
 node_modules
-conf/*.toml
-*.toml
 conf/.env
+serviceAccount.json
 src/wl.json
 src/save.json
-test
-parseInput-o.js
