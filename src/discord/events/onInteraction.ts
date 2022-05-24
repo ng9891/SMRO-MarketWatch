@@ -1,5 +1,5 @@
 import {Interaction} from 'discord.js';
-import {CommandList} from '../commands/_CommandList';
+import CommandList from '../commands/_CommandList';
 
 export const onInteraction = async (interaction: Interaction) => {
   if (!interaction.isCommand()) return;

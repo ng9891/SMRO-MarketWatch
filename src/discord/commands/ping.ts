@@ -1,13 +1,10 @@
-import {Command} from '../interfaces/Command';
+import {Command} from '../../interfaces/Command';
 import {SlashCommandBuilder} from '@discordjs/builders';
 
 export const ping: Command = {
   data: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
   run: async (interaction) => {
     await interaction.deferReply();
-    const {user} = interaction;
-
-    console.log(user);
     interaction.editReply('Pong!');
   },
 };

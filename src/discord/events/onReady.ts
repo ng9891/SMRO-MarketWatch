@@ -1,7 +1,7 @@
 import {Client} from 'discord.js';
 import {Routes} from 'discord-api-types/v9';
 import {REST} from '@discordjs/rest';
-import {CommandList} from '../commands/_CommandList';
+import CommandList from '../commands/_CommandList';
 
 // Deploy Commands
 export const onReady = async (BOT: Client) => {
