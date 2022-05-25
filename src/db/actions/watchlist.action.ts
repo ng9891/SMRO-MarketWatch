@@ -1,7 +1,6 @@
 import db from '../firebase';
-import {add} from 'date-fns';
-import getUnixTime from 'date-fns/getUnixTime';
-import fromUnixTime from 'date-fns/fromUnixTime';
+import {FieldValue} from 'firebase-admin/firestore';
+import {add, getUnixTime, fromUnixTime} from 'date-fns';
 import {Watchlist} from '../../ts/interfaces/Watchlist';
 import {AppUser} from '../../ts/interfaces/AppUser';
 import {Scrape} from '../../ts/interfaces/Scrape';
@@ -31,14 +30,40 @@ export const setWatchListInfo = async (recurrence: number, user: AppUser, scrape
     nextOn,
     setByID: userID,
     setByName: userName,
+    createdOn: timestamp,
   };
 
-  await watchlistRef.doc(itemID).set(wl);
-
+  await watchlistRef.doc(itemID).set(wl, {merge: true});
   return wl;
 };
 
 export const addSub = async (list: List) => {
   const {itemID, userID} = list;
+  const snap = await watchlistRef.doc(itemID).collection('subs').doc(userID).get();
+  let newSub = false;
+  if (!snap.exists) {
+    await watchlistRef.doc(itemID).set({subs: FieldValue.increment(1)}, {merge: true});
+    newSub = true;
+  }
   await watchlistRef.doc(itemID).collection('subs').doc(userID).set(list);
+  return newSub;
+};
+
+export const updateRecurrence = async (wl: Watchlist): Promise<Watchlist> => {
+  const {setByID, setByName, recurrence} = wl;
+
+  const now = new Date();
+  const nextOn = getUnixTime(add(now, {minutes: recurrence}));
+  const setOn = getUnixTime(now);
+
+  const newWl = {
+    recurrence,
+    setOn,
+    nextOn,
+    setByID,
+    setByName,
+  };
+
+  await watchlistRef.doc(wl.itemID).update(newWl);
+  return Object.assign(wl, newWl);
 };

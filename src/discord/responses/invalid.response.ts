@@ -9,7 +9,7 @@ export const getInvalidMaxPriceMsg = () => {
 import {AppUser} from '../../ts/interfaces/AppUser';
 export const getMaxListSizeMsg = (itemID: string, itemName = '', list: AppUser['list']) => {
   if (!list) throw new Error('List is empty in MaxListSizeMsg');
-  let str = `\`\`\`Failed to add: ${itemID}: ${itemName}. \nYour list is full. Please remove an item from your list:`;
+  let str = `\`\`\`Failed to add: [${itemID}: ${itemName}]. \nYour list is full. Please remove an item from your list:`;
 
   if (list) {
     for (const [key, value] of Object.entries(list)) {
@@ -19,4 +19,12 @@ export const getMaxListSizeMsg = (itemID: string, itemName = '', list: AppUser['
 
   str += '```';
   return str;
+};
+
+export const getNoPermissionMsg = () => {
+  return '```You do not have enough permission to use this command. Please contact a administrator.```';
+};
+
+export const getNotInWatchlistMsg = (itemID: string) => {
+  return `[ItemID:\`${itemID}\`] is not in the watch list.`;
 };

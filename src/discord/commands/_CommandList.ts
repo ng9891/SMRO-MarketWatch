@@ -1,8 +1,7 @@
 import {Command} from '../../ts/interfaces/Command';
-import {ping} from './ping';
-import {add} from './add';
-import {list} from './list';
+import {help} from './help.command';
+import {watchlist} from './watchlist.command';
 
-const CommandList: Command[] = [ping, add, list];
+const CommandList: Command[] = [help, watchlist];
 
 export default CommandList;

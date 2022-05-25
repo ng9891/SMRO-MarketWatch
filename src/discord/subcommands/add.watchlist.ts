@@ -1,12 +1,12 @@
 import {List} from '../../ts/interfaces/List';
-import {Command} from '../../ts/interfaces/Command';
-import {SlashCommandBuilder} from '@discordjs/builders';
+import {Subcommand} from '../../ts/interfaces/Subcommand';
+import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import scrapItemInfoByID from '../../scraper/scraper';
 import {addSub, getWatchListInfo, setWatchListInfo} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {parsePriceString} from '../../helpers/helpers';
-import {getDefaultEmbed} from '../responses/valid.responses';
-import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from '../responses/invalid.responses';
+import {getDefaultEmbed} from '../responses/valid.response';
+import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from '../responses/invalid.response';
 
 const isMaxListSize = (listSize: number | undefined) => {
   if (!listSize) return false;
@@ -14,10 +14,10 @@ const isMaxListSize = (listSize: number | undefined) => {
   return false;
 };
 
-export const add: Command = {
-  data: new SlashCommandBuilder()
+export const add: Subcommand = {
+  data: new SlashCommandSubcommandBuilder()
     .setName('add')
-    .setDescription('Adds/Updates an Item ID to/of the watchlist.')
+    .setDescription('Add/Update an Item ID to the watchlist.')
     .addIntegerOption((option) =>
       option.setName('item-id').setDescription('ID of the Item. e.g 6635').setRequired(true)
     )
@@ -34,7 +34,8 @@ export const add: Command = {
       const userName = interaction.user.username;
       const itemID = interaction.options.getInteger('item-id', true).toString();
       const threshold = interaction.options.getString('threshold', true);
-      const refinement = interaction.options.getInteger('refinement')?.toString();
+      const refine = interaction.options.getInteger('refinement');
+      const refinement = refine ? Math.abs(refine).toString() : null;
       const validPrice = parsePriceString(threshold);
       if (!validPrice) throw new Error(getInvalidPriceFormatMsg());
 
@@ -67,8 +68,9 @@ export const add: Command = {
         wl = await setWatchListInfo(recurrence, newUser, itemInfo);
       }
 
-      await addSub(newList);
-      const embed = getDefaultEmbed('ADD', wl, newUser.list);
+      const isNewSub = await addSub(newList);
+      const action = isNewSub ? 'ADD' : 'UPDATE';
+      const embed = getDefaultEmbed(action, wl, newUser.list);
       //TODO: set job.
       //TODO: Initial check?
       await interaction.editReply({embeds: [embed]});

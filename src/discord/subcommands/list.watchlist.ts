@@ -1,13 +1,13 @@
-import {Command} from '../../ts/interfaces/Command';
-import {SlashCommandBuilder} from '@discordjs/builders';
+import {Subcommand} from '../../ts/interfaces/Subcommand';
+import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
-import {getListingMsg} from '../responses/valid.responses';
+import {getListingMsg} from '../responses/valid.response';
 
-export const list: Command = {
-  data: new SlashCommandBuilder()
+export const list: Subcommand = {
+  data: new SlashCommandSubcommandBuilder()
     .setName('list')
-    .setDescription('Get tracking list')
-    .addUserOption((option) => option.setName('user').setDescription('Specifying the user. Optional')),
+    .setDescription('Display the watchlist of a user.')
+    .addUserOption((option) => option.setName('user').setDescription('Optional. Specify the user.')),
   run: async (interaction) => {
     await interaction.deferReply();
     const mention = interaction.options.getUser('user');

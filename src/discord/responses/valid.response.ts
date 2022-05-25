@@ -63,9 +63,9 @@ const tableConfig = {
   singleLine: true,
 };
 
-export const getListAsTable = (list: {[key: string]: List} | undefined) => {
+export const getListAsTable = (list: {[key: string]: List} | undefined, header: string[]) => {
   if (!list) return 'List is empty.';
-  const data = [['ID', 'Name', '$', 'Added']];
+  const data = [header];
   for (const [key, value] of Object.entries(list)) {
     const {itemName, threshold, timestamp} = value;
     data.push([key, itemName, formatPrice(threshold), formatDistanceToNow(fromUnixTime(timestamp))]);
@@ -74,10 +74,20 @@ export const getListAsTable = (list: {[key: string]: List} | undefined) => {
 };
 
 export const getListingMsg = (user: AppUser) => {
-  const table = getListAsTable(user.list);
+  const header = ['ID', 'Name', '<$', 'Added'];
+  const table = getListAsTable(user.list, header);
   if (!user.list) return 'List is empty.';
   const len = Object.keys(user.list).length;
   const sizeStr = `Total of ${len} out of ${process.env.MAX_LIST_SIZE}.`;
 
-  return `${user.userName}'s list.\`\`\`${table}${sizeStr}\`\`\``;
+  return `[${user.userName}]'s list.\`\`\`${table}${sizeStr}\`\`\``;
+};
+
+export const getCronUpdateMsg = (itemID: string, itemName: string, recurrence: number, nextOn: number) => {
+  const relativeTime = formatDistanceToNow(fromUnixTime(nextOn), {addSuffix: true});
+  return `\`\`\`Updated [${itemID}:${itemName}] to check every ${recurrence} min. Next check: ${relativeTime}\`\`\``;
+};
+
+export const getHelpMsg = () => {
+  return "```The purpose of this Bot is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!```";
 };
