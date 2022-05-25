@@ -11,7 +11,8 @@ export const getUserInfo = async (userID: string) => {
 
 export const setUserInfo = async (user: AppUser): Promise<AppUser> => {
   const {userID, userName, list} = user;
-  const listSize = list ? Object.keys(list).length : 0;
-  await usersRef.doc(userID).set({userID, userName, list: {...list}, listSize});
+  const newList = list ? list : {};
+  const listSize = Object.keys(newList).length;
+  await usersRef.doc(userID).set({userID, userName, list: {...newList}, listSize});
   return {...user, listSize};
 };
