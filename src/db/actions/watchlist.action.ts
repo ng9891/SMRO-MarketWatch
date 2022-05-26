@@ -8,16 +8,15 @@ import {List} from '../../ts/interfaces/List';
 
 const watchlistRef = db.collection('Watchlist');
 
-export const getWatchListInfo = async (itemID: string) => {
+export const getWatchListInfo = async (itemID: string): Promise<Watchlist | null> => {
   const snap = await watchlistRef.doc(itemID).get();
   if (!snap.exists) return null;
   return snap.data() as Watchlist;
 };
 
-export const setWatchListInfo = async (recurrence: number, user: AppUser, scrape: Scrape): Promise<Watchlist> => {
+export const createNewWatchList = async (recurrence: number, user: AppUser, scrape: Scrape): Promise<Watchlist> => {
   const {itemID, name: itemName, timestamp} = scrape;
   const {userID, userName} = user;
-
   const now = fromUnixTime(timestamp);
   const nextOn = getUnixTime(add(now, {minutes: recurrence}));
   const setOn = getUnixTime(now);
@@ -37,33 +36,38 @@ export const setWatchListInfo = async (recurrence: number, user: AppUser, scrape
   return wl;
 };
 
-export const addSub = async (list: List) => {
+export const updateWatchList = async (wl: Watchlist): Promise<Watchlist> => {
+  const {recurrence, setByID, setByName} = wl;
+  const now = new Date();
+  const nextOn = getUnixTime(add(now, {minutes: recurrence}));
+  const setOn = getUnixTime(now);
+
+  const update = {recurrence, setByID, setByName, setOn, nextOn};
+  await watchlistRef.doc(wl.itemID).update(update);
+
+  return Object.assign(wl, update) as Watchlist;
+};
+
+export const addSub = async (list: List): Promise<boolean> => {
   const {itemID, userID} = list;
-  const snap = await watchlistRef.doc(itemID).collection('subs').doc(userID).get();
+  const subsRef = watchlistRef.doc(itemID).collection('Subs');
+  const snap = await subsRef.doc(userID).get();
   let newSub = false;
   if (!snap.exists) {
     await watchlistRef.doc(itemID).set({subs: FieldValue.increment(1)}, {merge: true});
     newSub = true;
   }
-  await watchlistRef.doc(itemID).collection('subs').doc(userID).set(list);
+  await subsRef.doc(userID).set(list);
   return newSub;
 };
 
-export const updateRecurrence = async (wl: Watchlist): Promise<Watchlist> => {
-  const {setByID, setByName, recurrence} = wl;
-
-  const now = new Date();
-  const nextOn = getUnixTime(add(now, {minutes: recurrence}));
-  const setOn = getUnixTime(now);
-
-  const newWl = {
-    recurrence,
-    setOn,
-    nextOn,
-    setByID,
-    setByName,
-  };
-
-  await watchlistRef.doc(wl.itemID).update(newWl);
-  return Object.assign(wl, newWl);
+export const unSub = async (itemID: string, userID: string): Promise<void> => {
+  await watchlistRef.doc(itemID).collection('Subs').doc(userID).delete();
+  const snap = await watchlistRef.doc(itemID).get();
+  if (snap.exists) {
+    const data = snap.data();
+    if (data && data.subs > 0) await watchlistRef.doc(itemID).set({subs: FieldValue.increment(-1)}, {merge: true});
+  } else {
+    console.error('Unsubscribing a user not subscribed to:' + itemID);
+  }
 };

@@ -7,22 +7,38 @@ export const getInvalidMaxPriceMsg = () => {
 };
 
 import {AppUser} from '../../ts/interfaces/AppUser';
-export const getMaxListSizeMsg = (itemID: string, itemName = '', list: AppUser['list']) => {
-  if (!list) throw new Error('List is empty in MaxListSizeMsg');
-  let str = `\`\`\`Failed to add: [${itemID}: ${itemName}]. \nYour list is full. Please remove an item from your list:`;
 
-  if (list) {
-    for (const [key, value] of Object.entries(list)) {
-      str += `\n${key}: ${value.itemName}`;
-    }
+const printAppUserList = (list: AppUser['list']) => {
+  if (!list || Object.keys(list).length === 0) return 'Empty List';
+  let str = '';
+  for (const [key, value] of Object.entries(list)) {
+    str += `\n${key}: ${value.itemName}`;
   }
+  return str;
+};
 
+export const getMaxListSizeMsg = (itemID: string, itemName = '', list: AppUser['list']) => {
+  let str = `\nFailed to add: [${itemID}: ${itemName}]. \nYour list is full. Please remove an item from your list:`;
+  if (!list) return str;
   str += '```';
+  str += printAppUserList(list);
+  str += '```';
+  str += `Total of ${Object.keys(list).length} out of ${process.env.MAX_LIST_SIZE}.`;
+  return str;
+};
+
+export const getItemNotOnListMsg = (itemID: string, list: AppUser['list']) => {
+  let str = `\nFailed to remove: [${itemID}]. ItemID is not in the list:\n`;
+  if (!list) return str;
+  str += '```';
+  str += printAppUserList(list);
+  str += '```';
+  str += `Total of ${Object.keys(list).length} out of ${process.env.MAX_LIST_SIZE}.`;
   return str;
 };
 
 export const getNoPermissionMsg = () => {
-  return '```You do not have enough permission to use this command. Please contact a administrator.```';
+  return '```You do not have enough permission to use this command. Please contact a administrator for help.```';
 };
 
 export const getNotInWatchlistMsg = (itemID: string) => {

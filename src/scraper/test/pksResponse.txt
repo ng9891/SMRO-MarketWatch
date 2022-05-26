@@ -1,0 +1,1527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>Helheim: Viewing Item (Purified Knight's Shield)</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico" />
+<link rel="stylesheet" href="/hel/themes/default/css/flux.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/bootstrap.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/bootstrap-theme.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/fontAwesome.css" type="text/css" media="screen" title="" charset="utf-8" />
+
+<link rel="stylesheet" href="/hel/themes/default/css/owl-carousel.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/shining4.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/material-design-iconic-font.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/mainLogin.css" type="text/css" media="screen" title="" charset="utf-8" />
+<script type="a21a4ef1af41347306b42dfb-text/javascript">
+			function updatePreferredServer(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_server_form.preferred_server.value = preferred;
+				document.preferred_server_form.submit();
+			}
+			
+			function updatePreferredTheme(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_theme_form.preferred_theme.value = preferred;
+				document.preferred_theme_form.submit();
+			}
+
+            function updatePreferredLanguage(sel){
+                var preferred = sel.options[sel.selectedIndex].value;
+                setCookie('language', preferred);
+                reload();
+            }
+
+			// Preload spinner image.
+			var spinner = new Image();
+			spinner.src = '/hel/themes/default/img/spinner.gif';
+			
+			function refreshSecurityCode(imgSelector){
+				$(imgSelector).attr('src', spinner.src);
+				
+				// Load image, spinner will be active until loading is complete.
+				var clean = false;
+				var image = new Image();
+				image.src = "/hel/?module=captcha"+(clean ? '?nocache=' : '&nocache=')+Math.random();
+				
+				$(imgSelector).attr('src', image.src);
+			}
+			function toggleSearchForm()
+			{
+				//$('.search-form').toggle();
+				$('.search-form').slideToggle('fast');
+			}
+
+            function setCookie(key, value) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + expires.getTime()); // never expires
+                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+            }
+		</script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<link href="/hel/themes/default/css/flux/unitip.css" rel="stylesheet" type="text/css" media="screen" title="" charset="utf-8" />
+</head>
+<body>
+<header class="nav-down responsive-nav hidden-lg hidden-md">
+<button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+
+<div id="main-nav" class="collapse navbar-collapse">
+<nav>
+<ul class="nav navbar-nav">
+<li><a href="/hel/?module=news&action=view#home">Home</a></li>
+<li><a href="/hel/?module=news&action=view#news">News</a></li>
+<li><a href="/hel/?module=news&action=view#information">Official Implementations</a></li>
+<li><a href="/hel/?module=news&action=view#features">Features</a></li>
+<li><a href="https://www.shining-moon.com/hel/index.php/Downloads>">Download</a></li>
+<li><a href="https://www.shining-moon.com/hel/?module=market">Market</a></li>
+<li><a href="/hel/?module=item">Database</a></li>
+<li><a href="https://wiki.shining-moon.com/index.php/index.php">Wiki</a></li>
+<li><a href="/hel/?module=paymethod">Get Cash Points</a></li>
+<li><a href="https://www.shining-moon.com/vote">Vote For Points!</a></li>
+<li><a href="https://www.shining-moon.com/?module=referral">Referral</a></li>
+<li><a href="/hel/?module=news&action=view#videos">Videos</a></li>
+<li><a href="https://wiki.shining-moon.com/index.php/GM_Staff">Staff</a></li>
+<br>
+<li><a href="https://www.shining-moon.com/ticket">Ticket</a></li>
+<li><a href="https://discordapp.com/invite/8NuTZZZ">Discord</a></li>
+<li><a href="https://www.shining-moon.com/ipb">Forum</a></li>
+<li><a href="http://ratemyserver.net/index.php?page=detailedlistserver&serid=19647&itv=6&url_sname=Shining%20Moon%20RO">RateMyServer</a></li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="topbarinfo container ">
+<div class="row">
+<div class="row vertical-align">
+
+<div class="login col-md-3 col-lg-3 col-sm-3 " style="margin-left:10px"><iframe src="https://free.timeanddate.com/clock/i72m08vs/n3922/fc0f0/tct/pct" frameborder="0" width="81" height="15" allowTransparency="true"></iframe></div>
+<div class="login col-md-3 col-lg-3 col-sm-3 ">
+<span>Server: </span>
+<i class="fa fa-check-square text-success"></i> </div>
+<div class="playersOnline login col-md-3 col-lg-3 col-sm-3 ">
+<span id="pOnline">Players:</span>
+<span>1238</span>
+</div>
+<div class="login col-md-3 col-lg-3 col-sm-3 dspFlex justify-content-end">
+<div class="container-login100-form-btn btnTopBar">
+<a href="/hel/?module=account&action=login" class="wrap-login100-form-btn ">
+<div class="login100-form-bgbtn"></div>
+<button class="login100-form-btn btnSession">
+Login
+</button>
+</a>
+</div>
+<div class="container-login100-form-btn btnTopBar">
+<a href="/hel/?module=account&action=create" class="wrap-login100-form-btn ">
+<div class="login100-form-bgbtn"></div>
+<button class="login100-form-btn btnSession">
+SIGN UP
+</button>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sidebar-navigation hidde-sm hidden-xs">
+<div class="logo">
+<img src="themes/default/img/logo.gif" style="max-width: 100%; max-height:160px;" />
+</div>
+<nav class="lateralNav" />
+<ul>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#home">
+<span class="rect"></span>
+<span class="circle"></span>
+Home
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=info#home">
+<span class="rect"></span>
+<span class="circle"></span>
+Server Information
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#news">
+<span class="rect"></span>
+<span class="circle"></span>
+News
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#information">
+<span class="rect"></span>
+<span class="circle"></span>
+Official Implementations
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#features">
+<span class="rect"></span>
+<span class="circle"></span>
+Features
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php/Downloads">
+<span class="rect"></span>
+<span class="circle"></span>
+Download
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/hel/?module=market">
+<span class="rect"></span>
+<span class="circle"></span>
+Market
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=item">
+<span class="rect"></span>
+<span class="circle"></span>
+Database
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php">
+<span class="rect"></span>
+<span class="circle"></span>
+Wiki
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=paymethod">
+<span class="rect"></span>
+<span class="circle"></span>
+Get Cash Points
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/vote">
+<span class="rect"></span>
+<span class="circle"></span>
+Vote For Points!
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/hel/?module=referral">
+<span class="rect"></span>
+<span class="circle"></span>
+Referral System
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#videos">
+<span class="rect"></span>
+<span class="circle"></span>
+Videos
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php/GM_Staff">
+<span class="rect"></span>
+<span class="circle"></span>
+Staff
+</a>
+</li>
+<br>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/ticket">
+<span class="rect"></span>
+<span class="circle"></span>
+Ticket
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://discordapp.com/invite/8NuTZZZ">
+<span class="rect"></span>
+<span class="circle"></span>
+Discord
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/ipb">
+<span class="rect"></span>
+<span class="circle"></span>
+Forum
+</a>
+</li>
+<li style="height: 40px;">
+<a href="http://ratemyserver.net/index.php?page=detailedlistserver&serid=19647&itv=6&url_sname=Shining%20Moon%20RO">
+<span class="rect"></span>
+<span class="circle"></span>
+RateMyServer !
+</a>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page-content">
+<div class="limiter">
+<div class="container-login100 container-login100Rankings" id="dataBaseWp">
+<div class="wrap-login100 commonContainer accountClass">
+<div class="admMenu">
+</div>
+<div id="submenu">
+<a href="/hel/?module=item" class="sub-menu-item">List Items</a> </div>
+<br>
+<div class="adjust">
+<div align="center">
+<div class="ro-item-container">
+<div class="inner">
+<table style="width:250px; margin-left: 10px; ">
+<td>
+<br>
+<br>
+A knight's shield that is finally free of its curse.<br>
+It seems to have regained its original powers that were obscured by the curse.<br>
+------------------------<br>
+MATK + 5%<br>
+Increase physical damage inflicted on <font color=#6666CC>All</font> enemies by 5%.<br>
+Increases attack speed (reduces delay after attack by 10%).<br>
+Reduce damage taken from <font color=#6666CC>All</font> property attacks by 10%.<br>
+Adds a 5% chance of gaining 50 SP per second for 7 seconds when receiving physical or magical damage.<br>
+Adds a 2% chance of gaining 300 HP per second for 7 seconds when performing physidcal or magical attacks.<br>
+<br>
+If upgrade level is +7 or higher,<br>
+ATK + 20<br>
+MATK + 20<br>
+<br>
+If upgrade level is +9 or higher,<br>
+ASPD + 2<br>
+<br>
+If upgrade level is +12 or higher,<br>
+reduce after cast delay of skills by 5%.<br>
+------------------------<br>
+Class:<font color=#6666CC>Shield</font><br>
+Defense:<font color=#6666CC>0</font><br>
+Weight:<font color=#009900>80</font><br>
+Required Level:<font color=#009900> 1</font><br>
+Jobs: <font color=#6666CC>All classes</font><br>
+<br>
+Item ID:<font color=#ff0000> 28946</font><br>
+<br>
+</td>
+</table>
+</div>
+<div style="clear:both;"></div>
+</div>
+<br><br><br>
+<h3>
+<img src="/hel/data/items/icons/28946.png" /> #28946: Purified Knight's Shield </h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<tr>
+<th>Item ID</th>
+<td>28946</td>
+<td rowspan="9" style="width: 150px; text-align: center; vertical-alignment: middle">
+<img src="/hel/data/items/images/28946.png" />
+</td>
+<th>For Sale</th>
+<td>
+<span class="for-sale no">
+No
+</span>
+</td>
+</tr>
+<tr>
+<th>Identifier</th>
+<td>Purified_Knight_Shield</td>
+<th>Credit Price</th>
+<td>
+<span class="not-applicable">Not For Sale</span>
+</td>
+</tr>
+<tr>
+<th>Name</th>
+<td>Purified Knight's Shield</td>
+<th>Type</th>
+<td>Armor</td>
+</tr>
+<tr>
+<th>NPC Buy</th>
+<td>20</td>
+<th>Weight</th>
+<td>80</td>
+</tr>
+<tr>
+<th>NPC Sell</th>
+<td>
+10 </td>
+<th>Weapon Level</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>0</td>
+<th>Defense</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Slots</th>
+<td>1</td>
+<th>Refineable</th>
+<td>
+Yes
+</td>
+</tr>
+<tr>
+<th>Attack</th>
+<td>0</td>
+<th>Min Equip Level</th>
+<td>1</td>
+</tr>
+<tr>
+<th>MATK</th>
+<td>0</td>
+<th>Max Equip Level</th>
+<td>
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equip Locations</th>
+<td colspan="4">
+Off Hand </td>
+</tr>
+<tr>
+<th>Equip Upper</th>
+<td colspan="4">
+Normal / Upper / Baby / Third / Third Upper / Third Baby </td>
+</tr>
+<tr>
+<th>Equippable Jobs</th>
+<td colspan="4">
+All Jobs </td>
+</tr>
+<tr>
+<th>Equip Gender</th>
+<td colspan="4">
+Both (Male and Female)
+</td>
+</tr>
+</table>
+</div>
+<br><br>
+<br><br>
+<h3>Vending information:</h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<thead>
+<tr>
+<th width="40"><a href="/hel/?module=item&action=view&price_order=asc&id=28946&nameid_order=asc" class="sortable">ID</a></th>
+<th colspan="2"><a href="/hel/?module=item&action=view&price_order=asc&id=28946&name_japanese_order=desc" class="sortable">Name ▲</a></th>
+<th>Card0</th>
+<th>Card1</th>
+<th>Card2</th>
+<th>Card3</th>
+<th width="120"><a href="/hel/?module=item&action=view&price_order=desc&id=28946" class="sortable">Price ▲</a></th>
+<th width="50">Amount</th>
+<th width="100">Shop Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
+<span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(0)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-0" style="display:none;" class="item-options"><li>Increases resistance against Demihuman monster by 3%</li><li>Increases magical damage inflicted on Demihuman monster by 5%</li><li>Ignore 60% magical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+148,888,888 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1857"> </a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
+<span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(1)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-1" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Plant monster by 1%</li><li>Increases physical damage inflicted on Brute monster by 3%</li><li>Ignore 57% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+148,888,888 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1857"> </a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
+<span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(2)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-2" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Plant monster by 5%</li><li>Increases magical damage inflicted on Plant monster by 2%</li><li>Ignore 53% magical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+200,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=714">Rush</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++9 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(3)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-3" style="display:none;" class="item-options"><li>MDEF +10</li><li>Increases physical damage inflicted on Insect monster by 1%</li><li>Ignore 51% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+220,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=862">New things 5</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
+<span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(4)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-4" style="display:none;" class="item-options"><li>Increases healing skill by 5%</li><li>Increases magical damage inflicted on Demihuman monster by 2%</li><li>Ignore 59% physical defense of Demihuman monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=862">New things 5</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++12 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(5)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-5" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Angel monster by 2%</li><li>Increases magical damage inflicted on Brute monster by 1%</li><li>Ignore 57% magical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2398">Clearance Sale!</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++12 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(6)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-6" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Brute monster by 3%</li><li>Increases healing skill by 10%</li><li>Ignore 44% magical defense of Dragon monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+290,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1960">Drei - Equipments</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++12 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(7)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-7" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Devil monster by 5%</li><li>Increases healing skill by 8%</li><li>Ignore 56% magical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+300,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2127">Yes</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++12 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(8)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-8" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Devil monster by 5%</li><li>Increases magical damage inflicted on Angel monster by 4%</li><li>Ignore 60% magical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+325,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=739">all thing</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++11 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(9)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-9" style="display:none;" class="item-options"><li>Increases healing skill by 7%</li><li>DEF +78</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+350,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1960">Drei - Equipments</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++7 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(10)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-10" style="display:none;" class="item-options"><li>Increases resistance against Brute monster by 6%</li><li>Increases magical damage inflicted on Demihuman monster by 4%</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+350,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=318">Quaint</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++7 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(11)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-11" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Demon monster by 1%</li><li>Increases physical damage inflicted on Demon monster by 2%</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+350,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=318">Quaint</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=28946" class="link-to-item">28946</a></td>
+<td><img src="/hel/data/items/icons/28946.png" /></td>
+<td>
++12 <span class="item_name">Purified Knight's Shield</span>
+[1] <a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(12)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[3 Options]</a>
+<ul id="item-options-12" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Demon monster by 3%</li><li>Increases resistance against Demon monster by 5%</li><li>Reduce after cast delay by 5%</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+400,000,000 z
+</td>
+<td align="right" width="50">
+1 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1960">Drei - Equipments</a></span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pages"><a title="Page #1" class="page-num current-page">1</a></div>
+<br><br>
+<h3>Vending Price History:</h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<thead>
+<tr>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=28946&date_order=none" class="sortable">Date ▼</a></th>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=28946&item_name_order=asc" class="sortable">Item Name</a></th>
+<th>Card 1</th>
+<th>Card 2</th>
+<th>Card 3</th>
+<th>Card 4</th>
+<th>Price</th>
+<th>Amount Sold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-15 04:45:00</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=567347804" />
+<a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(0)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-0" style="display:none;" class="item-options"><li>MDEF +4</li><li>Increases resistance against Insect monster by 2%</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+188,888,888 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-12 04:56:18</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1470837149" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(1)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-1" style="display:none;" class="item-options"><li>Reduce variable cast time by 3%</li><li>Increases magical damage inflicted on Demihuman monster by 4%</li><li>Ignore 57% magical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+215,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-09 07:19:40</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=449613956" />
++9 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(2)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-2" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Formless monster by 5%</li><li>Increases resistance against Angel monster by 5%</li><li>Ignore 51% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+190,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-09 05:03:21</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=408082316" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(3)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-3" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Formless monster by 4%</li><li>Increases physical damage inflicted on Dragon monster by 1%</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+288,888,888 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-08 08:14:39</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1009492496" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(4)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-4" style="display:none;" class="item-options"><li>Increases magical damage inflicted on Undead monster by 3%</li><li>Increases magical damage inflicted on Fish monster by 4%</li><li>Ignore 59% magical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+300,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-05 15:13:59</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1775748675" />
++8 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(5)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-5" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Dragon monster by 4%</li><li>Increases magical damage inflicted on Devil monster by 2%</li><li>Ignore 55% physical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+200,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-04 03:29:07</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1251611085" />
+<a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(6)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-6" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Demon monster by 4%</li><li>Increases physical damage inflicted on Undead monster by 5%</li><li>Ignore 60% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+230,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-02 09:26:11</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=788920914" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(7)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-7" style="display:none;" class="item-options"><li>MDEF +9</li><li>Increases physical damage inflicted on Insect monster by 5%</li><li>Reduce after cast delay by 5%</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+350,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-02 02:34:38</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1036588213" />
+<a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+180,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-30 20:11:31</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=892799385" />
+<a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+180,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-30 00:41:30</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1637749158" />
++8 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(10)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-10" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Dragon monster by 4%</li><li>Increases magical damage inflicted on Devil monster by 2%</li><li>Ignore 55% physical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+200,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-27 19:27:06</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1331336290" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(11)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-11" style="display:none;" class="item-options"><li>Increases resistance against Plant monster by 5%</li><li>Increases physical damage inflicted on Formless monster by 4%</li><li>Ignore 59% magical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+200,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-27 14:56:10</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=616634724" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(12)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-12" style="display:none;" class="item-options"><li>MDEF +10</li><li>Increases resistance against Dragon monster by 2%</li><li>Ignore 58% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-27 08:06:48</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1729743231" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(13)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-13" style="display:none;" class="item-options"><li>DEF +33</li><li>Increases attack speed (reduce delay after attack by 1%)</li><li>Ignore 60% physical defense of Normal monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-25 15:42:08</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=568491032" />
+<a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(14)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-14" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Formless monster by 4%</li><li>Increases resistance against Fish monster by 3%</li><li>Ignore 41% magical defense of Dragon monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+149,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-24 09:12:01</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1047542569" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(15)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-15" style="display:none;" class="item-options"><li>Increases resistance against Formless monster by 6%</li><li>Increases resistance against Formless monster by 6%</li><li>Ignore 38% physical defense of Demihuman monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+ <td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-24 07:52:24</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=708926418" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(16)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-16" style="display:none;" class="item-options"><li>MDEF +10</li><li>Increases magical damage inflicted on Insect monster by 2%</li><li>Reduce after cast delay by 5%</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-23 06:47:50</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1863313174" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(17)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-17" style="display:none;" class="item-options"><li>Increases physical damage inflicted on Angel monster by 5%</li><li>Increases physical damage inflicted on Formless monster by 4%</li><li>Remove weapon's size penalty</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+310,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-21 23:46:06</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1925608715" />
++12 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(18)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-18" style="display:none;" class="item-options"><li>Increases resistance against Demihuman monster by 6%</li><li>Increases resistance against Plant monster by 2%</li><li>Reduce after cast delay by 3%</li></ul> </td>
+<td>
+Khalitzburg Knight Card </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+250,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-04-21 09:08:47</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=627599225" />
++9 <a href="/hel/?module=item&action=view&id=28946">Purified Knight's Shield</a>
+<a title="Click to check options" class="item-options-toggle" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleOption(19)" data-cf-modified-a21a4ef1af41347306b42dfb-="">[ Options ]</a>
+<ul id="item-options-19" style="display:none;" class="item-options"><li>MDEF +10</li><li>Increases physical damage inflicted on Insect monster by 1%</li><li>Ignore 51% physical defense of Boss monster</li></ul> </td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-9">
+120,000,000 z
+</td>
+<td>
+1 </td>
+</tr>
+</tbody>
+</table>
+</div>
+<br><br>
+<span class="not-applicable">No price history available for this item.</span>
+</div>
+</div>
+</div></div>
+<section class="footer">
+<p>Copyright &copy; 2019. Shining Moon</p>
+</section>
+</div>
+<script type="a21a4ef1af41347306b42dfb-text/javascript">
+			function updatePreferredServer(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_server_form.preferred_server.value = preferred;
+				document.preferred_server_form.submit();
+			}
+
+			function updatePreferredTheme(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_theme_form.preferred_theme.value = preferred;
+				document.preferred_theme_form.submit();
+			}
+
+            function updatePreferredLanguage(sel){
+                var preferred = sel.options[sel.selectedIndex].value;
+                setCookie('language', preferred);
+                reload();
+            }
+
+			// Preload spinner image.
+			var spinner = new Image();
+			spinner.src = '/hel/themes/default/img/spinner.gif';
+
+			function refreshSecurityCode(imgSelector){
+				$(imgSelector).attr('src', spinner.src);
+
+				// Load image, spinner will be active until loading is complete.
+				var clean = false;
+				var image = new Image();
+				image.src = "/hel/?module=captcha"+(clean ? '?nocache=' : '&nocache=')+Math.random();
+
+				$(imgSelector).attr('src', image.src);
+			}
+			function toggleSearchForm()
+			{
+				//$('.search-form').toggle();
+				$('.search-form').slideToggle('fast');
+			}
+
+            function setCookie(key, value) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + expires.getTime()); // never expires
+                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+            }
+		</script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/flux.datefields.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/flux.unitip.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/bootstrap.min.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/plugins.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/main.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/popper.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/mainLogin.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/flux.itemoption.js"></script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript">
+            // Hide Header on on scroll down
+            var didScroll;
+            var lastScrollTop = 0;
+            var delta = 5;
+            var navbarHeight = $('header').outerHeight();
+
+            $(window).scroll(function(event){
+                didScroll = true;
+            });
+
+            setInterval(function() {
+                if (didScroll) {
+                    hasScrolled();
+                    didScroll = false;
+                }
+            }, 250);
+
+            function hasScrolled() {
+                var st = $(this).scrollTop();
+
+                // Make sure they scroll more than delta
+                if(Math.abs(lastScrollTop - st) <= delta)
+                    return;
+
+                // If they scrolled down and are past the navbar, add class .nav-up.
+                // This is necessary so you never see what is "behind" the navbar.
+                if (st > lastScrollTop && st > navbarHeight){
+                    // Scroll Down
+                    $('header').removeClass('nav-down').addClass('nav-up');
+                } else {
+                    // Scroll Up
+                    if(st + $(window).height() < $(document).height()) {
+                        $('header').removeClass('nav-up').addClass('nav-down');
+                    }
+                }
+
+                lastScrollTop = st;
+            }
+            </script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript">
+                $(document).ready(function(){
+                    var inputs = 'input[type=text],input[type=password],input[type=file]';
+                    $(inputs).focus(function(){
+                        $(this).css({
+                            'background-color': '#f9f5e7',
+                            'border-color': '#dcd7c7',
+                            'color': '#726c58'
+                        });
+                    });
+                    $(inputs).blur(function(){
+                        $(this).css({
+                            'backgroundColor': '#ffffff',
+                            'borderColor': '#dddddd',
+                            'color': '#444444'
+                        }, 500);
+                    });
+                    $('.menuitem a').hover(
+                        function(){
+                            $(this).fadeTo(200, 0.85);
+                            $(this).css('cursor', 'pointer');
+                        },
+                        function(){
+                            $(this).fadeTo(150, 1.00);
+                            $(this).css('cursor', 'normal');
+                        }
+                    );
+                    $('.money-input').keyup(function() {
+                        var creditValue = parseInt($(this).val() / 0.00033, 10);
+                        if (isNaN(creditValue))
+                            $('.credit-input').val('?');
+                        else
+                            $('.credit-input').val(creditValue);
+                    }).keyup();
+                    $('.credit-input').keyup(function() {
+                        var moneyValue = parseFloat($(this).val() * 0.00033);
+                        if (isNaN(moneyValue))
+                            $('.money-input').val('?');
+                        else
+                            $('.money-input').val(moneyValue.toFixed(2));
+                    }).keyup();
+
+                    // In: js/flux.datefields.js
+                    processDateFields();
+                });
+
+                function reload(){
+                    window.location.href = '/hel/?module=item&action=view';
+                }
+            </script>
+<script type="a21a4ef1af41347306b42dfb-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<td align="right">
+<span>Theme:
+<select name="preferred_theme" onchange="if (!window.__cfRLUnblockHandlers) return false; updatePreferredTheme(this)" data-cf-modified-a21a4ef1af41347306b42dfb-="">
+<option value="default" selected="selected">default</option>
+</select>
+</span>
+<form action="/hel/?module=item&action=view&price_order=asc&id=28946" method="post" name="preferred_theme_form" style="display: none">
+<input type="hidden" name="preferred_theme" value="" />
+</form>
+</td>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a21a4ef1af41347306b42dfb-|49" defer=""></script></body>
+</html>

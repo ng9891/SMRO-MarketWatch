@@ -1,9 +1,10 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import {GuildMember, PermissionResolvable} from 'discord.js';
-import {getWatchListInfo, updateRecurrence} from '../../db/actions/watchlist.action';
-import {getCronUpdateMsg} from '../responses/valid.response';
-import {getNoPermissionMsg, getNotInWatchlistMsg} from '../responses/invalid.response';
+import {getWatchListInfo, updateWatchList, createNewWatchList} from '../../db/actions/watchlist.action';
+import {getRecurrenceUpdateMsg} from '../responses/valid.response';
+import {getNoPermissionMsg} from '../responses/invalid.response';
+import scrapItemInfoByID from '../../scraper/scraper';
 
 export const recurrence: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
@@ -29,14 +30,17 @@ export const recurrence: Subcommand = {
         ('BAN_MEMBERS' as PermissionResolvable);
       if (!member.permissions.has(permission)) throw new Error(getNoPermissionMsg());
 
-      const wl = await getWatchListInfo(itemID);
-      if (!wl) throw new Error(getNotInWatchlistMsg(itemID));
+      let wl = await getWatchListInfo(itemID);
+      if (!wl) {
+        const itemInfo = await scrapItemInfoByID(itemID);
+        wl = await createNewWatchList(recurrence, {userID, userName}, itemInfo);
+      } else {
+        wl = {...wl, setByID: userID, setByName: userName, recurrence};
+      }
 
-      const newWl = {...wl, setByID: userID, setByName: userName, recurrence};
-
-      const {nextOn, itemName} = await updateRecurrence(newWl);
-      const resp = getCronUpdateMsg(itemID, itemName, recurrence, nextOn);
-      // TODO: set up job.
+      await updateWatchList(wl);
+      const resp = getRecurrenceUpdateMsg(wl);
+      // TODO: set up job if subs > 0
       await interaction.editReply(resp);
     } catch (error) {
       const err = error as Error;

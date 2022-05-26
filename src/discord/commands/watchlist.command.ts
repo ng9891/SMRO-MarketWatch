@@ -32,6 +32,9 @@ export const watchlist: Command = {
         await list.run(interaction);
         break;
       }
+      default: {
+        await interaction.reply('Command not found.');
+      }
     }
   },
 };

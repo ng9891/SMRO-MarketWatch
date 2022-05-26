@@ -15,10 +15,8 @@ export const list: Subcommand = {
     const userName = mention && !mention.bot ? mention.username : interaction.user.username;
 
     try {
-      const user = await getUserInfo(userID);
-      const newUser = user ? user : await setUserInfo({userID, userName});
-
-      const resp = getListingMsg(newUser);
+      const user = await getUserInfo(userID, userName);
+      const resp = getListingMsg(user);
       await interaction.editReply(resp);
     } catch (error) {
       const err = error as Error;

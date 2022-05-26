@@ -1,11 +1,13 @@
+import {VendInfo} from '../ts/interfaces/VendInfo';
+
 export const cleanShopText = (text: string) => {
   return text
     .split(/\n|\\n/)
-    .reduce((prev, el) => {
-      if (!el) return prev;
-      if (el === '( Enchant )') return prev;
-      if (el === 'None') return (prev += '-');
-      return (prev += ' ' + el.trim());
+    .reduce((prev, str) => {
+      if (!str) return prev;
+      if (str === '( Enchant )') return prev;
+      if (str === 'None') return (prev += '-');
+      return (prev += ' ' + str.trim());
     }, '')
     .trim();
 };
@@ -67,4 +69,9 @@ export const formatPrice = (num: number) => {
   if (num < 1000000) return displayInThousands(num);
   if (num < 1000000000) return displayInMillions(num);
   return displayInBillions(num);
+};
+
+export const getVendHash = (vend: VendInfo) => {
+  const {itemID, shopID, shopName, price} = vend;
+  return `${itemID}${shopID}${shopName}${price}`;
 };

@@ -5,16 +5,22 @@ import {table} from 'table';
 import {formatDistanceToNow, fromUnixTime} from 'date-fns';
 import {formatPrice} from '../../helpers/helpers';
 import {List} from '../../ts/interfaces/List';
+import {listKey} from '../../ts/interfaces/AppUser';
 
 export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['list'] = {}) => {
   const {itemID, itemName: name, nextOn} = wl;
-  const threshold = list[itemID]?.threshold ? list[itemID].threshold : 0;
-  const refinement = list[itemID]?.refinement ? list[itemID].refinement : '';
-  const listSize = Object.keys(list).length;
+  const id = itemID as listKey;
+  const {[id]: item, ...rest} = list;
+  const threshold = item ? item.threshold : 0;
+  const refinement = item ? item.refinement : '';
+
+  const newList = status === 'REMOVE' ? rest : list;
+
+  const listSize = Object.keys(newList).length;
   const maxListSize = Number(process.env.MAX_LIST_SIZE);
 
   let listStr = '';
-  for (const [key, value] of Object.entries(list)) {
+  for (const [key, value] of Object.entries(newList)) {
     const refineStr = refinement ? `+${refinement} ` : '';
     listStr += `\n **${key}**: ${refineStr}${value.itemName}`;
   }
@@ -83,9 +89,9 @@ export const getListingMsg = (user: AppUser) => {
   return `[${user.userName}]'s list.\`\`\`${table}${sizeStr}\`\`\``;
 };
 
-export const getCronUpdateMsg = (itemID: string, itemName: string, recurrence: number, nextOn: number) => {
-  const relativeTime = formatDistanceToNow(fromUnixTime(nextOn), {addSuffix: true});
-  return `\`\`\`Updated [${itemID}:${itemName}] to check every ${recurrence} min. Next check: ${relativeTime}\`\`\``;
+export const getRecurrenceUpdateMsg = (wl: Watchlist) => {
+  const {itemID, itemName, recurrence, subs} = wl;
+  return `\`\`\`Updated [${itemID}:${itemName}] with [${subs} sub] to check every ${recurrence} min.\`\`\``;
 };
 
 export const getHelpMsg = () => {

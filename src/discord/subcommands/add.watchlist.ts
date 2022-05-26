@@ -2,7 +2,7 @@ import {List} from '../../ts/interfaces/List';
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import scrapItemInfoByID from '../../scraper/scraper';
-import {addSub, getWatchListInfo, setWatchListInfo} from '../../db/actions/watchlist.action';
+import {addSub, getWatchListInfo, createNewWatchList, updateWatchList} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {parsePriceString} from '../../helpers/helpers';
 import {getDefaultEmbed} from '../responses/valid.response';
@@ -10,7 +10,7 @@ import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from
 
 const isMaxListSize = (listSize: number | undefined) => {
   if (!listSize) return false;
-  if (listSize === Number(process.env.MAX_LIST_SIZE)) return true;
+  if (listSize <= Number(process.env.MAX_LIST_SIZE)) return true;
   return false;
 };
 
@@ -18,9 +18,7 @@ export const add: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
     .setName('add')
     .setDescription('Add/Update an Item ID to the watchlist.')
-    .addIntegerOption((option) =>
-      option.setName('item-id').setDescription('ID of the Item. e.g 6635').setRequired(true)
-    )
+    .addIntegerOption((option) => option.setName('itemid').setDescription('ID of the Item. e.g 6635').setRequired(true))
     .addStringOption((option) =>
       option.setName('threshold').setDescription('Price threshold for notifications. e.g 250m').setRequired(true)
     )
@@ -32,7 +30,7 @@ export const add: Subcommand = {
       await interaction.deferReply();
       const userID = interaction.user.id;
       const userName = interaction.user.username;
-      const itemID = interaction.options.getInteger('item-id', true).toString();
+      const itemID = interaction.options.getInteger('itemid', true).toString();
       const threshold = interaction.options.getString('threshold', true);
       const refine = interaction.options.getInteger('refinement');
       const refinement = refine ? Math.abs(refine).toString() : null;
@@ -54,25 +52,33 @@ export const add: Subcommand = {
       };
       if (refinement) newList.refinement = refinement;
 
-      const user = await getUserInfo(userID);
-      const isFull = isMaxListSize(user?.listSize);
-      if (isFull) throw new Error(getMaxListSizeMsg(itemID, itemInfo.name, user?.list));
-      const newUser = user
-        ? await setUserInfo({...user, list: {...user.list, [itemID]: newList}})
-        : await setUserInfo({userID, userName, list: {[itemID]: newList}});
+      const user = await getUserInfo(userID, userName);
+      const list = user.list;
+
+      // If its not an update. Check for list size
+      if (list && !list[itemID]) {
+        const isFull = isMaxListSize(user.listSize);
+        if (isFull) throw new Error(getMaxListSizeMsg(itemID, itemInfo.name, user?.list));
+      }
+
+      const newUser = await setUserInfo({...user, list: {...user.list, [itemID]: newList}});
 
       // Check if recurrence is set.
       let wl = await getWatchListInfo(itemID);
       if (!wl) {
         const recurrence = Number(process.env.DEFAULT_RECURRANCE_MINUTES);
-        wl = await setWatchListInfo(recurrence, newUser, itemInfo);
+        wl = await createNewWatchList(recurrence, newUser, itemInfo);
+      } else if (wl.subs === 0) {
+        // WatchList exists but doesn't have sub. Might not need this when setting job
+        const newWl = Object.assign(wl, {setByID: userID, setByName: userName});
+        wl = await updateWatchList(newWl);
       }
+      //TODO: set job.
+      //TODO: Initial check?
 
       const isNewSub = await addSub(newList);
       const action = isNewSub ? 'ADD' : 'UPDATE';
       const embed = getDefaultEmbed(action, wl, newUser.list);
-      //TODO: set job.
-      //TODO: Initial check?
       await interaction.editReply({embeds: [embed]});
     } catch (error) {
       const err = error as Error;

@@ -1,11 +1,17 @@
 import db from '../firebase';
 import {AppUser} from '../../ts/interfaces/AppUser';
+import getUnixTime from 'date-fns/getUnixTime';
 
 const usersRef = db.collection('User');
 
-export const getUserInfo = async (userID: string) => {
+export const getUserInfo = async (userID: string, userName: string) => {
   const snap = await usersRef.doc(userID).get();
-  if (!snap.exists) return null;
+  if (!snap.exists) {
+    const timestamp = getUnixTime(new Date());
+    const newUser = {userID, userName, listSize: 0, list: {}, timestamp};
+    await usersRef.doc(userID).set(newUser);
+    return newUser;
+  }
   return snap.data() as AppUser;
 };
 

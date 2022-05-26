@@ -1,0 +1,1833 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>Helheim: Viewing Item (Blacksmith Blessing)</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico" />
+<link rel="stylesheet" href="/hel/themes/default/css/flux.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/bootstrap.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/bootstrap-theme.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/fontAwesome.css" type="text/css" media="screen" title="" charset="utf-8" />
+
+<link rel="stylesheet" href="/hel/themes/default/css/owl-carousel.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/shining4.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/material-design-iconic-font.min.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/hel/themes/default/css/mainLogin.css" type="text/css" media="screen" title="" charset="utf-8" />
+<script type="fb51f6f04aedd2be2702ce19-text/javascript">
+			function updatePreferredServer(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_server_form.preferred_server.value = preferred;
+				document.preferred_server_form.submit();
+			}
+			
+			function updatePreferredTheme(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_theme_form.preferred_theme.value = preferred;
+				document.preferred_theme_form.submit();
+			}
+
+            function updatePreferredLanguage(sel){
+                var preferred = sel.options[sel.selectedIndex].value;
+                setCookie('language', preferred);
+                reload();
+            }
+
+			// Preload spinner image.
+			var spinner = new Image();
+			spinner.src = '/hel/themes/default/img/spinner.gif';
+			
+			function refreshSecurityCode(imgSelector){
+				$(imgSelector).attr('src', spinner.src);
+				
+				// Load image, spinner will be active until loading is complete.
+				var clean = false;
+				var image = new Image();
+				image.src = "/hel/?module=captcha"+(clean ? '?nocache=' : '&nocache=')+Math.random();
+				
+				$(imgSelector).attr('src', image.src);
+			}
+			function toggleSearchForm()
+			{
+				//$('.search-form').toggle();
+				$('.search-form').slideToggle('fast');
+			}
+
+            function setCookie(key, value) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + expires.getTime()); // never expires
+                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+            }
+		</script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<link href="/hel/themes/default/css/flux/unitip.css" rel="stylesheet" type="text/css" media="screen" title="" charset="utf-8" />
+</head>
+<body>
+<header class="nav-down responsive-nav hidden-lg hidden-md">
+<button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+
+<div id="main-nav" class="collapse navbar-collapse">
+<nav>
+<ul class="nav navbar-nav">
+<li><a href="/hel/?module=news&action=view#home">Home</a></li>
+<li><a href="/hel/?module=news&action=view#news">News</a></li>
+<li><a href="/hel/?module=news&action=view#information">Official Implementations</a></li>
+<li><a href="/hel/?module=news&action=view#features">Features</a></li>
+<li><a href="https://www.shining-moon.com/hel/index.php/Downloads>">Download</a></li>
+<li><a href="https://www.shining-moon.com/hel/?module=market">Market</a></li>
+<li><a href="/hel/?module=item">Database</a></li>
+<li><a href="https://wiki.shining-moon.com/index.php/index.php">Wiki</a></li>
+<li><a href="/hel/?module=paymethod">Get Cash Points</a></li>
+<li><a href="https://www.shining-moon.com/vote">Vote For Points!</a></li>
+<li><a href="https://www.shining-moon.com/?module=referral">Referral</a></li>
+<li><a href="/hel/?module=news&action=view#videos">Videos</a></li>
+<li><a href="https://wiki.shining-moon.com/index.php/GM_Staff">Staff</a></li>
+<br>
+<li><a href="https://www.shining-moon.com/ticket">Ticket</a></li>
+<li><a href="https://discordapp.com/invite/8NuTZZZ">Discord</a></li>
+<li><a href="https://www.shining-moon.com/ipb">Forum</a></li>
+<li><a href="http://ratemyserver.net/index.php?page=detailedlistserver&serid=19647&itv=6&url_sname=Shining%20Moon%20RO">RateMyServer</a></li>
+</ul>
+</nav>
+</div>
+</header>
+<div class="topbarinfo container ">
+<div class="row">
+<div class="row vertical-align">
+
+<div class="login col-md-3 col-lg-3 col-sm-3 " style="margin-left:10px"><iframe src="https://free.timeanddate.com/clock/i72m08vs/n3922/fc0f0/tct/pct" frameborder="0" width="81" height="15" allowTransparency="true"></iframe></div>
+<div class="login col-md-3 col-lg-3 col-sm-3 ">
+<span>Server: </span>
+<i class="fa fa-check-square text-success"></i> </div>
+<div class="playersOnline login col-md-3 col-lg-3 col-sm-3 ">
+<span id="pOnline">Players:</span>
+<span>1238</span>
+</div>
+<div class="login col-md-3 col-lg-3 col-sm-3 dspFlex justify-content-end">
+<div class="container-login100-form-btn btnTopBar">
+<a href="/hel/?module=account&action=login" class="wrap-login100-form-btn ">
+<div class="login100-form-bgbtn"></div>
+<button class="login100-form-btn btnSession">
+Login
+</button>
+</a>
+</div>
+<div class="container-login100-form-btn btnTopBar">
+<a href="/hel/?module=account&action=create" class="wrap-login100-form-btn ">
+<div class="login100-form-bgbtn"></div>
+<button class="login100-form-btn btnSession">
+SIGN UP
+</button>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sidebar-navigation hidde-sm hidden-xs">
+<div class="logo">
+<img src="themes/default/img/logo.gif" style="max-width: 100%; max-height:160px;" />
+</div>
+<nav class="lateralNav" />
+<ul>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#home">
+<span class="rect"></span>
+<span class="circle"></span>
+Home
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=info#home">
+<span class="rect"></span>
+<span class="circle"></span>
+Server Information
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#news">
+<span class="rect"></span>
+<span class="circle"></span>
+News
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#information">
+<span class="rect"></span>
+<span class="circle"></span>
+Official Implementations
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#features">
+<span class="rect"></span>
+<span class="circle"></span>
+Features
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php/Downloads">
+<span class="rect"></span>
+<span class="circle"></span>
+Download
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/hel/?module=market">
+<span class="rect"></span>
+<span class="circle"></span>
+Market
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=item">
+<span class="rect"></span>
+<span class="circle"></span>
+Database
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php">
+<span class="rect"></span>
+<span class="circle"></span>
+Wiki
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=paymethod">
+<span class="rect"></span>
+<span class="circle"></span>
+Get Cash Points
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/vote">
+<span class="rect"></span>
+<span class="circle"></span>
+Vote For Points!
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/hel/?module=referral">
+<span class="rect"></span>
+<span class="circle"></span>
+Referral System
+</a>
+</li>
+<li style="height: 40px;">
+<a href="/hel/?module=news&action=view#videos">
+<span class="rect"></span>
+<span class="circle"></span>
+Videos
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://wiki.shining-moon.com/index.php/GM_Staff">
+<span class="rect"></span>
+<span class="circle"></span>
+Staff
+</a>
+</li>
+<br>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/ticket">
+<span class="rect"></span>
+<span class="circle"></span>
+Ticket
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://discordapp.com/invite/8NuTZZZ">
+<span class="rect"></span>
+<span class="circle"></span>
+Discord
+</a>
+</li>
+<li style="height: 40px;">
+<a href="https://www.shining-moon.com/ipb">
+<span class="rect"></span>
+<span class="circle"></span>
+Forum
+</a>
+</li>
+<li style="height: 40px;">
+<a href="http://ratemyserver.net/index.php?page=detailedlistserver&serid=19647&itv=6&url_sname=Shining%20Moon%20RO">
+<span class="rect"></span>
+<span class="circle"></span>
+RateMyServer !
+</a>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page-content">
+<div class="limiter">
+<div class="container-login100 container-login100Rankings" id="dataBaseWp">
+<div class="wrap-login100 commonContainer accountClass">
+<div class="admMenu">
+</div>
+<div id="submenu">
+<a href="/hel/?module=item" class="sub-menu-item">List Items</a> </div>
+<br>
+<div class="adjust">
+<div align="center">
+<div class="ro-item-container">
+<div class="inner">
+<table style="width:250px; margin-left: 10px; ">
+<td>
+<br>
+<br>
+Use this bottle in combination with any refinement material to protect the item from downgrading and breaking in the Refinement UI.<br>
+This item will be consumed regardless of fail or success, the amount needed is increased corresponding to refine level.<br>
+[ Realm: Niflheim only - has a 100% chance to upgrade the item ]<br>
+--------------------------<br>
+Required number of bottles:<br>
++7 refine -> +8 refine : 1 ea<br>
++8 refine -> +9 refine : 2 ea<br>
++9 refine -> +10 refine : 4 ea<br>
++10 refine -> +11 refine : 7 ea<br>
++11 refine -> +12 refine : 11 ea<br>
+--------------------------<br>
+**Only apply up to +12 refine.<br>
+Weight:<font color=#009900> 0</font><br>
+<br>
+Item ID:<font color=#ff0000> 6635</font><br>
+<br>
+</td>
+</table>
+</div>
+<div style="clear:both;"></div>
+</div>
+<br><br><br>
+<h3>
+<img src="/hel/data/items/icons/6635.png" /> #6635: Blacksmith Blessing </h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<tr>
+<th>Item ID</th>
+<td>6635</td>
+<td rowspan="9" style="width: 150px; text-align: center; vertical-alignment: middle">
+<img src="/hel/data/items/images/6635.png" />
+</td>
+<th>For Sale</th>
+<td>
+<span class="for-sale no">
+No
+</span>
+</td>
+</tr>
+<tr>
+<th>Identifier</th>
+<td>Blacksmith_Blessing</td>
+<th>Credit Price</th>
+<td>
+<span class="not-applicable">Not For Sale</span>
+</td>
+</tr>
+<tr>
+<th>Name</th>
+<td>Blacksmith Blessing</td>
+<th>Type</th>
+<td>Etc</td>
+</tr>
+<tr>
+<th>NPC Buy</th>
+<td>20</td>
+<th>Weight</th>
+<td>0</td>
+</tr>
+<tr>
+<th>NPC Sell</th>
+<td>
+10 </td>
+<th>Weapon Level</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>0</td>
+<th>Defense</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Slots</th>
+<td>0</td>
+<th>Refineable</th>
+<td>
+No
+</td>
+</tr>
+<tr>
+<th>Attack</th>
+<td>0</td>
+<th>Min Equip Level</th>
+<td>0</td>
+</tr>
+<tr>
+<th>MATK</th>
+<td>0</td>
+<th>Max Equip Level</th>
+<td>
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equip Locations</th>
+<td colspan="4">
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equip Upper</th>
+<td colspan="4">
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equippable Jobs</th>
+<td colspan="4">
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equip Gender</th>
+<td colspan="4">
+<span class="not-applicable">Unknown</span>
+</td>
+</tr>
+</table>
+</div>
+<br><br>
+<br><br>
+<h3>Vending information:</h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<thead>
+<tr>
+<th width="40"><a href="/hel/?module=item&action=view&price_order=asc&id=6635&nameid_order=asc" class="sortable">ID</a></th>
+<th colspan="2"><a href="/hel/?module=item&action=view&price_order=asc&id=6635&name_japanese_order=desc" class="sortable">Name ▲</a></th>
+<th>Card0</th>
+<th>Card1</th>
+<th>Card2</th>
+<th>Card3</th>
+<th width="120"><a href="/hel/?module=item&action=view&price_order=desc&id=6635" class="sortable">Price ▲</a></th>
+<th width="50">Amount</th>
+<th width="100">Shop Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td align="right" width="50">
+19 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2178">School Requirements</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,400,000 z
+</td>
+<td align="right" width="50">
+53 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2416">BBs, BSBs</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,550,000 z
+</td>
+<td align="right" width="50">
+93 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2085">bebi</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,700,000 z
+</td>
+<td align="right" width="50">
+422 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1918">BSB</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,750,000 z
+</td>
+<td align="right" width="50">
+345 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1421">BSB</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,750,000 z
+</td>
+<td align="right" width="50">
+34 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1809">Grind</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,900,000 z
+</td>
+<td align="right" width="50">
+7 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2091">Toko7</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,948,998 z
+</td>
+<td align="right" width="50">
+400 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1604"> </a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,949,000 z
+</td>
+<td align="right" width="50">
+137 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=732"> Store</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,950,000 z
+</td>
+<td align="right" width="50">
+468 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=537">13s</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,990,000 z
+</td>
+<td align="right" width="50">
+112 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=654">vit/spell/int</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,000,000 z
+</td>
+<td align="right" width="50">
+10 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=667">05xd</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,000,000 z
+</td>
+<td align="right" width="50">
+391 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=2443">Refiniwis</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,399,000 z
+</td>
+<td align="right" width="50">
+205 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=469"> </a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,500,000 z
+</td>
+<td align="right" width="50">
+400 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=1576">OwO</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,500,000 z
+</td>
+<td align="right" width="50">
+380 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=474">Your friends</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,949,998 z
+</td>
+<td align="right" width="50">
+8 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=253">BSB</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+5,969,693 z
+</td>
+<td align="right" width="50">
+364 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=236">Quat</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+6,000,000 z
+</td>
+<td align="right" width="50">
+517 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=701">11s</a></span>
+</td>
+</tr>
+<tr>
+<td align="right"><a href="/hel/?module=item&action=view&id=6635" class="link-to-item">6635</a></td>
+<td><img src="/hel/data/items/icons/6635.png" /></td>
+<td>
+<span class="item_name">Blacksmith Blessing</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+6,400,000 z
+</td>
+<td align="right" width="50">
+120 </td>
+<td>
+<span title="Click for items vended by this vendor and location"><a href="/hel/?module=vending&action=viewshop&id=138">Bsbs, melee, Berze</a></span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pages"><a title="Page #1" class="page-num current-page">1</a></div>
+<br><br>
+<h3>Buyingstore information:</h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<thead>
+<tr>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=6635&title_order=desc" class="sortable">Shop ▲</a></th>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=6635&merchant_order=asc" class="sortable">Merchant</a></th>
+<th>Position</th>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=6635&item_name_order=asc" class="sortable">Item Name</a></th>
+<th width="120">Price</th>
+<th width="50">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=254"> </a>
+</td>
+<td>West Bank</td>
+<td>
+geffen 105, 100 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=523936522" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,900,000 z
+</td>
+<td>
+157 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=9"> </a>
+</td>
+<td>Inasara</td>
+<td>
+fortessa 199, 118 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=875877505" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,000,004 z
+</td>
+<td>
+237 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=23">$</a>
+</td>
+<td>776y</td>
+<td>
+dewata 150, 231 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=1743529838" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,611,200 z
+</td>
+<td>
+163 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=24">BB</a>
+</td>
+<td>Rorotera</td>
+<td>
+gonryun 155, 127 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=1739792902" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,640,001 z
+</td>
+<td>
+389 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=7">BSB</a>
+</td>
+<td>NekoNekoNeko</td>
+<td>
+fortessa 205, 157 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=1800796735" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,000,005 z
+</td>
+<td>
+273 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=2">bsbs</a>
+</td>
+<td>shakeyourmoneymaker</td>
+<td>
+ra_temple 125, 163 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=1776414522" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+800,000 z
+</td>
+<td>
+756 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=22">Goods</a>
+</td>
+<td>World Bank</td>
+<td>
+geffen 115, 100 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=486913915" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,621,000 z
+</td>
+<td>
+100 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=buyingstore&action=viewshop&id=220">Purchase</a>
+</td>
+<td>Swiss Bank</td>
+<td>
+geffen 110, 100 </td>
+<td>
+<img src="/hel/data/items/icons/6635.png?nocache=1209711771" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td align="right" class="price price-7">
+3,641,000 z
+</td>
+<td>
+100 </td>
+</tr>
+</tbody>
+</table>
+</div>
+<br><br>
+<h3>Vending Price History:</h3>
+<div style="overflow-x: auto">
+<table class="vertical-table">
+<thead>
+<tr>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=6635&date_order=none" class="sortable">Date ▼</a></th>
+<th><a href="/hel/?module=item&action=view&price_order=asc&id=6635&item_name_order=asc" class="sortable">Item Name</a></th>
+<th>Card 1</th>
+<th>Card 2</th>
+<th>Card 3</th>
+<th>Card 4</th>
+<th>Price</th>
+<th>Amount Sold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 18:08:32</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=946687502" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+2 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 17:49:39</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=492202403" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+8 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 17:45:42</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=139076851" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+8 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 17:45:09</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=380969335" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+8 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 17:33:44</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=578608066" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+2 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 17:33:22</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=46904538" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 16:37:09</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1263508185" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,199,999 z
+</td>
+<td>
+2 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 16:37:00</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1077154588" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+5 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 16:31:22</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=328611517" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 16:30:15</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=115153624" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+1 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 14:18:08</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=713517768" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 14:09:55</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=575204662" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,000 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 13:00:54</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=851952627" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 13:00:25</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1146015349" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+2 </td>
+</tr>
+<tr>
+<td>
+  <a href="/hel/?module=history&action=view&id=">2022-05-25 12:58:31</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1723739264" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 12:54:22</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=2031802568" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+5 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 10:22:42</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=147450851" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+2 </td>
+</tr>
+<tr>
+<td>
+ <a href="/hel/?module=history&action=view&id=">2022-05-25 08:25:48</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1246719047" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+4 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 08:11:10</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1859774369" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+10 </td>
+</tr>
+<tr>
+<td>
+<a href="/hel/?module=history&action=view&id=">2022-05-25 08:10:09</a>
+</td>
+<td>
+<img src="/hel/data/items/icons/0.png?nocache=1447456147" />
+<a href="/hel/?module=item&action=view&id=6635">Blacksmith Blessing</a>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td>
+<span class="not-applicable">None</span>
+</td>
+<td align="right" class="price price-7">
+4,399,998 z
+</td>
+<td>
+2 </td>
+</tr>
+</tbody>
+</table>
+</div>
+<br><br>
+<b><h3>Minimum in the past 10 days have been : 2400000</h3></b>
+<b><h3>Maximum in the past 10 days have been : 4949000</h3></b>
+<b><h3>Average of the past 10 days is : 4524328</h3></b>
+</div>
+</div>
+</div></div>
+<section class="footer">
+<p>Copyright &copy; 2019. Shining Moon</p>
+</section>
+</div>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript">
+			function updatePreferredServer(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_server_form.preferred_server.value = preferred;
+				document.preferred_server_form.submit();
+			}
+
+			function updatePreferredTheme(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_theme_form.preferred_theme.value = preferred;
+				document.preferred_theme_form.submit();
+			}
+
+            function updatePreferredLanguage(sel){
+                var preferred = sel.options[sel.selectedIndex].value;
+                setCookie('language', preferred);
+                reload();
+            }
+
+			// Preload spinner image.
+			var spinner = new Image();
+			spinner.src = '/hel/themes/default/img/spinner.gif';
+
+			function refreshSecurityCode(imgSelector){
+				$(imgSelector).attr('src', spinner.src);
+
+				// Load image, spinner will be active until loading is complete.
+				var clean = false;
+				var image = new Image();
+				image.src = "/hel/?module=captcha"+(clean ? '?nocache=' : '&nocache=')+Math.random();
+
+				$(imgSelector).attr('src', image.src);
+			}
+			function toggleSearchForm()
+			{
+				//$('.search-form').toggle();
+				$('.search-form').slideToggle('fast');
+			}
+
+            function setCookie(key, value) {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + expires.getTime()); // never expires
+                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+            }
+		</script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/flux.datefields.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/flux.unitip.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/bootstrap.min.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/plugins.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/main.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/popper.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/mainLogin.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/flux.itemoption.js"></script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript">
+            // Hide Header on on scroll down
+            var didScroll;
+            var lastScrollTop = 0;
+            var delta = 5;
+            var navbarHeight = $('header').outerHeight();
+
+            $(window).scroll(function(event){
+                didScroll = true;
+            });
+
+            setInterval(function() {
+                if (didScroll) {
+                    hasScrolled();
+                    didScroll = false;
+                }
+            }, 250);
+
+            function hasScrolled() {
+                var st = $(this).scrollTop();
+
+                // Make sure they scroll more than delta
+                if(Math.abs(lastScrollTop - st) <= delta)
+                    return;
+
+                // If they scrolled down and are past the navbar, add class .nav-up.
+                // This is necessary so you never see what is "behind" the navbar.
+                if (st > lastScrollTop && st > navbarHeight){
+                    // Scroll Down
+                    $('header').removeClass('nav-down').addClass('nav-up');
+                } else {
+                    // Scroll Up
+                    if(st + $(window).height() < $(document).height()) {
+                        $('header').removeClass('nav-up').addClass('nav-down');
+                    }
+                }
+
+                lastScrollTop = st;
+            }
+            </script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript">
+                $(document).ready(function(){
+                    var inputs = 'input[type=text],input[type=password],input[type=file]';
+                    $(inputs).focus(function(){
+                        $(this).css({
+                            'background-color': '#f9f5e7',
+                            'border-color': '#dcd7c7',
+                            'color': '#726c58'
+                        });
+                    });
+                    $(inputs).blur(function(){
+                        $(this).css({
+                            'backgroundColor': '#ffffff',
+                            'borderColor': '#dddddd',
+                            'color': '#444444'
+                        }, 500);
+                    });
+                    $('.menuitem a').hover(
+                        function(){
+                            $(this).fadeTo(200, 0.85);
+                            $(this).css('cursor', 'pointer');
+                        },
+                        function(){
+                            $(this).fadeTo(150, 1.00);
+                            $(this).css('cursor', 'normal');
+                        }
+                    );
+                    $('.money-input').keyup(function() {
+                        var creditValue = parseInt($(this).val() / 0.00033, 10);
+                        if (isNaN(creditValue))
+                            $('.credit-input').val('?');
+                        else
+                            $('.credit-input').val(creditValue);
+                    }).keyup();
+                    $('.credit-input').keyup(function() {
+                        var moneyValue = parseFloat($(this).val() * 0.00033);
+                        if (isNaN(moneyValue))
+                            $('.money-input').val('?');
+                        else
+                            $('.money-input').val(moneyValue.toFixed(2));
+                    }).keyup();
+
+                    // In: js/flux.datefields.js
+                    processDateFields();
+                });
+
+                function reload(){
+                    window.location.href = '/hel/?module=item&action=view';
+                }
+            </script>
+<script type="fb51f6f04aedd2be2702ce19-text/javascript" src="/hel/themes/default/js/jquery-1.11.2.min.js"></script>
+<td align="right">
+<span>Theme:
+<select name="preferred_theme" onchange="if (!window.__cfRLUnblockHandlers) return false; updatePreferredTheme(this)" data-cf-modified-fb51f6f04aedd2be2702ce19-="">
+<option value="default" selected="selected">default</option>
+</select>
+</span>
+<form action="/hel/?module=item&action=view&price_order=asc&id=6635" method="post" name="preferred_theme_form" style="display: none">
+<input type="hidden" name="preferred_theme" value="" />
+</form>
+</td>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="fb51f6f04aedd2be2702ce19-|49" defer=""></script></body>
+</html>

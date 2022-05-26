@@ -28,18 +28,34 @@ describe('Clean vend text', () => {
     expect(helpers.cleanShopText('\n\n+12 Automatic Leg A-type\n')).toBe('+12 Automatic Leg A-type');
   });
 
-  test('Random \n', () => {
+  test('Random \\n', () => {
     expect(helpers.cleanShopText('\n\n+12 Automatic\n\nLeg A-type\n')).toBe('+12 Automatic Leg A-type');
+  });
+
+  test('Refinement', () => {
+    expect(helpers.cleanShopText('\n\n+12')).toBe('+12');
+  });
+
+  test('Only \\n', () => {
+    expect(helpers.cleanShopText('\n\n')).toBe('');
   });
 
   test('With options', () => {
     expect(
       helpers.cleanShopText(
-        "\nCursed Knight's Shield\n[1] [2 Options]\nIncreases resistance against Demihuman monster by 4%Increases resistance against Demihuman monster by 5% "
+        "\\n\\nCursed Knight's Shield\n[1] [2 Options]\nIncreases resistance against Demihuman monster by 4%Increases resistance against Demihuman monster by 5% "
       )
     ).toBe(
       "Cursed Knight's Shield [1] [2 Options] Increases resistance against Demihuman monster by 4%Increases resistance against Demihuman monster by 5%"
     );
+  });
+
+  test('With refinement and options', () => {
+    expect(
+      helpers.cleanShopText(
+        "\\n\\n+9 Cursed Knight's Shield\n[ Options ]\\nIncreases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3% "
+      )
+    ).toBe("+9 Cursed Knight's Shield [ Options ] Increases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3%");
   });
 });
 
