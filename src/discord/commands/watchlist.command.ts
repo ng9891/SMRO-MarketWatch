@@ -17,23 +17,19 @@ export const watchlist: Command = {
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case 'add': {
-        await add.run(interaction);
-        break;
+        return await add.run(interaction);
       }
       case 'remove': {
-        await remove.run(interaction);
-        break;
+        return await remove.run(interaction);
       }
       case 'recurrence': {
-        await recurrence.run(interaction);
-        break;
+        return await recurrence.run(interaction);
       }
       case 'list': {
-        await list.run(interaction);
-        break;
+        return await list.run(interaction);
       }
       default: {
-        await interaction.reply('Command not found.');
+        return 'Command not found.';
       }
     }
   },

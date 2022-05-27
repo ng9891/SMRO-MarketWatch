@@ -23,7 +23,6 @@ describe('Scrape', () => {
 
     const file = await fs.readFile(path.resolve(__dirname, './test/pksObject.json'), 'utf8');
     const object: Scrape = JSON.parse(file);
-    console.log(object)
     object.timestamp = Math.floor(new Date().getTime() / 1000);
     expect(test).toEqual(object);
   });

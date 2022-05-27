@@ -13,6 +13,6 @@ export const onReady = async (BOT: Client) => {
     Routes.applicationGuildCommands(BOT.user?.id || 'missing id', process.env.DISCORD_GUILD_ID as string),
     {body: commandData}
   );
-
+  
   console.log("Bot is ready!");
 };

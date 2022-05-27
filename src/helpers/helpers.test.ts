@@ -55,7 +55,9 @@ describe('Clean vend text', () => {
       helpers.cleanShopText(
         "\\n\\n+9 Cursed Knight's Shield\n[ Options ]\\nIncreases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3% "
       )
-    ).toBe("+9 Cursed Knight's Shield [ Options ] Increases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3%");
+    ).toBe(
+      "+9 Cursed Knight's Shield [ Options ] Increases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3%"
+    );
   });
 });
 
@@ -130,5 +132,44 @@ describe('Parse number to string', () => {
 
   test('With decimals', () => {
     expect(helpers.formatPrice(1500.55)).toBe('1.5k');
+  });
+});
+
+import getUnixTime from 'date-fns/getUnixTime';
+describe('Calculate Next Execution ', () => {
+  test('Same date 10min recurrence', () => {
+    const now = new Date(2022, 1, 1, 1, 40, 0);
+    const next = new Date(2022, 1, 1, 1, 50, 0);
+    expect(helpers.calculateNextExec(now, now, 10)).toEqual(next);
+  });
+
+  test('1 Year difference', () => {
+    const recurrence = 30;
+    const now = new Date(2022, 1, 1, 1, 40, 0);
+    const before = new Date(2021, 1, 1, 1, 0, 0);
+    const next = new Date(2022, 1, 1, 2, 0, 0);
+    expect(helpers.calculateNextExec(before, now, recurrence)).toEqual(next);
+  });
+
+  test('10 days and 4 hrs 10min difference', () => {
+    const recurrence = 20;
+    const now = new Date(2022, 1, 10, 1, 40, 0);
+    const before = new Date(2022, 1, 1, 4, 20, 0);
+    const next = new Date(2022, 1, 10, 2, 0, 0);
+    expect(helpers.calculateNextExec(before, now, recurrence)).toEqual(next);
+  });
+
+  test('with timestamp', () => {
+    const recurrence = 20;
+    const now = new Date(2022, 1, 10, 1, 40, 0);
+    const before = new Date(2022, 1, 1, 4, 20, 0);
+    const next = new Date(2022, 1, 10, 2, 0, 0);
+    expect(helpers.calculateNextExec(getUnixTime(before), getUnixTime(now), recurrence)).toEqual(next);
+  });
+
+  test('In the future', () => {
+    const now = new Date(2022, 1, 10, 1, 40, 0);
+    const next = new Date(2022, 1, 10, 2, 0, 0);
+    expect(helpers.calculateNextExec(next, now, 30)).toEqual(next);
   });
 });

@@ -6,8 +6,16 @@ export const onInteraction = async (interaction: Interaction) => {
 
   for (const Command of CommandList) {
     if (interaction.commandName === Command.data.name) {
-      await Command.run(interaction);
-      break;
+      try {
+        await interaction.deferReply();
+        const resp = await Command.run(interaction);
+        if (resp) await interaction.editReply(resp);
+        break;
+      } catch (error) {
+        const err = error as Error;
+        console.log(err);
+        await interaction.editReply(err.message);
+      }
     }
   }
 };

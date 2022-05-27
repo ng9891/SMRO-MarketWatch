@@ -7,5 +7,6 @@ export interface Watchlist{
   setByName: string,
   setOn: number,
   nextOn: number,
+  createdOn: number,
   subs?: number,
 }

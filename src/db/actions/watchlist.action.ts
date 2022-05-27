@@ -5,6 +5,7 @@ import {Watchlist} from '../../ts/interfaces/Watchlist';
 import {AppUser} from '../../ts/interfaces/AppUser';
 import {Scrape} from '../../ts/interfaces/Scrape';
 import {List} from '../../ts/interfaces/List';
+import {calculateNextExec} from '../../helpers/helpers';
 
 const watchlistRef = db.collection('Watchlist');
 
@@ -30,6 +31,7 @@ export const createNewWatchList = async (recurrence: number, user: AppUser, scra
     setByID: userID,
     setByName: userName,
     createdOn: timestamp,
+    subs: 0,
   };
 
   await watchlistRef.doc(itemID).set(wl, {merge: true});
@@ -37,12 +39,12 @@ export const createNewWatchList = async (recurrence: number, user: AppUser, scra
 };
 
 export const updateWatchList = async (wl: Watchlist): Promise<Watchlist> => {
-  const {recurrence, setByID, setByName} = wl;
-  const now = new Date();
-  const nextOn = getUnixTime(add(now, {minutes: recurrence}));
-  const setOn = getUnixTime(now);
+  const {recurrence, setByID, setByName, setOn} = wl;
 
-  const update = {recurrence, setByID, setByName, setOn, nextOn};
+  const now = new Date();
+  const nextOn = getUnixTime(calculateNextExec(setOn, now, recurrence));
+
+  const update = {recurrence, setByID, setByName, nextOn, setOn};
   await watchlistRef.doc(wl.itemID).update(update);
 
   return Object.assign(wl, update) as Watchlist;

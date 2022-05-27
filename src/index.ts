@@ -3,7 +3,7 @@ import {deployDiscordBot} from './discord/discord';
 
 dotenv.config({path: './conf/.env'});
 
-(() => {
+(async () => {
   const token = process.env.DISCORD_TOKEN;
   const clientId = process.env.DISCORD_CLIENT_ID;
   const guildId = process.env.DISCORD_GUILD_ID;
@@ -22,5 +22,6 @@ dotenv.config({path: './conf/.env'});
   if (!maxListSize) return console.error('No MAX_LIST_SIZE found');
   if (!recurr) return console.error('No DEFAULT_RECURRANCE_MINUTES found');
 
-  deployDiscordBot(token);
+  await deployDiscordBot(token);
+  // 621303786303913996 text channel
 })();
