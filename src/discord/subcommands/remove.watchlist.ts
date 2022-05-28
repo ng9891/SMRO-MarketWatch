@@ -18,9 +18,10 @@ export const remove: Subcommand = {
   run: async (interaction) => {
     const userID = interaction.user.id;
     const userName = interaction.user.username;
+    const discriminator = interaction.user.discriminator;
     const itemID = interaction.options.getInteger('itemid', true).toString();
 
-    const user = await getUserInfo(userID, userName);
+    const user = await getUserInfo(userID, userName, discriminator);
     const id = itemID as ListKey;
 
     const list = user.list ? user.list : undefined;

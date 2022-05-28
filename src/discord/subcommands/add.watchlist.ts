@@ -4,6 +4,7 @@ import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import scrapItemInfoByID from '../../scraper/scraper';
 import {addSub, getWatchListInfo, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
+import {setItemInfo} from '../../db/actions/items.action';
 import {parsePriceString} from '../../helpers/helpers';
 import {getDefaultEmbed} from '../responses/valid.response';
 import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from '../responses/invalid.response';
@@ -30,6 +31,7 @@ export const add: Subcommand = {
   run: async (interaction) => {
     const userID = interaction.user.id;
     const userName = interaction.user.username;
+    const discriminator = interaction.user.discriminator;
     const itemID = interaction.options.getInteger('itemid', true).toString();
     const threshold = interaction.options.getString('threshold', true);
     const refine = interaction.options.getInteger('refinement');
@@ -52,7 +54,7 @@ export const add: Subcommand = {
     };
     if (refinement) newList.refinement = refinement;
 
-    const user = await getUserInfo(userID, userName);
+    const user = await getUserInfo(userID, userName, discriminator);
     const list = user.list;
 
     // If its not an update. Check for list size
@@ -62,6 +64,7 @@ export const add: Subcommand = {
     }
 
     const newUser = await setUserInfo({...user, list: {...user.list, [itemID]: newList}});
+    await setItemInfo(itemInfo, userID);
 
     // Check if recurrence is set.
     let wl = await getWatchListInfo(itemID);

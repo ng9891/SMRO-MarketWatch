@@ -4,11 +4,11 @@ import getUnixTime from 'date-fns/getUnixTime';
 
 const usersRef = db.collection('User');
 
-export const getUserInfo = async (userID: string, userName: string) => {
+export const getUserInfo = async (userID: string, userName: string, discriminator: string): Promise<AppUser> => {
   const snap = await usersRef.doc(userID).get();
   if (!snap.exists) {
     const timestamp = getUnixTime(new Date());
-    const newUser = {userID, userName, listSize: 0, list: {}, timestamp};
+    const newUser = {userID, userName, discriminator, listSize: 0, list: {}, timestamp};
     await usersRef.doc(userID).set(newUser);
     return newUser;
   }

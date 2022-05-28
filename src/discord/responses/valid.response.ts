@@ -12,7 +12,7 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['li
   const id = itemID as ListKey;
   const {[id]: item, ...rest} = list;
   const threshold = item ? item.threshold : 0;
-  const refinement = item ? item.refinement : '';
+  const refinement = item?.refinement ? `+${item.refinement} ` : '';
 
   const newList = status === 'REMOVE' ? rest : list;
 
@@ -22,12 +22,12 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['li
   let listStr = 'Empty list';
   if (listSize > 0) listStr = '';
   for (const [key, value] of Object.entries(newList)) {
-    const refineStr = refinement ? `+${refinement} ` : '';
+    const refineStr = value.refinement ? `+${value.refinement} ` : '';
     listStr += `\n **${key}**: ${refineStr}${value.itemName}`;
   }
 
   const embed = new MessageEmbed()
-    .setTitle(`${itemID}: ${name}`)
+    .setTitle(`${itemID}: ${refinement}${name}`)
     .setURL(`${process.env.ITEM_URL as string}${itemID}`)
     .setThumbnail(`${process.env.THUMBNAIL_URL}${itemID}.png`)
     .addFields(
