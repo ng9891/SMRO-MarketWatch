@@ -11,10 +11,13 @@ export const getItemInfo = async (itemID: string): Promise<Scrape | null> => {
 };
 
 export const setItemInfo = async (scrape: Scrape, userID: string): Promise<void> => {
-  const {vend, timestamp, watchHistory, itemID, ...rest} = scrape;
-  await itemsRef.doc(itemID).set({
-    itemID,
-    ...rest,
-    watchHistory: FieldValue.arrayUnion(userID),
-  });
+  const {vends, timestamp, watchHistory, itemID, ...rest} = scrape;
+  await itemsRef.doc(itemID).set(
+    {
+      itemID,
+      ...rest,
+      watchHistory: FieldValue.arrayUnion(userID),
+    },
+    {merge: true}
+  );
 };

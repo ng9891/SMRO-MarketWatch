@@ -1,6 +1,8 @@
 import * as helpers from './helpers';
+import {promises as fs} from 'fs';
+import path from 'path';
 
-describe('Clean vend text', () => {
+describe.skip('Clean vend text', () => {
   test('Empty card slots', () => {
     const text = helpers.cleanShopText('\nNone\n');
     expect(text).toBe('-');
@@ -61,7 +63,7 @@ describe('Clean vend text', () => {
   });
 });
 
-describe('Clean vend prices', () => {
+describe.skip('Clean vend prices', () => {
   test('Empty price', () => {
     expect(helpers.cleanShopPrice('')).toBe(0);
   });
@@ -79,7 +81,7 @@ describe('Clean vend prices', () => {
   });
 });
 
-describe('Parse string to numbers', () => {
+describe.skip('Parse string to numbers', () => {
   test('thousands', () => {
     expect(helpers.parsePriceString('1.5k')).toBe(1500);
   });
@@ -109,7 +111,7 @@ describe('Parse string to numbers', () => {
   });
 });
 
-describe('Parse number to string', () => {
+describe.skip('Parse number to string', () => {
   test('thousands', () => {
     expect(helpers.formatPrice(25000)).toBe('25k');
   });
@@ -136,7 +138,9 @@ describe('Parse number to string', () => {
 });
 
 import getUnixTime from 'date-fns/getUnixTime';
-describe('Calculate Next Execution ', () => {
+import {VendInfo} from '../ts/interfaces/VendInfo';
+import {Scrape} from '../ts/interfaces/Scrape';
+describe.skip('Calculate Next Execution ', () => {
   test('Same date 10min recurrence', () => {
     const now = new Date(2022, 1, 1, 1, 40, 0);
     const next = new Date(2022, 1, 1, 1, 50, 0);
@@ -172,4 +176,102 @@ describe('Calculate Next Execution ', () => {
     const next = new Date(2022, 1, 10, 2, 0, 0);
     expect(helpers.calculateNextExec(next, now, 30)).toEqual(next);
   });
+});
+
+describe.skip('Same refinement', () => {
+  test('empty strings', () => {
+    expect(helpers.isSameRefinement('', '')).toBe(true);
+  });
+
+  test('with -', () => {
+    expect(helpers.isSameRefinement('12', '-')).toBe(false);
+  });
+
+  test('Same', () => {
+    expect(helpers.isSameRefinement('12', '+12')).toBe(true);
+  });
+
+  test('Same 2', () => {
+    expect(helpers.isSameRefinement('-8', '+8')).toBe(true);
+  });
+
+  test('Not Same', () => {
+    expect(helpers.isSameRefinement('12', '+11')).toBe(false);
+  });
+
+  test('Not Same 2', () => {
+    expect(helpers.isSameRefinement('1', '+0')).toBe(false);
+  });
+
+  test('with 0', () => {
+    expect(helpers.isSameRefinement('0', '-')).toBe(true);
+  });
+});
+
+describe('Testing getting vend not in history', () => {
+  let mockData: Scrape['vends'];
+  let subSet12: Scrape['vends'];
+  let subSet7: Scrape['vends'];
+
+  beforeAll(async () => {
+    const file = await fs.readFile(path.resolve(__dirname, '../scraper/mocks/pksObject.json'), 'utf8');
+    const mockDataScraped = JSON.parse(file);
+    mockData = mockDataScraped.vends as VendInfo[];
+    subSet12 = mockData.filter((el) => el.refinement === '+12');
+    subSet7 = mockData.filter((el) => el.refinement === '+7');
+  });
+
+  test('checkHashInHistory', () => {
+    const mockHistory = mockData as VendInfo[];
+    expect(helpers.checkHashInHistory('', mockHistory)).toBe(false);
+    expect(helpers.checkHashInHistory('289467Rush200000', mockHistory)).toBe(false);
+    expect(helpers.checkHashInHistory('-2894618571857?-?28946148888888', mockHistory)).toBe(true);
+    expect(helpers.checkHashInHistory('+12289462127Yes300000000', mockHistory)).toBe(true);
+    expect(helpers.checkHashInHistory('+12289461960Drei-Equipments400000000', mockHistory)).toBe(true);
+  });
+
+  test('checkHashInHistory With string array', async () => {
+    const mockHistory = ['+12289461960Drei-Equipments400000000', '+12289462127Yes300000000', '-2894618571857?-?28946148888888'];
+    expect(helpers.checkHashInHistory('+12289462127Yes300000000', mockHistory)).toBe(true);
+    expect(helpers.checkHashInHistory('+12289461960Drei-Equipments400000000', mockHistory)).toBe(true);
+    expect(helpers.checkHashInHistory('289467Rush200000', mockHistory)).toBe(false);
+  });
+
+  test('Subset', async () => {
+    const mockNewVends = mockData as VendInfo[];
+    const mockHistory = mockNewVends.slice(0, 10);
+    const subSetAnswer = mockNewVends.slice(10);
+    const diff = await helpers.vendsNotInHistory(mockNewVends, mockHistory);
+    expect(diff.length).toBe(3);
+    expect(diff).toEqual(subSetAnswer);
+  });
+
+  test('Subset 2', async () => {
+    const mockNewVends = mockData as VendInfo[];
+    const mockHistory = mockNewVends.slice(0, 12);
+    const subSetAnswer = mockNewVends.slice(12);
+    const diff = await helpers.vendsNotInHistory(mockNewVends, mockHistory);
+    expect(diff).toEqual(subSetAnswer);
+    expect(diff.length).toBe(1);
+  });
+
+  test('Subset 3 - vends have 1 repeated hash at array[1]', async () => {
+    const mockNewVends = mockData as VendInfo[];
+    const mockHistory = mockNewVends.slice(0, 1);
+    const subSetAnswer = mockNewVends.slice(2);
+    const diff = await helpers.vendsNotInHistory(mockNewVends, mockHistory);
+    expect(diff.length).toBe(11);
+    expect(diff).toEqual(subSetAnswer);
+  });
+
+  test('No history', async () => {
+    const mockNewVends = mockData as VendInfo[];
+    const mockHistory = [] as VendInfo[];
+    const subSetAnswer = mockData;
+    const diff = await helpers.vendsNotInHistory(mockNewVends, mockHistory);
+    expect(diff.length).toBe(13);
+    expect(diff).toEqual(subSetAnswer);
+  });
+
+
 });

@@ -1,17 +1,75 @@
-import {Watchlist} from '../ts/interfaces/Watchlist';
-import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
 import {sendMsgBot} from '../discord/discord';
+import {getSubs} from '../db/actions/watchlist.action';
+import {addToHistory, getHistory} from '../db/actions/history.action';
+import scrapItemInfoByID from '../scraper/scraper';
+import {QuerySnapshot, QueryDocumentSnapshot} from 'firebase-admin/firestore';
+import {Watchlist} from '../ts/interfaces/Watchlist';
+import {VendInfo} from '../ts/interfaces/VendInfo';
+import {List} from '../ts/interfaces/List';
+import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
+import {getNotificationMsg} from '../discord/responses/valid.response';
+import {isSameRefinement, isItemAnEquip, vendsNotInHistory} from '../helpers/helpers';
+import {subDays} from 'date-fns';
+
+export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[], isEquip = true) => {
+  const channelID = process.env.DISCORD_CHANNEL_ID;
+  if (!channelID) throw new Error('No channel ID found.');
+
+  subs.forEach(async (snap) => {
+    const sub = snap instanceof QueryDocumentSnapshot ? snap.data() as List : snap;
+
+    // Get vends below threshold
+    const notifArr = [];
+    for (const vend of vends) {
+      // Vends are sorted. Faster than Array.reduce
+      if (vend.price > sub.threshold) break;
+      if (sub.refinement && !isSameRefinement(sub.refinement, vend.refinement)) continue;
+      notifArr.push(vend);
+    }
+
+    if (notifArr.length > 0) {
+      const msg = getNotificationMsg(sub.userID, notifArr, isEquip);
+      await sendMsgBot(msg, channelID);
+    }else await sendMsgBot('```No new vends found.```', channelID);
+  });
+};
 
 export const checkMarket: SchedulerCallBack = async function (wl: Watchlist) {
-  const {itemID, itemName, recurrence, nextOn, setOn} = wl;
-
-  if (process.env.LOG_RUNNING_MESSAGE) {
-    const channelID = process.env.DISCORD_CHANNEL_ID;
+  const channelID = process.env.DISCORD_CHANNEL_ID;
+  try {
     if (!channelID) throw new Error('No channel ID found.');
-    sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
-  }
 
-  //TODO: check subs and add history.
-  
-  return wl;
+    const {itemID, itemName} = wl;
+
+    if (process.env.LOG_RUNNING_MESSAGE) await sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
+
+    const subs = await getSubs(itemID);
+    if (!subs) return wl;
+
+    const scrape = await scrapItemInfoByID(itemID);
+    const vends = scrape?.vends;
+    if (!vends || vends.length === 0) return wl;
+
+    const historyDays = Number(process.env.HISTORY_FROM_DAYS);
+    const daysDiff = isNaN(historyDays) || historyDays === 0 ? 30 : historyDays;
+    const fromDate = subDays(new Date(), daysDiff);
+    const history = await getHistory(itemID, fromDate);
+    const historyHashes = history ? history : [];
+    const newVends = vendsNotInHistory(vends, historyHashes);
+
+    const isEquip = isItemAnEquip(scrape.type, scrape.equipLocation);
+
+    await notifySubs(subs, newVends, isEquip);
+    await addToHistory(newVends, scrape.timestamp);
+
+    if (process.env.LOG_RUNNING_MESSAGE) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
+
+    // Returning Watchlist for next job.
+    return wl;
+  } catch (error) {
+    const err = error as Error;
+    console.log(err.message);
+    if (channelID) await sendMsgBot(err.message, channelID);
+    return wl;
+  }
 };

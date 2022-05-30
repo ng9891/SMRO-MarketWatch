@@ -27,6 +27,5 @@ dotenv.config({path: './conf/.env'});
   if (!permission) return console.error('No channel ID found.');
 
   await deployDiscordBot(token);
-  // 28946 pks
-  // 28942 cks
+
 })();

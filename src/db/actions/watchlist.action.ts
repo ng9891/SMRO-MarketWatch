@@ -59,7 +59,7 @@ export const addSub = async (list: List): Promise<boolean> => {
     await watchlistRef.doc(itemID).set({subs: FieldValue.increment(1)}, {merge: true});
     newSub = true;
   }
-  await subsRef.doc(userID).set(list);
+  await subsRef.doc(userID).set({...list});
   return newSub;
 };
 
@@ -72,4 +72,10 @@ export const unSub = async (itemID: string, userID: string): Promise<void> => {
   } else {
     console.error('Unsubscribing a user not subscribed to:' + itemID);
   }
+};
+
+export const getSubs = async (itemID: string) => {
+  const snap = await watchlistRef.doc(itemID).collection('Subs').get();
+  if (snap.empty) return null;
+  return snap;
 };

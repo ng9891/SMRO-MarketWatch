@@ -38,7 +38,7 @@ export const getItemNotOnListMsg = (itemID: string, list: AppUser['list']) => {
 };
 
 export const getNoPermissionMsg = () => {
-  return '```You do not have enough permission to use this command. Please contact a administrator for help.```';
+  return '```You do not have enough permission to use this command. Please contact an administrator if you need help.```';
 };
 
 export const getNotInWatchlistMsg = (itemID: string) => {

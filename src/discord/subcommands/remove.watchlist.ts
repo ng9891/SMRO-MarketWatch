@@ -1,6 +1,5 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
-import {MessagePayload} from 'discord.js';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {ListKey} from '../../ts/types/ListKey';
 import {getWatchListInfo, unSub} from '../../db/actions/watchlist.action';
@@ -16,6 +15,7 @@ export const remove: Subcommand = {
       option.setName('itemid').setDescription('Item ID to remove from the watchlist').setRequired(true)
     ),
   run: async (interaction) => {
+    await interaction.deferReply();
     const userID = interaction.user.id;
     const userName = interaction.user.username;
     const discriminator = interaction.user.discriminator;
@@ -25,20 +25,20 @@ export const remove: Subcommand = {
     const id = itemID as ListKey;
 
     const list = user.list ? user.list : undefined;
-    if (!list) throw new Error(getItemNotOnListMsg(itemID, list));
+    if (!list) return getItemNotOnListMsg(itemID, list);
 
     const {[id]: delItem, ...rest} = list;
-    if (!delItem) throw new Error(getItemNotOnListMsg(itemID, list));
+    if (!delItem) return getItemNotOnListMsg(itemID, list);
 
     const newUser = Object.assign(user, {list: rest});
     await setUserInfo(newUser);
     await unSub(itemID, userID);
 
     const wl = await getWatchListInfo(itemID);
-    if (!wl) throw new Error('Error. Deleted an item not in the Watchlist.');
+    if (!wl) return 'Error. Deleted an item not in the Watchlist.';
     if (!wl?.subs || wl.subs === 0) Scheduler.cancelJob(itemID);
 
     const resp = getDefaultEmbed('REMOVE', wl, list);
-    return {embeds: [resp]};
+    await interaction.editReply({embeds: [resp]});
   },
 };

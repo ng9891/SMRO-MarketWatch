@@ -6,6 +6,7 @@ import {formatDistanceToNow, fromUnixTime} from 'date-fns';
 import {formatPrice} from '../../helpers/helpers';
 import {List} from '../../ts/interfaces/List';
 import {ListKey} from '../../ts/types/ListKey';
+import {VendInfo} from '../../ts/interfaces/VendInfo';
 
 export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['list'] = {}) => {
   const {itemID, itemName: name, nextOn} = wl;
@@ -74,8 +75,9 @@ export const getListAsTable = (list: {[key: string]: List} | undefined, header: 
   if (!list) return 'List is empty.';
   const data = [header];
   for (const [key, value] of Object.entries(list)) {
-    const {itemName, threshold, timestamp} = value;
-    data.push([key, itemName, formatPrice(threshold), formatDistanceToNow(fromUnixTime(timestamp))]);
+    const {itemName, threshold, timestamp, refinement} = value;
+    const refine = refinement === '-' ? '' : `+${refinement} `;
+    data.push([key, `${refine}${itemName}`, formatPrice(threshold), formatDistanceToNow(fromUnixTime(timestamp))]);
   }
   return table(data, tableConfig);
 };
@@ -97,4 +99,24 @@ export const getRecurrenceUpdateMsg = (wl: Watchlist) => {
 
 export const getHelpMsg = () => {
   return "```The purpose of this Bot is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!```";
+};
+
+export const getNotificationMsg = (userID: string, vends: VendInfo[], isEquip: boolean) => {
+  const data = [];
+  // Header
+  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['shopID', 'price', '#']);
+
+  for (const vend of vends) {
+    if (isEquip) {
+      const {shopID, price, refinement, card0, card1, card2, card3} = vend;
+      data.push([shopID, formatPrice(price), refinement, card0, card1, card2, card3]);
+    } else {
+      const {shopID, price, amount} = vend;
+      data.push([shopID, formatPrice(price), amount]);
+    }
+  }
+  const {itemID, itemName} = vends[0];
+  const tab = table(data, tableConfig);
+  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}:${itemName}\n${tab}[@ws ${itemID}]\`\`\``;
+  return msg;
 };

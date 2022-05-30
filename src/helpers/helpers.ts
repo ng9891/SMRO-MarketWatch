@@ -1,4 +1,8 @@
 import {VendInfo} from '../ts/interfaces/VendInfo';
+import addMinutes from 'date-fns/addMinutes';
+import differenceInMinutes from 'date-fns/differenceInMinutes';
+import fromUnixTime from 'date-fns/fromUnixTime';
+import {QuerySnapshot} from 'firebase-admin/firestore';
 
 export const cleanShopText = (text: string): string => {
   return text
@@ -71,14 +75,12 @@ export const formatPrice = (num: number): string => {
   return displayInBillions(num);
 };
 
-export const getVendHash = (vend: VendInfo): string => {
-  const {itemID, shopID, shopName, price} = vend;
-  return `${itemID}${shopID}${shopName}${price}`;
+export const calculateVendHash = (vend: VendInfo): string => {
+  const {itemID, shopID, shopName, price, refinement} = vend;
+  const name = shopName ? shopName.split(' ').join('') : `${shopID}?${refinement}?${itemID}`;
+  return `${refinement}${itemID}${shopID}${name}${price}`;
 };
 
-import addMinutes from 'date-fns/addMinutes';
-import differenceInMinutes from 'date-fns/differenceInMinutes';
-import fromUnixTime from 'date-fns/fromUnixTime';
 export const calculateNextExec = (start: number | Date, current: number | Date, recurrence: number): Date => {
   const started = start instanceof Date ? start : fromUnixTime(start);
   const now = current instanceof Date ? current : fromUnixTime(current);
@@ -88,4 +90,38 @@ export const calculateNextExec = (start: number | Date, current: number | Date, 
   const addAmount = recurrence * Math.floor(diff / recurrence);
   const newStartPoint = addMinutes(started, addAmount);
   return addMinutes(newStartPoint, recurrence);
+};
+
+export const isSameRefinement = (userRefine: string, vendRefine: string): boolean => {
+  const userRefinement = Number(userRefine.match(/\d+/g));
+  const vendRefinement = Number(vendRefine.match(/\d+/g));
+  return userRefinement === vendRefinement;
+};
+
+export const isItemAnEquip = (itemType: string, equipLocation: string): boolean => {
+  if (itemType === 'Card' || equipLocation === '-') return false;
+  return true;
+};
+
+export const checkHashInHistory = (hash: string, hashesArr: VendInfo[] | QuerySnapshot | string[]): boolean => {
+  if (hashesArr instanceof QuerySnapshot)
+    return hashesArr.docs.some((scrape) => {
+      const data = scrape.data() as VendInfo;
+      return data.hash && data.hash === hash;
+    });
+
+  return hashesArr.some((scrape) => {
+    if (typeof scrape === 'string') return scrape === hash;
+    return scrape.hash && scrape.hash === hash;
+  });
+};
+
+export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | QuerySnapshot | string[]) => {
+  return vend1.reduce<VendInfo[]>((prev, curr) => {
+    const {hash} = curr;
+    const checkedHash = hash ? hash : calculateVendHash(curr);
+    const isIn = checkHashInHistory(checkedHash, history);
+    if (!isIn) prev.push(curr);
+    return prev;
+  }, []);
 };

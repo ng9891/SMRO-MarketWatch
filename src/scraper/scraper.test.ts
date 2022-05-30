@@ -8,7 +8,7 @@ import scrapItemInfoByID from './scraper';
 import {Scrape} from '../ts/interfaces/Scrape';
 
 beforeAll(async () => {
-  const data = await fs.readFile(path.resolve(__dirname, './test/pksResponse.txt'), 'utf8');
+  const data = await fs.readFile(path.resolve(__dirname, './mocks/pksResponse.txt'), 'utf8');
   global.fetch = jest.fn(() =>
     Promise.resolve({
       ok: true,
@@ -18,10 +18,10 @@ beforeAll(async () => {
 });
 
 describe('Scrape', () => {
-  test('Scraping 6685 BSB', async () => {
-    const test = await scrapItemInfoByID('6690');
-
-    const file = await fs.readFile(path.resolve(__dirname, './test/pksObject.json'), 'utf8');
+  test('Scraping 28946 PKS', async () => {
+    const test = await scrapItemInfoByID('28946');
+    // await fs.writeFile(path.resolve(__dirname, './mocks/pksObject.json'), JSON.stringify(test));
+    const file = await fs.readFile(path.resolve(__dirname, './mocks/pksObject.json'), 'utf8');
     const object: Scrape = JSON.parse(file);
     object.timestamp = Math.floor(new Date().getTime() / 1000);
     expect(test).toEqual(object);

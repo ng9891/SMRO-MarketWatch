@@ -20,6 +20,7 @@ export const recurrence: Subcommand = {
       option.setName('recurrence').setDescription('New recurrence interval in minutes.').setRequired(true)
     ),
   run: async (interaction) => {
+    await interaction.deferReply();
     const userID = interaction.user.id;
     const userName = interaction.user.username;
     const itemID = interaction.options.getInteger('itemid', true)?.toString();
@@ -28,7 +29,7 @@ export const recurrence: Subcommand = {
     const member = interaction.member as GuildMember;
     const permission =
       (process.env.PERMISSION_TO_CHANGE_SCRAPE_TIME as PermissionResolvable) || ('BAN_MEMBERS' as PermissionResolvable);
-    if (!member.permissions.has(permission)) throw new Error(getNoPermissionMsg());
+    if (!member.permissions.has(permission)) return getNoPermissionMsg();
 
     let wl = await getWatchListInfo(itemID);
     if (!wl) {
@@ -41,6 +42,6 @@ export const recurrence: Subcommand = {
 
     if (wl?.subs && wl.subs > 0) Scheduler.createJob(wl, checkMarket);
 
-    return getRecurrenceUpdateMsg(wl);
+    await interaction.editReply(getRecurrenceUpdateMsg(wl));
   },
 };

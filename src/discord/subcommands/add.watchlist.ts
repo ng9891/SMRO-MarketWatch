@@ -5,11 +5,11 @@ import scrapItemInfoByID from '../../scraper/scraper';
 import {addSub, getWatchListInfo, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {setItemInfo} from '../../db/actions/items.action';
-import {parsePriceString} from '../../helpers/helpers';
+import {parsePriceString, isItemAnEquip} from '../../helpers/helpers';
 import {getDefaultEmbed} from '../responses/valid.response';
 import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from '../responses/invalid.response';
 import Scheduler from '../../scheduler/Scheduler';
-import {checkMarket} from '../../scheduler/checkMarket';
+import {checkMarket, notifySubs} from '../../scheduler/checkMarket';
 
 const isListFull = (listSize: number | undefined) => {
   if (!listSize) return false;
@@ -29,6 +29,7 @@ export const add: Subcommand = {
       option.setName('refinement').setDescription('Minimum refinement of the equipment if applicable. e.g 11 or 12')
     ),
   run: async (interaction) => {
+    await interaction.deferReply();
     const userID = interaction.user.id;
     const userName = interaction.user.username;
     const discriminator = interaction.user.discriminator;
@@ -37,10 +38,10 @@ export const add: Subcommand = {
     const refine = interaction.options.getInteger('refinement');
     const refinement = refine ? Math.abs(refine).toString() : null;
     const validPrice = parsePriceString(threshold);
-    if (!validPrice) throw new Error(getInvalidPriceFormatMsg());
+    if (!validPrice) return getInvalidPriceFormatMsg();
 
     const maxThreshold = Number(process.env.MAX_THRESHOLD);
-    if (validPrice >= maxThreshold) throw new Error(getInvalidMaxPriceMsg());
+    if (validPrice >= maxThreshold) return getInvalidMaxPriceMsg();
 
     // Scraping item info
     const itemInfo = await scrapItemInfoByID(itemID);
@@ -60,7 +61,7 @@ export const add: Subcommand = {
     // If its not an update. Check for list size
     if (list && !list[itemID]) {
       const isFull = isListFull(user.listSize);
-      if (isFull) throw new Error(getMaxListSizeMsg(itemID, itemInfo.name, user?.list));
+      if (isFull) return getMaxListSizeMsg(itemID, itemInfo.name, user?.list);
     }
 
     const newUser = await setUserInfo({...user, list: {...user.list, [itemID]: newList}});
@@ -76,10 +77,12 @@ export const add: Subcommand = {
     // Job is not running because it has 0 subs. Needs reschedule.
     if (!wl?.subs || wl.subs === 0) Scheduler.rescheduleJob(wl, checkMarket);
 
-    //TODO: Initial check?
     const isNewSub = await addSub(newList);
     const action = isNewSub ? 'ADD' : 'UPDATE';
     const embed = getDefaultEmbed(action, wl, newUser.list);
-    return {embeds: [embed]};
+
+    if (!itemInfo.vends) itemInfo.vends = [];
+    await interaction.editReply({embeds: [embed]});
+    await notifySubs([newList], itemInfo.vends, isItemAnEquip(itemInfo.type, itemInfo.equipLocation));
   },
 };

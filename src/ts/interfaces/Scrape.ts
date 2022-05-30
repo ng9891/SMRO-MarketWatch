@@ -3,8 +3,8 @@ export interface Scrape {
   itemID: string;
   name: string;
   type: string;
-  equipLocation?: string;
+  equipLocation: string;
   timestamp: number;
-  vend?: VendInfo[];
+  vends?: VendInfo[];
   watchHistory?: string[];
 }
