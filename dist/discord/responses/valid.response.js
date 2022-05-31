@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotificationMsg = exports.getHelpMsg = exports.getRecurrenceUpdateMsg = exports.getListingMsg = exports.getListAsTable = exports.getDefaultEmbed = void 0;
+exports.getNotificationMsg = exports.getHelpMsg = exports.getRecurrenceUpdateMsg = exports.getRecurrenceMsg = exports.getListingMsg = exports.getListAsTable = exports.getDefaultEmbed = void 0;
 const discord_js_1 = require("discord.js");
 const table_1 = require("table");
 const date_fns_1 = require("date-fns");
@@ -72,7 +72,7 @@ const getListAsTable = (list, header) => {
     const data = [header];
     for (const [key, value] of Object.entries(list)) {
         const { itemName, threshold, timestamp, refinement } = value;
-        const refine = refinement === '-' ? '' : `+${refinement} `;
+        const refine = !refinement || refinement === '-' ? '' : `+${refinement} `;
         data.push([key, `${refine}${itemName}`, (0, helpers_1.formatPrice)(threshold), (0, date_fns_1.formatDistanceToNow)((0, date_fns_1.fromUnixTime)(timestamp))]);
     }
     return (0, table_1.table)(data, tableConfig);
@@ -88,6 +88,18 @@ const getListingMsg = (user) => {
     return `[${user.userName}]'s list.\`\`\`${table}${sizeStr}\`\`\``;
 };
 exports.getListingMsg = getListingMsg;
+const getRecurrenceMsg = (jobs) => {
+    let resp = '```';
+    const data = [['ID', 'Name', 'Recur', 'Next in', 'Sub']];
+    jobs.forEach((job) => {
+        data.push([job.itemID, job.itemName, `${job.recurrence}min`, job.nextOn, job.subs]);
+    });
+    const tab = (0, table_1.table)(data, tableConfig);
+    resp += `${tab}Total of ${jobs.length} job(s).`;
+    resp += '```';
+    return resp;
+};
+exports.getRecurrenceMsg = getRecurrenceMsg;
 const getRecurrenceUpdateMsg = (wl) => {
     const { itemID, itemName, recurrence, subs } = wl;
     return `\`\`\`Updated [${itemID}:${itemName}] with [${subs || 0} sub(s)] to check every ${recurrence} min.\`\`\``;
@@ -100,7 +112,7 @@ exports.getHelpMsg = getHelpMsg;
 const getNotificationMsg = (userID, vends, isEquip) => {
     const data = [];
     // Header
-    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['shopID', 'price', '#']);
+    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
     for (const vend of vends) {
         if (isEquip) {
             const { shopID, price, refinement, card0, card1, card2, card3 } = vend;

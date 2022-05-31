@@ -1,5 +1,5 @@
 import db from '../firebase';
-import {FieldValue} from 'firebase-admin/firestore';
+import {FieldValue, QuerySnapshot} from 'firebase-admin/firestore';
 import {add, getUnixTime, fromUnixTime} from 'date-fns';
 import {Watchlist} from '../../ts/interfaces/Watchlist';
 import {AppUser} from '../../ts/interfaces/AppUser';
@@ -13,6 +13,11 @@ export const getWatchListInfo = async (itemID: string): Promise<Watchlist | null
   const snap = await watchlistRef.doc(itemID).get();
   if (!snap.exists) return null;
   return snap.data() as Watchlist;
+};
+
+export const getActiveWatchLists = async (subs = 1): Promise<QuerySnapshot> => {
+  const snap = await watchlistRef.where('subs', '>=', subs).get();
+  return snap;
 };
 
 export const createNewWatchList = async (recurrence: number, user: AppUser, scrape: Scrape): Promise<Watchlist> => {
@@ -38,16 +43,21 @@ export const createNewWatchList = async (recurrence: number, user: AppUser, scra
   return wl;
 };
 
-export const updateWatchList = async (wl: Watchlist): Promise<Watchlist> => {
-  const {recurrence, setByID, setByName, setOn} = wl;
+export const updateWatchLists = async (list: Watchlist[]): Promise<Watchlist[]> => {
+  const batch = db.batch();
+  const newList = list.map((wl) => {
+    const {itemID, recurrence, setByID, setByName, setOn} = wl;
 
-  const now = new Date();
-  const nextOn = getUnixTime(calculateNextExec(setOn, now, recurrence));
+    const now = new Date();
+    const nextOn = getUnixTime(calculateNextExec(setOn, now, recurrence));
 
-  const update = {recurrence, setByID, setByName, nextOn, setOn};
-  await watchlistRef.doc(wl.itemID).update(update);
-
-  return Object.assign(wl, update) as Watchlist;
+    const update = {recurrence, setByID, setByName, nextOn, setOn};
+    batch.update(watchlistRef.doc(itemID), update);
+    // await watchlistRef.doc(wl.itemID).update(update);
+    return Object.assign(wl, update) as Watchlist;
+  });
+  await batch.commit();
+  return newList;
 };
 
 export const addSub = async (list: List): Promise<boolean> => {
@@ -74,7 +84,7 @@ export const unSub = async (itemID: string, userID: string): Promise<void> => {
   }
 };
 
-export const getSubs = async (itemID: string) => {
+export const getSubs = async (itemID: string): Promise<QuerySnapshot | null> => {
   const snap = await watchlistRef.doc(itemID).collection('Subs').get();
   if (snap.empty) return null;
   return snap;

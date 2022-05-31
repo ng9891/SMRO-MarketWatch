@@ -7,6 +7,7 @@ import {formatPrice} from '../../helpers/helpers';
 import {List} from '../../ts/interfaces/List';
 import {ListKey} from '../../ts/types/ListKey';
 import {VendInfo} from '../../ts/interfaces/VendInfo';
+import {JobInfo} from '../../ts/types/JobInfo';
 
 export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['list'] = {}) => {
   const {itemID, itemName: name, nextOn} = wl;
@@ -76,7 +77,7 @@ export const getListAsTable = (list: {[key: string]: List} | undefined, header: 
   const data = [header];
   for (const [key, value] of Object.entries(list)) {
     const {itemName, threshold, timestamp, refinement} = value;
-    const refine = refinement === '-' ? '' : `+${refinement} `;
+    const refine = !refinement || refinement === '-' ? '' : `+${refinement} `;
     data.push([key, `${refine}${itemName}`, formatPrice(threshold), formatDistanceToNow(fromUnixTime(timestamp))]);
   }
   return table(data, tableConfig);
@@ -92,6 +93,20 @@ export const getListingMsg = (user: AppUser) => {
   return `[${user.userName}]'s list.\`\`\`${table}${sizeStr}\`\`\``;
 };
 
+export const getRecurrenceMsg = (
+  jobs: {itemID: string; itemName: string; subs: string; recurrence: number; nextOn: string}[]
+) => {
+  let resp = '```';
+  const data = [['ID', 'Name', 'Recur', 'Next in', 'Sub']];
+  jobs.forEach((job) => {
+    data.push([job.itemID, job.itemName, `${job.recurrence}min`, job.nextOn, job.subs]);
+  });
+  const tab = table(data, tableConfig);
+  resp += `${tab}Total of ${jobs.length} job(s).`;
+  resp += '```';
+  return resp;
+};
+
 export const getRecurrenceUpdateMsg = (wl: Watchlist) => {
   const {itemID, itemName, recurrence, subs} = wl;
   return `\`\`\`Updated [${itemID}:${itemName}] with [${subs || 0} sub(s)] to check every ${recurrence} min.\`\`\``;
@@ -104,7 +119,7 @@ export const getHelpMsg = () => {
 export const getNotificationMsg = (userID: string, vends: VendInfo[], isEquip: boolean) => {
   const data = [];
   // Header
-  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['shopID', 'price', '#']);
+  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
 
   for (const vend of vends) {
     if (isEquip) {

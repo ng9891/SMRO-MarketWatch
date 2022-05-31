@@ -75,7 +75,7 @@ export const add: Subcommand = {
     }
 
     // Job is not running because it has 0 subs. Needs reschedule.
-    if (!wl?.subs || wl.subs === 0) Scheduler.rescheduleJob(wl, checkMarket);
+    if (!wl?.subs || wl.subs === 0) Scheduler.rescheduleJob({...wl, subs: 1}, checkMarket);
 
     const isNewSub = await addSub(newList);
     const action = isNewSub ? 'ADD' : 'UPDATE';

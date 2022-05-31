@@ -16,13 +16,14 @@ const node_schedule_1 = __importDefault(require("node-schedule"));
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const watchlist_action_1 = require("../db/actions/watchlist.action");
 const Scheduler = (() => {
-    const scheduleArr = new Map();
+    const schedulerMap = new Map();
     const rescheduleJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('\n*********************************');
         console.log(`[${wl.itemID}:${wl.itemName}] Rescheduling...`);
         // Updating nextOn
-        const newWL = yield (0, watchlist_action_1.updateWatchList)(wl);
-        createJob(newWL, cb);
+        const updatedWl = yield (0, watchlist_action_1.updateWatchLists)([wl]);
+        const newWl = updatedWl[0];
+        createJob(newWl, cb);
     });
     const _onJobSuccess = (wl, cb) => {
         rescheduleJob(wl, cb);
@@ -55,18 +56,21 @@ const Scheduler = (() => {
         newJob.on('canceled', () => {
             _onJobCanceled(`${itemID}:${itemName}`);
         });
-        scheduleArr.set(itemID, newJob);
+        schedulerMap.set(itemID, { wl, job: newJob });
     });
     const cancelJob = (itemID) => {
-        const job = scheduleArr.get(itemID);
-        if (job)
-            return job.cancel();
+        const item = schedulerMap.get(itemID);
+        if (item) {
+            schedulerMap.delete(itemID);
+            return item.job.cancel();
+        }
         return false;
     };
     return {
         createJob,
         cancelJob,
         rescheduleJob,
+        schedulerMap,
     };
 })();
 exports.default = Scheduler;

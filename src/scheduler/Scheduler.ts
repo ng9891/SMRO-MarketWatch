@@ -1,18 +1,20 @@
 import schedule from 'node-schedule';
 import {Watchlist} from '../ts/interfaces/Watchlist';
+import {JobInfo} from '../ts/types/JobInfo';
 import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
 import fromUnixTime from 'date-fns/fromUnixTime';
-import {updateWatchList} from '../db/actions/watchlist.action';
+import {updateWatchLists} from '../db/actions/watchlist.action';
 
 const Scheduler = (() => {
-  const scheduleArr = new Map<string, schedule.Job>();
+  const schedulerMap = new Map<string, JobInfo>();
 
   const rescheduleJob = async (wl: Watchlist, cb: SchedulerCallBack) => {
     console.log('\n*********************************');
     console.log(`[${wl.itemID}:${wl.itemName}] Rescheduling...`);
     // Updating nextOn
-    const newWL = await updateWatchList(wl);
-    createJob(newWL, cb);
+    const updatedWl = await updateWatchLists([wl]);
+    const newWl = updatedWl[0];
+    createJob(newWl, cb);
   };
 
   const _onJobSuccess = (wl: Watchlist, cb: SchedulerCallBack) => {
@@ -50,12 +52,15 @@ const Scheduler = (() => {
       _onJobCanceled(`${itemID}:${itemName}`);
     });
 
-    scheduleArr.set(itemID, newJob);
+    schedulerMap.set(itemID, {wl, job: newJob});
   };
 
   const cancelJob = (itemID: string) => {
-    const job = scheduleArr.get(itemID);
-    if (job) return job.cancel();
+    const item = schedulerMap.get(itemID);
+    if (item) {
+      schedulerMap.delete(itemID);
+      return item.job.cancel();
+    }
     return false;
   };
 
@@ -63,6 +68,7 @@ const Scheduler = (() => {
     createJob,
     cancelJob,
     rescheduleJob,
+    schedulerMap,
   };
 })();
 

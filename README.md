@@ -47,8 +47,9 @@ You are free to tweak some parameters in the `.env` configuration file. However,
 ### Commands
 - Add / Update list item
 - Delete an item from the list
-- Change scraping time for an item. `Limited to server admins.`
 - Display your list.
+- Display running scrape jobs.
+- Update scraping time for an item. `Limited to server admins.`
 - Help
 ### Developed using:
 - Typescript

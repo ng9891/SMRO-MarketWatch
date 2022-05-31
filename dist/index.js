@@ -14,6 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 const discord_1 = require("./discord/discord");
+const watchlist_action_1 = require("./db/actions/watchlist.action");
+const Scheduler_1 = __importDefault(require("./scheduler/Scheduler"));
+const checkMarket_1 = require("./scheduler/checkMarket");
 dotenv_1.default.config({ path: './conf/.env' });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const token = process.env.DISCORD_TOKEN;
@@ -47,4 +50,13 @@ dotenv_1.default.config({ path: './conf/.env' });
     if (!permission)
         return console.error('No channel ID found.');
     yield (0, discord_1.deployDiscordBot)(token);
+    // Rerunning all jobs.
+    const watchlists = yield (0, watchlist_action_1.getActiveWatchLists)();
+    if (watchlists.empty)
+        return;
+    const batch = watchlists.docs.map((snap) => snap.data());
+    const updatedBatch = yield (0, watchlist_action_1.updateWatchLists)(batch);
+    updatedBatch.forEach((wl) => {
+        Scheduler_1.default.createJob(wl, checkMarket_1.checkMarket);
+    });
 }))();

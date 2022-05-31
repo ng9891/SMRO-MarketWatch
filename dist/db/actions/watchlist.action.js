@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubs = exports.unSub = exports.addSub = exports.updateWatchList = exports.createNewWatchList = exports.getWatchListInfo = void 0;
+exports.getSubs = exports.unSub = exports.addSub = exports.updateWatchLists = exports.createNewWatchList = exports.getActiveWatchLists = exports.getWatchListInfo = void 0;
 const firebase_1 = __importDefault(require("../firebase"));
 const firestore_1 = require("firebase-admin/firestore");
 const date_fns_1 = require("date-fns");
@@ -25,6 +25,11 @@ const getWatchListInfo = (itemID) => __awaiter(void 0, void 0, void 0, function*
     return snap.data();
 });
 exports.getWatchListInfo = getWatchListInfo;
+const getActiveWatchLists = (subs = 1) => __awaiter(void 0, void 0, void 0, function* () {
+    const snap = yield watchlistRef.where('subs', '>=', subs).get();
+    return snap;
+});
+exports.getActiveWatchLists = getActiveWatchLists;
 const createNewWatchList = (recurrence, user, scrape) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemID, name: itemName, timestamp } = scrape;
     const { userID, userName } = user;
@@ -46,15 +51,21 @@ const createNewWatchList = (recurrence, user, scrape) => __awaiter(void 0, void 
     return wl;
 });
 exports.createNewWatchList = createNewWatchList;
-const updateWatchList = (wl) => __awaiter(void 0, void 0, void 0, function* () {
-    const { recurrence, setByID, setByName, setOn } = wl;
-    const now = new Date();
-    const nextOn = (0, date_fns_1.getUnixTime)((0, helpers_1.calculateNextExec)(setOn, now, recurrence));
-    const update = { recurrence, setByID, setByName, nextOn, setOn };
-    yield watchlistRef.doc(wl.itemID).update(update);
-    return Object.assign(wl, update);
+const updateWatchLists = (list) => __awaiter(void 0, void 0, void 0, function* () {
+    const batch = firebase_1.default.batch();
+    const newList = list.map((wl) => {
+        const { itemID, recurrence, setByID, setByName, setOn } = wl;
+        const now = new Date();
+        const nextOn = (0, date_fns_1.getUnixTime)((0, helpers_1.calculateNextExec)(setOn, now, recurrence));
+        const update = { recurrence, setByID, setByName, nextOn, setOn };
+        batch.update(watchlistRef.doc(itemID), update);
+        // await watchlistRef.doc(wl.itemID).update(update);
+        return Object.assign(wl, update);
+    });
+    yield batch.commit();
+    return newList;
 });
-exports.updateWatchList = updateWatchList;
+exports.updateWatchLists = updateWatchLists;
 const addSub = (list) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemID, userID } = list;
     const subsRef = watchlistRef.doc(itemID).collection('Subs');

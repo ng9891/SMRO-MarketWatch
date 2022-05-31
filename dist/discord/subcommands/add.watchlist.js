@@ -82,7 +82,7 @@ exports.add = {
         }
         // Job is not running because it has 0 subs. Needs reschedule.
         if (!(wl === null || wl === void 0 ? void 0 : wl.subs) || wl.subs === 0)
-            Scheduler_1.default.rescheduleJob(wl, checkMarket_1.checkMarket);
+            Scheduler_1.default.rescheduleJob(Object.assign(Object.assign({}, wl), { subs: 1 }), checkMarket_1.checkMarket);
         const isNewSub = yield (0, watchlist_action_1.addSub)(newList);
         const action = isNewSub ? 'ADD' : 'UPDATE';
         const embed = (0, valid_response_1.getDefaultEmbed)(action, wl, newUser.list);

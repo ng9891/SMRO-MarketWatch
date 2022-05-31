@@ -1,5 +1,9 @@
 import dotenv from 'dotenv';
 import {deployDiscordBot} from './discord/discord';
+import {getActiveWatchLists, updateWatchLists} from './db/actions/watchlist.action';
+import Scheduler from './scheduler/Scheduler';
+import {checkMarket} from './scheduler/checkMarket';
+import {Watchlist} from './ts/interfaces/Watchlist';
 
 dotenv.config({path: './conf/.env'});
 
@@ -28,4 +32,16 @@ dotenv.config({path: './conf/.env'});
 
   await deployDiscordBot(token);
 
+  // Rerunning all jobs.
+
+  const watchlists = await getActiveWatchLists();
+  if (watchlists.empty) return;
+
+  const batch = watchlists.docs.map((snap) => snap.data() as Watchlist);
+  const updatedBatch = await updateWatchLists(batch);
+
+  updatedBatch.forEach((wl) => {
+    Scheduler.createJob(wl, checkMarket);
+  });
+  
 })();

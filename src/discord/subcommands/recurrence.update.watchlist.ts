@@ -1,7 +1,7 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import {GuildMember, PermissionResolvable} from 'discord.js';
-import {getWatchListInfo, updateWatchList, createNewWatchList} from '../../db/actions/watchlist.action';
+import {getWatchListInfo, updateWatchLists, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getRecurrenceUpdateMsg} from '../responses/valid.response';
 import {getNoPermissionMsg} from '../responses/invalid.response';
 import scrapItemInfoByID from '../../scraper/scraper';
@@ -9,10 +9,10 @@ import Scheduler from '../../scheduler/Scheduler';
 import {checkMarket} from '../../scheduler/checkMarket';
 import {getUnixTime} from 'date-fns';
 
-export const recurrence: Subcommand = {
+export const recurrenceUpdate: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
-    .setName('recurrence')
-    .setDescription('Change the check recurrence of an item. **Must have permission!**')
+    .setName('update')
+    .setDescription('Updates the recurrence of an item. **Must have permission!**')
     .addIntegerOption((option) =>
       option.setName('itemid').setDescription('The ID of the item you wish to change.').setRequired(true)
     )
@@ -37,7 +37,8 @@ export const recurrence: Subcommand = {
       wl = await createNewWatchList(recurrence, {userID, userName}, itemInfo);
     } else {
       const newWl = {...wl, setByID: userID, setByName: userName, recurrence, setOn: getUnixTime(new Date())};
-      wl = await updateWatchList(newWl);
+      const updatedWl = await updateWatchLists([newWl]);
+      wl = updatedWl[0];
     }
 
     if (wl?.subs && wl.subs > 0) Scheduler.createJob(wl, checkMarket);

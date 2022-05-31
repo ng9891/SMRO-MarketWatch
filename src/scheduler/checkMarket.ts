@@ -16,7 +16,7 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
   if (!channelID) throw new Error('No channel ID found.');
 
   subs.forEach(async (snap) => {
-    const sub = snap instanceof QueryDocumentSnapshot ? snap.data() as List : snap;
+    const sub = snap instanceof QueryDocumentSnapshot ? (snap.data() as List) : snap;
 
     // Get vends below threshold
     const notifArr = [];
@@ -30,11 +30,11 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
     if (notifArr.length > 0) {
       const msg = getNotificationMsg(sub.userID, notifArr, isEquip);
       await sendMsgBot(msg, channelID);
-    }else await sendMsgBot('```No new vends found.```', channelID);
+    }
   });
 };
 
-export const checkMarket: SchedulerCallBack = async function (wl: Watchlist) {
+export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Promise<Watchlist> {
   const channelID = process.env.DISCORD_CHANNEL_ID;
   try {
     if (!channelID) throw new Error('No channel ID found.');
@@ -45,10 +45,11 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist) {
 
     const subs = await getSubs(itemID);
     if (!subs) return wl;
+    const subCount = subs.size as number;
 
     const scrape = await scrapItemInfoByID(itemID);
     const vends = scrape?.vends;
-    if (!vends || vends.length === 0) return wl;
+    if (!vends || vends.length === 0) return {...wl, subs: subCount};
 
     const historyDays = Number(process.env.HISTORY_FROM_DAYS);
     const daysDiff = isNaN(historyDays) || historyDays === 0 ? 30 : historyDays;
@@ -64,8 +65,8 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist) {
 
     if (process.env.LOG_RUNNING_MESSAGE) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
 
-    // Returning Watchlist for next job.
-    return wl;
+    // Returning Watchlist for the next job.
+    return {...wl, subs: subCount};
   } catch (error) {
     const err = error as Error;
     console.log(err.message);

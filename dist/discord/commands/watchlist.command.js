@@ -13,7 +13,8 @@ exports.watchlist = void 0;
 const builders_1 = require("@discordjs/builders");
 const add_watchlist_1 = require("../subcommands/add.watchlist");
 const remove_watchlist_1 = require("../subcommands/remove.watchlist");
-const recurrence_watchlist_1 = require("../subcommands/recurrence.watchlist");
+const recurrence_update_watchlist_1 = require("../subcommands/recurrence.update.watchlist");
+const recurrence_list_watchlist_1 = require("../subcommands/recurrence.list.watchlist");
 const list_watchlist_1 = require("../subcommands/list.watchlist");
 exports.watchlist = {
     data: new builders_1.SlashCommandBuilder()
@@ -21,19 +22,34 @@ exports.watchlist = {
         .setDescription('Manage watchlist')
         .addSubcommand(add_watchlist_1.add.data)
         .addSubcommand(remove_watchlist_1.remove.data)
-        .addSubcommand(recurrence_watchlist_1.recurrence.data)
-        .addSubcommand(list_watchlist_1.list.data),
+        .addSubcommand(list_watchlist_1.list.data)
+        .addSubcommandGroup((group) => group
+        .setName('recurrence')
+        .setDescription('recurrency')
+        .addSubcommand(recurrence_update_watchlist_1.recurrenceUpdate.data)
+        .addSubcommand(recurrence_list_watchlist_1.recurrenceList.data)),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
         const subcommand = interaction.options.getSubcommand();
+        const isRecurrenceGroup = interaction.options.getSubcommandGroup(false);
+        if (isRecurrenceGroup) {
+            switch (subcommand) {
+                case 'update': {
+                    return yield recurrence_update_watchlist_1.recurrenceUpdate.run(interaction);
+                }
+                case 'list': {
+                    return yield recurrence_list_watchlist_1.recurrenceList.run(interaction);
+                }
+                default: {
+                    return 'Command not found.';
+                }
+            }
+        }
         switch (subcommand) {
             case 'add': {
                 return yield add_watchlist_1.add.run(interaction);
             }
             case 'remove': {
                 return yield remove_watchlist_1.remove.run(interaction);
-            }
-            case 'recurrence': {
-                return yield recurrence_watchlist_1.recurrence.run(interaction);
             }
             case 'list': {
                 return yield list_watchlist_1.list.run(interaction);
