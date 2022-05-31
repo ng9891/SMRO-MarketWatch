@@ -1,5 +1,5 @@
 # SMRO - MarketWatch
-A Discord Bot to check for new item listing in the market below users defined thresholds.
+A Discord Bot to check for new items listing in the SMRO market below users defined thresholds.
 
 The purpose of this App is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!
 
@@ -7,14 +7,14 @@ The purpose of this App is to notify users of a sale/deal in the SMRO market. Pl
 ### Discord Bot configuration
 Allow the bot to have the following scopes/permissions:
 
-- Scopes: `bot, applications.commands`
-- Permissions: `Read Messages, send messages, embed links, use slash commands`
+- Scopes: `bot` and `applications.commands`
+- Permissions: `Read Messages`, `send messages`, `embed links` and `use slash commands`
   
 ### Configure the App
 1. Rename `conf/.env-boilerplate` to `.env`
    
-2. Add your `DISCORD_TOKEN`, `DISCORD_GUILD_ID` and `DISCORD_CLIENT_ID`
-3. Add your `Firestore service account key` in the folder `./src/db/serviceAccount.json`
+2. Add your `DISCORD_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_MSG_CHANNEL_ID` and `DISCORD_CLIENT_ID`
+3. Add your `Firestore service account key` to the folder `./src/db/serviceAccount.json`
    
 4.  Run 
     ```bash
@@ -40,22 +40,23 @@ Information are gathered by web scrapping the SMRO website. We are not responsib
 
 Moreover, SMRO website is subject to changes and might break the application. I will try to keep it as updated as possible.
 
-If your Discord server has a lot of users with a watchlist, you might need to manage your firebase budget.
+If your Discord server has a lot of users with a watchlist, you might need to manage your `Firestore` budget.
 
 ## Technical Stuffs
-You are free to tweak some parameters in the `.env` configuration file. However, keep in mind that information are queried by web scrapping the SMRO website and `we are not responsible if you get banned`.
+You are free to tweak some parameters in the `.env` configuration file. However, keep in mind that informations are queried by web scraping the SMRO website and `we are not responsible if you get banned`.
 ### Commands
 - Add / Update list item
 - Delete an item from the list
 - Display your list.
 - Display running scrape jobs.
-- Update scraping time for an item. `Limited to server admins.`
-- Help
+- Update scraping time for an item. Limited to users that have `BAN_MEMBERS` permission.
+- Help message.
 ### Developed using:
 - Typescript
 - Discord API
 - Firebase
 - Cheerio
+- Fetch
 - Date-Fns
 - Node-schedule
 - Jest
