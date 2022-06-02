@@ -1,7 +1,7 @@
 import {sendMsgBot} from '../discord/discord';
 import {getSubs} from '../db/actions/watchlist.action';
 import {addToHistory, getHistory} from '../db/actions/history.action';
-import scrapItemInfoByID from '../scraper/scraper';
+import {scrapeItem} from '../scraper/scraper';
 import {QuerySnapshot, QueryDocumentSnapshot} from 'firebase-admin/firestore';
 import {Watchlist} from '../ts/interfaces/Watchlist';
 import {VendInfo} from '../ts/interfaces/VendInfo';
@@ -48,7 +48,7 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
     if (!subs) return wl;
     const subCount = subs.size as number;
 
-    const scrape = await scrapItemInfoByID(itemID);
+    const scrape = await scrapeItem(itemID, itemName, 'HEL');
     const vends = scrape?.vends;
     if (!vends || vends.length === 0) return {...wl, subs: subCount};
 

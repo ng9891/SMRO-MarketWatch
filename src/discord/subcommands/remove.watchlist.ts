@@ -11,8 +11,15 @@ export const remove: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
     .setName('remove')
     .setDescription('Remove an item from the watchlist.')
-    .addIntegerOption((option) =>
-      option.setName('itemid').setDescription('Item ID to remove from the watchlist').setRequired(true)
+    .addStringOption((option) =>
+      option
+        .setName('server')
+        .setDescription('Decide which server to put the watchlist')
+        .setRequired(true)
+        .setAutocomplete(true)
+    )
+    .addStringOption((option) =>
+      option.setName('item-query').setDescription('Find the item.').setRequired(true).setAutocomplete(true)
     ),
   run: async (interaction) => {
     await interaction.deferReply();

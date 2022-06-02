@@ -30,7 +30,7 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, list: AppUser['li
 
   const embed = new MessageEmbed()
     .setTitle(`${itemID}: ${refinement}${name}`)
-    .setURL(`${process.env.ITEM_URL as string}${itemID}`)
+    .setURL(`${process.env.URL_HEL as string}${itemID}`)
     .setThumbnail(`${process.env.THUMBNAIL_URL}${itemID}.png`)
     .addFields(
       {name: 'Action', value: `**${status}**`},

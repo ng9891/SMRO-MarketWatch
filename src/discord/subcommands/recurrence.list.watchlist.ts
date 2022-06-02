@@ -7,7 +7,7 @@ import {getRecurrenceMsg} from '../responses/valid.response';
 import {JobInfo} from '../../ts/types/JobInfo';
 
 export const recurrenceList: Subcommand = {
-  data: new SlashCommandSubcommandBuilder().setName('list').setDescription('List running jobs.'),
+  data: new SlashCommandSubcommandBuilder().setName('list').setDescription('List of running jobs.'),
   run: async (interaction) => {
     await interaction.deferReply();
     const itemsMap = Scheduler.schedulerMap;

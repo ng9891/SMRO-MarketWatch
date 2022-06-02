@@ -1,7 +1,7 @@
 import {List} from '../../ts/interfaces/List';
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
-import scrapItemInfoByID from '../../scraper/scraper';
+import {scrapeItem} from '../../scraper/scraper';
 import {addSub, getWatchListInfo, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {setItemInfo} from '../../db/actions/items.action';
@@ -21,7 +21,16 @@ export const add: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
     .setName('add')
     .setDescription('Add/Update an Item ID to the watchlist.')
-    .addIntegerOption((option) => option.setName('itemid').setDescription('ID of the Item. e.g 6635').setRequired(true))
+    .addStringOption((option) =>
+      option
+        .setName('server')
+        .setDescription('Decide which server to put the watchlist')
+        .setRequired(true)
+        .setAutocomplete(true)
+    )
+    .addStringOption((option) =>
+      option.setName('item-query').setDescription('Find item.').setRequired(true).setAutocomplete(true)
+    )
     .addStringOption((option) =>
       option.setName('threshold').setDescription('Price threshold for notifications. e.g 250m').setRequired(true)
     )
@@ -30,6 +39,7 @@ export const add: Subcommand = {
     ),
   run: async (interaction) => {
     await interaction.deferReply();
+    console.log(interaction.commandName);
     const userID = interaction.user.id;
     const userName = interaction.user.username;
     const discriminator = interaction.user.discriminator;
@@ -44,7 +54,7 @@ export const add: Subcommand = {
     if (validPrice >= maxThreshold) return getInvalidMaxPriceMsg();
 
     // Scraping item info
-    const itemInfo = await scrapItemInfoByID(itemID);
+    const itemInfo = await scrapeItem(itemID, 'test', 'HEL');
     const newList: List = {
       itemID,
       threshold: validPrice,

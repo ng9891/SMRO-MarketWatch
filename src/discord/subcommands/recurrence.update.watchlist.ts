@@ -4,7 +4,7 @@ import {GuildMember, PermissionResolvable} from 'discord.js';
 import {getWatchListInfo, updateWatchLists, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getRecurrenceUpdateMsg} from '../responses/valid.response';
 import {getNoPermissionMsg} from '../responses/invalid.response';
-import scrapItemInfoByID from '../../scraper/scraper';
+import {scrapeItem} from '../../scraper/scraper';
 import Scheduler from '../../scheduler/Scheduler';
 import {checkMarket} from '../../scheduler/checkMarket';
 import {getUnixTime} from 'date-fns';
@@ -13,8 +13,15 @@ export const recurrenceUpdate: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
     .setName('update')
     .setDescription('Updates the recurrence of an item. **Must have permission!**')
-    .addIntegerOption((option) =>
-      option.setName('itemid').setDescription('The ID of the item you wish to change.').setRequired(true)
+    .addStringOption((option) =>
+      option
+        .setName('server')
+        .setDescription('Decide which server to put the watchlist')
+        .setRequired(true)
+        .setAutocomplete(true)
+    )
+    .addStringOption((option) =>
+      option.setName('item-query').setDescription('Find item.').setRequired(true).setAutocomplete(true)
     )
     .addIntegerOption((option) =>
       option.setName('recurrence').setDescription('New recurrence interval in minutes.').setRequired(true)
@@ -33,7 +40,7 @@ export const recurrenceUpdate: Subcommand = {
 
     let wl = await getWatchListInfo(itemID);
     if (!wl) {
-      const itemInfo = await scrapItemInfoByID(itemID);
+      const itemInfo = await scrapeItem(itemID, 'test', 'HEL');
       wl = await createNewWatchList(recurrence, {userID, userName}, itemInfo);
     } else {
       const newWl = {...wl, setByID: userID, setByName: userName, recurrence, setOn: getUnixTime(new Date())};

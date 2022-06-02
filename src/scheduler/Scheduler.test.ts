@@ -23,9 +23,10 @@ const fakeWL: Watchlist = {
   nextOn: getUnixTime(addMinutes(new Date(), 30)),
   createdOn: getUnixTime(subMinutes(new Date(), 5 * 1440)),
   subs: 1,
+  server: 'HEL'
 };
 
-describe('Testing Scheduler', () => {
+describe.skip('Testing Scheduler', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -34,7 +35,7 @@ describe('Testing Scheduler', () => {
     jest.clearAllTimers();
   });
 
-  test.skip('Called once in 59min with 30min reccurence', () => {
+  test('Called once in 59min with 30min reccurence', () => {
     const callbackMock = jest.fn(mock);
     Scheduler.createJob(fakeWL, callbackMock);
 

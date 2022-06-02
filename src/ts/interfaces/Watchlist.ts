@@ -1,4 +1,4 @@
-// import {AppUser} from './AppUser'
+import {ServerName} from '../types/ServerName';
 export interface Watchlist {
   itemID: string;
   itemName: string;
@@ -8,5 +8,6 @@ export interface Watchlist {
   setOn: number;
   nextOn: number;
   createdOn: number;
+  server?: ServerName;
   subs?: number;
 }
