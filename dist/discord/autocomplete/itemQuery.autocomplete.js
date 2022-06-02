@@ -24,7 +24,7 @@ const itemQuery = (interaction) => __awaiter(void 0, void 0, void 0, function* (
         .filter((choice) => {
         if (isNum)
             return choice.id.toString().startsWith(focusedValue);
-        return choice.name.toLowerCase().startsWith(focusedValue.toLowerCase());
+        return choice.name.toLowerCase().includes(focusedValue.toLowerCase());
     })
         .slice(0, 25);
     yield interaction.respond(filtered.map((choice) => ({ name: `${choice.id} - ${choice.name}`, value: `${choice.id}=${choice.name}` })));

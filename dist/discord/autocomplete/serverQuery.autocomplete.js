@@ -16,7 +16,7 @@ const serverQuery = (interaction) => __awaiter(void 0, void 0, void 0, function*
         { name: 'Helheim', value: 'HEL' },
         { name: 'Niffleheim', value: 'NIF' },
     ];
-    const filtered = choices.filter((choice) => choice.name.toLowerCase().startsWith(focusedValue.toLowerCase()));
+    const filtered = choices.filter((choice) => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
     yield interaction.respond(filtered.map((choice) => ({ name: choice.name, value: choice.value })));
 });
 exports.serverQuery = serverQuery;
