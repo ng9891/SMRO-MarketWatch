@@ -17,7 +17,7 @@ const builders_1 = require("@discordjs/builders");
 const watchlist_action_1 = require("../../db/actions/watchlist.action");
 const valid_response_1 = require("../responses/valid.response");
 const invalid_response_1 = require("../responses/invalid.response");
-const scraper_1 = __importDefault(require("../../scraper/scraper"));
+const scraper_1 = require("../../scraper/scraper");
 const Scheduler_1 = __importDefault(require("../../scheduler/Scheduler"));
 const checkMarket_1 = require("../../scheduler/checkMarket");
 const date_fns_1 = require("date-fns");
@@ -25,23 +25,37 @@ exports.recurrenceUpdate = {
     data: new builders_1.SlashCommandSubcommandBuilder()
         .setName('update')
         .setDescription('Updates the recurrence of an item. **Must have permission!**')
-        .addIntegerOption((option) => option.setName('itemid').setDescription('The ID of the item you wish to change.').setRequired(true))
+        .addStringOption((option) => option
+        .setName('server')
+        .setDescription('Decide which server to put the watchlist')
+        .setRequired(true)
+        .setAutocomplete(true))
+        .addStringOption((option) => option.setName('item-query').setDescription('Find item.').setRequired(true).setAutocomplete(true))
         .addIntegerOption((option) => option.setName('recurrence').setDescription('New recurrence interval in minutes.').setRequired(true)),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
         yield interaction.deferReply();
         const userID = interaction.user.id;
         const userName = interaction.user.username;
-        const itemID = (_a = interaction.options.getInteger('itemid', true)) === null || _a === void 0 ? void 0 : _a.toString();
+        const discriminator = interaction.user.discriminator;
         const recurrence = Math.abs(interaction.options.getInteger('recurrence', true));
+        const query = interaction.options.getString('item-query');
+        if (!query)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const [itemID, itemName] = query.split('=');
+        if (!itemID || !itemName)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const serverQuery = interaction.options.getString('server');
+        if (!serverQuery)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const server = serverQuery;
         const member = interaction.member;
         const permission = process.env.PERMISSION_TO_CHANGE_SCRAPE_TIME || 'BAN_MEMBERS';
         if (!member.permissions.has(permission))
             return (0, invalid_response_1.getNoPermissionMsg)();
-        let wl = yield (0, watchlist_action_1.getWatchListInfo)(itemID);
+        let wl = yield (0, watchlist_action_1.getWatchListInfo)(itemID, server);
         if (!wl) {
-            const itemInfo = yield (0, scraper_1.default)(itemID);
-            wl = yield (0, watchlist_action_1.createNewWatchList)(recurrence, { userID, userName }, itemInfo);
+            const itemInfo = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
+            wl = yield (0, watchlist_action_1.createNewWatchList)(recurrence, { userID, userName, discriminator }, itemInfo);
         }
         else {
             const newWl = Object.assign(Object.assign({}, wl), { setByID: userID, setByName: userName, recurrence, setOn: (0, date_fns_1.getUnixTime)(new Date()) });

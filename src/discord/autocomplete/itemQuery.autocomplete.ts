@@ -8,12 +8,12 @@ export const itemQuery = async (interaction: AutocompleteInteraction) => {
   const choices = JSON.parse(data) as ItemChoice[];
 
   const focusedValue = interaction.options.getFocused() as string;
-  
+
   const isNum = !focusedValue || isNaN(Number(focusedValue)) ? false : true;
   const filtered = choices
     .filter((choice) => {
       if (isNum) return choice.id.toString().startsWith(focusedValue);
-      return choice.name.toLocaleLowerCase().startsWith(focusedValue.toLocaleLowerCase());
+      return choice.name.toLowerCase().startsWith(focusedValue.toLowerCase());
     })
     .slice(0, 25);
 

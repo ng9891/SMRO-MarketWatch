@@ -1,3 +1,5 @@
+import {ServerName} from '../types/ServerName';
+
 export interface VendInfo {
   shopID: string | undefined;
   shopName: string;
@@ -17,4 +19,5 @@ export interface VendInfo {
   timestamp?: number;
   merchant?: string;
   position?: string;
+  server?: ServerName;
 }

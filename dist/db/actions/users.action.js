@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setUserInfo = exports.getUserInfo = void 0;
 const firebase_1 = __importDefault(require("../firebase"));
 const getUnixTime_1 = __importDefault(require("date-fns/getUnixTime"));
-const usersRef = firebase_1.default.collection('User');
+const usersRef = firebase_1.default.collection('Users');
 const getUserInfo = (userID, userName, discriminator) => __awaiter(void 0, void 0, void 0, function* () {
     const snap = yield usersRef.doc(userID).get();
     if (!snap.exists) {
@@ -28,10 +28,10 @@ const getUserInfo = (userID, userName, discriminator) => __awaiter(void 0, void 
 });
 exports.getUserInfo = getUserInfo;
 const setUserInfo = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userID, userName, list } = user;
+    const { userID, userName, list, discriminator } = user;
     const newList = list ? list : {};
     const listSize = Object.keys(newList).length;
-    yield usersRef.doc(userID).set({ userID, userName, list: Object.assign({}, newList), listSize });
+    yield usersRef.doc(userID).update({ userID, userName, discriminator, list: Object.assign({}, newList), listSize });
     return Object.assign(Object.assign({}, user), { listSize });
 });
 exports.setUserInfo = setUserInfo;

@@ -19,7 +19,7 @@ const Scheduler = (() => {
     const schedulerMap = new Map();
     const rescheduleJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('\n*********************************');
-        console.log(`[${wl.itemID}:${wl.itemName}] Rescheduling...`);
+        console.log(`${wl.server} [${wl.itemID}:${wl.itemName}] Rescheduling...`);
         // Updating nextOn
         const updatedWl = yield (0, watchlist_action_1.updateWatchLists)([wl]);
         const newWl = updatedWl[0];
@@ -33,11 +33,11 @@ const Scheduler = (() => {
         console.log(`[${item}] cancelled on: ${date}`);
     };
     const createJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
-        const { itemID, itemName, nextOn, setOn, recurrence } = wl;
+        const { itemID, itemName, nextOn, setOn, recurrence, server } = wl;
         const nextJobDate = (0, fromUnixTime_1.default)(nextOn);
-        const isCancelled = cancelJob(itemID);
+        const isCancelled = cancelJob(itemID, server);
         if (!isCancelled)
-            console.log(`\n[${itemID}:${itemName}] Job is not running.`);
+            console.log(`\n${server} | [${itemID}:${itemName}] Job is not running.`);
         const newJob = node_schedule_1.default.scheduleJob(nextJobDate, function () {
             return __awaiter(this, void 0, void 0, function* () {
                 const date = new Date();
@@ -46,22 +46,22 @@ const Scheduler = (() => {
             });
         });
         if (!newJob)
-            throw new Error(`***Failed to create Job for: [${itemID}:${itemName}]***`);
-        console.log(`[${itemID}:${itemName}] Created:${(0, fromUnixTime_1.default)(setOn)} | Recur:${recurrence}min | jobOn:${nextJobDate}`);
+            throw new Error(`***Failed to create Job for: ${server} | [${itemID}:${itemName}]***`);
+        console.log(`${server} | [${itemID}:${itemName}] Created:${(0, fromUnixTime_1.default)(setOn)} | Recur:${recurrence}min | jobOn:${nextJobDate}`);
         newJob.on('success', (wl) => {
             if (!wl)
                 return;
             _onJobSuccess(wl, cb);
         });
         newJob.on('canceled', () => {
-            _onJobCanceled(`${itemID}:${itemName}`);
+            _onJobCanceled(`${server}${itemID}:${itemName}`);
         });
-        schedulerMap.set(itemID, { wl, job: newJob });
+        schedulerMap.set(server + itemID, { wl, job: newJob });
     });
-    const cancelJob = (itemID) => {
-        const item = schedulerMap.get(itemID);
+    const cancelJob = (itemID, server) => {
+        const item = schedulerMap.get(server + itemID);
         if (item) {
-            schedulerMap.delete(itemID);
+            schedulerMap.delete(server + itemID);
             return item.job.cancel();
         }
         return false;

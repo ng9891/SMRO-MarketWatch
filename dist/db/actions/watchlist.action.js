@@ -18,8 +18,8 @@ const firestore_1 = require("firebase-admin/firestore");
 const date_fns_1 = require("date-fns");
 const helpers_1 = require("../../helpers/helpers");
 const watchlistRef = firebase_1.default.collection('Watchlist');
-const getWatchListInfo = (itemID) => __awaiter(void 0, void 0, void 0, function* () {
-    const snap = yield watchlistRef.doc(itemID).get();
+const getWatchListInfo = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {
+    const snap = yield watchlistRef.doc(server + itemID).get();
     if (!snap.exists)
         return null;
     return snap.data();
@@ -31,7 +31,7 @@ const getActiveWatchLists = (subs = 1) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getActiveWatchLists = getActiveWatchLists;
 const createNewWatchList = (recurrence, user, scrape) => __awaiter(void 0, void 0, void 0, function* () {
-    const { itemID, name: itemName, timestamp } = scrape;
+    const { itemID, name: itemName, timestamp, server } = scrape;
     const { userID, userName } = user;
     const now = (0, date_fns_1.fromUnixTime)(timestamp);
     const nextOn = (0, date_fns_1.getUnixTime)((0, date_fns_1.add)(now, { minutes: recurrence }));
@@ -46,20 +46,20 @@ const createNewWatchList = (recurrence, user, scrape) => __awaiter(void 0, void 
         setByName: userName,
         createdOn: timestamp,
         subs: 0,
+        server,
     };
-    yield watchlistRef.doc(itemID).set(wl, { merge: true });
+    yield watchlistRef.doc(server + itemID).set(wl, { merge: true });
     return wl;
 });
 exports.createNewWatchList = createNewWatchList;
 const updateWatchLists = (list) => __awaiter(void 0, void 0, void 0, function* () {
     const batch = firebase_1.default.batch();
     const newList = list.map((wl) => {
-        const { itemID, recurrence, setByID, setByName, setOn } = wl;
+        const { itemID, recurrence, setByID, setByName, setOn, server } = wl;
         const now = new Date();
         const nextOn = (0, date_fns_1.getUnixTime)((0, helpers_1.calculateNextExec)(setOn, now, recurrence));
         const update = { recurrence, setByID, setByName, nextOn, setOn };
-        batch.update(watchlistRef.doc(itemID), update);
-        // await watchlistRef.doc(wl.itemID).update(update);
+        batch.update(watchlistRef.doc(server + itemID), update);
         return Object.assign(wl, update);
     });
     yield batch.commit();
@@ -67,33 +67,40 @@ const updateWatchLists = (list) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.updateWatchLists = updateWatchLists;
 const addSub = (list) => __awaiter(void 0, void 0, void 0, function* () {
-    const { itemID, userID } = list;
-    const subsRef = watchlistRef.doc(itemID).collection('Subs');
+    const { itemID, userID, server } = list;
+    const subsRef = watchlistRef.doc(server + itemID).collection('Subs');
     const snap = yield subsRef.doc(userID).get();
     let newSub = false;
     if (!snap.exists) {
-        yield watchlistRef.doc(itemID).set({ subs: firestore_1.FieldValue.increment(1) }, { merge: true });
+        yield watchlistRef.doc(server + itemID).set({ subs: firestore_1.FieldValue.increment(1) }, { merge: true });
         newSub = true;
     }
     yield subsRef.doc(userID).set(Object.assign({}, list));
     return newSub;
 });
 exports.addSub = addSub;
-const unSub = (itemID, userID) => __awaiter(void 0, void 0, void 0, function* () {
-    yield watchlistRef.doc(itemID).collection('Subs').doc(userID).delete();
-    const snap = yield watchlistRef.doc(itemID).get();
+const unSub = (itemID, userID, server) => __awaiter(void 0, void 0, void 0, function* () {
+    yield watchlistRef
+        .doc(server + itemID)
+        .collection('Subs')
+        .doc(userID)
+        .delete();
+    const snap = yield watchlistRef.doc(server + itemID).get();
     if (snap.exists) {
         const data = snap.data();
         if (data && data.subs > 0)
-            yield watchlistRef.doc(itemID).set({ subs: firestore_1.FieldValue.increment(-1) }, { merge: true });
+            yield watchlistRef.doc(server + itemID).set({ subs: firestore_1.FieldValue.increment(-1) }, { merge: true });
     }
     else {
-        console.error('Unsubscribing a user not subscribed to:' + itemID);
+        console.error('Unsubscribing a user not subscribed to: ' + server + itemID);
     }
 });
 exports.unSub = unSub;
-const getSubs = (itemID) => __awaiter(void 0, void 0, void 0, function* () {
-    const snap = yield watchlistRef.doc(itemID).collection('Subs').get();
+const getSubs = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {
+    const snap = yield watchlistRef
+        .doc(server + itemID)
+        .collection('Subs')
+        .get();
     if (snap.empty)
         return null;
     return snap;

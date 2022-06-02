@@ -19,7 +19,7 @@ const formatDistanceToNow_1 = __importDefault(require("date-fns/formatDistanceTo
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const valid_response_1 = require("../responses/valid.response");
 exports.recurrenceList = {
-    data: new builders_1.SlashCommandSubcommandBuilder().setName('list').setDescription('List running jobs.'),
+    data: new builders_1.SlashCommandSubcommandBuilder().setName('list').setDescription('List of running jobs.'),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
         yield interaction.deferReply();
         const itemsMap = Scheduler_1.default.schedulerMap;
@@ -31,7 +31,7 @@ exports.recurrenceList = {
             const unix = time.getTime() / 1000;
             const newTime = (0, fromUnixTime_1.default)(unix);
             const nextOn = (0, formatDistanceToNow_1.default)(newTime, { addSuffix: false });
-            return { itemID: key, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn };
+            return { itemID: wl.itemID, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn, server: wl.server };
         });
         const resp = (0, valid_response_1.getRecurrenceMsg)(data);
         yield interaction.editReply(resp);

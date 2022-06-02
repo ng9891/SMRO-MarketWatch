@@ -21,7 +21,7 @@ export const recurrenceList: Subcommand = {
       const unix = time.getTime() / 1000;
       const newTime = fromUnixTime(unix);
       const nextOn = formatDistanceToNow(newTime, {addSuffix: false});
-      return {itemID: key, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn};
+      return {itemID: wl.itemID, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn, server: wl.server};
     });
 
     const resp = getRecurrenceMsg(data);

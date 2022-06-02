@@ -5,17 +5,21 @@ import {scrapeItem} from '../../scraper/scraper';
 import {addSub, getWatchListInfo, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getUserInfo, setUserInfo} from '../../db/actions/users.action';
 import {setItemInfo} from '../../db/actions/items.action';
-import {parsePriceString, isItemAnEquip} from '../../helpers/helpers';
+import {parsePriceString, isItemAnEquip, calculateNextExec} from '../../helpers/helpers';
 import {getDefaultEmbed} from '../responses/valid.response';
 import {getInvalidPriceFormatMsg, getInvalidMaxPriceMsg, getMaxListSizeMsg} from '../responses/invalid.response';
+import {getSelectFromAutocompleteMsg} from '../responses/invalid.response';
 import Scheduler from '../../scheduler/Scheduler';
 import {checkMarket, notifySubs} from '../../scheduler/checkMarket';
+import {ServerName} from '../../ts/types/ServerName';
 
 const isListFull = (listSize: number | undefined) => {
   if (!listSize) return false;
   if (listSize < Number(process.env.MAX_LIST_SIZE)) return false;
   return true;
 };
+
+const isItemInArr = (itemID: string, arr: List[]) => arr.some((list) => list.itemID === itemID);
 
 export const add: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
@@ -39,11 +43,19 @@ export const add: Subcommand = {
     ),
   run: async (interaction) => {
     await interaction.deferReply();
-    console.log(interaction.commandName);
     const userID = interaction.user.id;
     const userName = interaction.user.username;
     const discriminator = interaction.user.discriminator;
-    const itemID = interaction.options.getInteger('itemid', true).toString();
+
+    const serverQuery = interaction.options.getString('server');
+    if (!serverQuery) return getSelectFromAutocompleteMsg();
+    const server = serverQuery as ServerName;
+
+    const query = interaction.options.getString('item-query');
+    if (!query) return getSelectFromAutocompleteMsg();
+    const [itemID, itemName] = query.split('=');
+    if (!itemID || !itemName) return getSelectFromAutocompleteMsg();
+
     const threshold = interaction.options.getString('threshold', true);
     const refine = interaction.options.getInteger('refinement');
     const refinement = refine ? Math.abs(refine).toString() : null;
@@ -54,7 +66,7 @@ export const add: Subcommand = {
     if (validPrice >= maxThreshold) return getInvalidMaxPriceMsg();
 
     // Scraping item info
-    const itemInfo = await scrapeItem(itemID, 'test', 'HEL');
+    const itemInfo = await scrapeItem(itemID, itemName, server);
     const newList: List = {
       itemID,
       threshold: validPrice,
@@ -62,23 +74,24 @@ export const add: Subcommand = {
       timestamp: itemInfo.timestamp,
       userID,
       userName,
+      server,
     };
     if (refinement) newList.refinement = refinement;
 
     const user = await getUserInfo(userID, userName, discriminator);
     const list = user.list;
 
-    // If its not an update. Check for list size
+    // If its not an item threshold update. Check for user list size
     if (list && !list[itemID]) {
       const isFull = isListFull(user.listSize);
       if (isFull) return getMaxListSizeMsg(itemID, itemInfo.name, user?.list);
     }
 
-    const newUser = await setUserInfo({...user, list: {...user.list, [itemID]: newList}});
+    const newUser = await setUserInfo({...user, list: {...user.list, [server + itemID]: newList}});
     await setItemInfo(itemInfo, userID);
 
     // Check if recurrence is set.
-    let wl = await getWatchListInfo(itemID);
+    let wl = await getWatchListInfo(itemID, server);
     if (!wl) {
       const recurrence = Number(process.env.DEFAULT_RECURRANCE_MINUTES);
       wl = await createNewWatchList(recurrence, newUser, itemInfo);
@@ -89,7 +102,8 @@ export const add: Subcommand = {
 
     const isNewSub = await addSub(newList);
     const action = isNewSub ? 'ADD' : 'UPDATE';
-    const embed = getDefaultEmbed(action, wl, newUser.list);
+    const nextOn = calculateNextExec(wl.setOn, new Date(), wl.recurrence).getTime() / 1000;
+    const embed = getDefaultEmbed(action, {...wl, nextOn}, newUser);
 
     if (!itemInfo.vends) itemInfo.vends = [];
     await interaction.editReply({embeds: [embed]});

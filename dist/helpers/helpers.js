@@ -24,12 +24,7 @@ const cleanShopText = (text) => {
 };
 exports.cleanShopText = cleanShopText;
 const cleanShopPrice = (text) => {
-    return Number(text
-        .replace(/\( Enchant \)/, '')
-        .replace(/\\n/g, '')
-        .replace(/,/g, '')
-        .slice(0, -2)
-        .trim());
+    return Number(text.replace(/\( Enchant \)/, '').replace(/\\n|,|\s|z/g, ''));
 };
 exports.cleanShopPrice = cleanShopPrice;
 const convertToThousands = (num) => {
@@ -89,9 +84,12 @@ const formatPrice = (num) => {
 };
 exports.formatPrice = formatPrice;
 const calculateVendHash = (vend) => {
-    const { itemID, shopID, shopName, price, refinement } = vend;
+    const { itemID, shopID, shopName, price, refinement, merchant, position } = vend;
+    let vendor = '';
+    if (merchant)
+        vendor = (merchant === null || merchant === void 0 ? void 0 : merchant.replace(/\s/g, '')) + (position === null || position === void 0 ? void 0 : position.replace(/\s/g, ''));
     const name = shopName ? shopName.split(' ').join('') : `${shopID}?${refinement}?${itemID}`;
-    return `${refinement}${itemID}${shopID}${name}${price}`;
+    return `${refinement}${itemID}${shopID}${name}${price}${vendor}`;
 };
 exports.calculateVendHash = calculateVendHash;
 const calculateNextExec = (start, current, recurrence) => {
@@ -114,7 +112,7 @@ const isSameRefinement = (userRefine, vendRefine) => {
 };
 exports.isSameRefinement = isSameRefinement;
 const isItemAnEquip = (itemType, equipLocation) => {
-    if (itemType === 'Card' || equipLocation === '-')
+    if (itemType === 'Card' || itemType === 'Etc' || equipLocation === '-')
         return false;
     return true;
 };

@@ -2,7 +2,7 @@ import db from '../firebase';
 import {AppUser} from '../../ts/interfaces/AppUser';
 import getUnixTime from 'date-fns/getUnixTime';
 
-const usersRef = db.collection('User');
+const usersRef = db.collection('Users');
 
 export const getUserInfo = async (userID: string, userName: string, discriminator: string): Promise<AppUser> => {
   const snap = await usersRef.doc(userID).get();
@@ -16,9 +16,9 @@ export const getUserInfo = async (userID: string, userName: string, discriminato
 };
 
 export const setUserInfo = async (user: AppUser): Promise<AppUser> => {
-  const {userID, userName, list} = user;
+  const {userID, userName, list, discriminator} = user;
   const newList = list ? list : {};
   const listSize = Object.keys(newList).length;
-  await usersRef.doc(userID).set({userID, userName, list: {...newList}, listSize});
+  await usersRef.doc(userID).update({userID, userName, discriminator, list: {...newList}, listSize});
   return {...user, listSize};
 };

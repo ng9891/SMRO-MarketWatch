@@ -39,7 +39,6 @@ dotenv.config({path: './conf/.env'});
   await deployDiscordBot(token);
 
   // Rerunning all jobs.
-
   const watchlists = await getActiveWatchLists();
   if (watchlists.empty) return;
 

@@ -1,9 +1,10 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 import {GuildMember, PermissionResolvable} from 'discord.js';
+import {ServerName} from '../../ts/types/ServerName';
 import {getWatchListInfo, updateWatchLists, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getRecurrenceUpdateMsg} from '../responses/valid.response';
-import {getNoPermissionMsg} from '../responses/invalid.response';
+import {getNoPermissionMsg, getSelectFromAutocompleteMsg} from '../responses/invalid.response';
 import {scrapeItem} from '../../scraper/scraper';
 import Scheduler from '../../scheduler/Scheduler';
 import {checkMarket} from '../../scheduler/checkMarket';
@@ -30,18 +31,27 @@ export const recurrenceUpdate: Subcommand = {
     await interaction.deferReply();
     const userID = interaction.user.id;
     const userName = interaction.user.username;
-    const itemID = interaction.options.getInteger('itemid', true)?.toString();
+    const discriminator = interaction.user.discriminator;
     const recurrence = Math.abs(interaction.options.getInteger('recurrence', true));
+
+    const query = interaction.options.getString('item-query');
+    if (!query) return getSelectFromAutocompleteMsg();
+    const [itemID, itemName] = query.split('=');
+    if (!itemID || !itemName) return getSelectFromAutocompleteMsg();
+
+    const serverQuery = interaction.options.getString('server');
+    if (!serverQuery) return getSelectFromAutocompleteMsg();
+    const server = serverQuery as ServerName;
 
     const member = interaction.member as GuildMember;
     const permission =
       (process.env.PERMISSION_TO_CHANGE_SCRAPE_TIME as PermissionResolvable) || ('BAN_MEMBERS' as PermissionResolvable);
     if (!member.permissions.has(permission)) return getNoPermissionMsg();
 
-    let wl = await getWatchListInfo(itemID);
+    let wl = await getWatchListInfo(itemID, server);
     if (!wl) {
-      const itemInfo = await scrapeItem(itemID, 'test', 'HEL');
-      wl = await createNewWatchList(recurrence, {userID, userName}, itemInfo);
+      const itemInfo = await scrapeItem(itemID, itemName, server);
+      wl = await createNewWatchList(recurrence, {userID, userName, discriminator}, itemInfo);
     } else {
       const newWl = {...wl, setByID: userID, setByName: userName, recurrence, setOn: getUnixTime(new Date())};
       const updatedWl = await updateWatchLists([newWl]);

@@ -6,11 +6,12 @@ import {AppUser} from '../../ts/interfaces/AppUser';
 import {Scrape} from '../../ts/interfaces/Scrape';
 import {List} from '../../ts/interfaces/List';
 import {calculateNextExec} from '../../helpers/helpers';
+import {ServerName} from '../../ts/types/ServerName';
 
 const watchlistRef = db.collection('Watchlist');
 
-export const getWatchListInfo = async (itemID: string): Promise<Watchlist | null> => {
-  const snap = await watchlistRef.doc(itemID).get();
+export const getWatchListInfo = async (itemID: string, server: ServerName): Promise<Watchlist | null> => {
+  const snap = await watchlistRef.doc(server + itemID).get();
   if (!snap.exists) return null;
   return snap.data() as Watchlist;
 };
@@ -21,7 +22,7 @@ export const getActiveWatchLists = async (subs = 1): Promise<QuerySnapshot> => {
 };
 
 export const createNewWatchList = async (recurrence: number, user: AppUser, scrape: Scrape): Promise<Watchlist> => {
-  const {itemID, name: itemName, timestamp} = scrape;
+  const {itemID, name: itemName, timestamp, server} = scrape;
   const {userID, userName} = user;
   const now = fromUnixTime(timestamp);
   const nextOn = getUnixTime(add(now, {minutes: recurrence}));
@@ -37,23 +38,24 @@ export const createNewWatchList = async (recurrence: number, user: AppUser, scra
     setByName: userName,
     createdOn: timestamp,
     subs: 0,
+    server,
   };
 
-  await watchlistRef.doc(itemID).set(wl, {merge: true});
+  await watchlistRef.doc(server + itemID).set(wl, {merge: true});
   return wl;
 };
 
 export const updateWatchLists = async (list: Watchlist[]): Promise<Watchlist[]> => {
   const batch = db.batch();
   const newList = list.map((wl) => {
-    const {itemID, recurrence, setByID, setByName, setOn} = wl;
+    const {itemID, recurrence, setByID, setByName, setOn, server} = wl;
 
     const now = new Date();
     const nextOn = getUnixTime(calculateNextExec(setOn, now, recurrence));
 
     const update = {recurrence, setByID, setByName, nextOn, setOn};
-    batch.update(watchlistRef.doc(itemID), update);
-    // await watchlistRef.doc(wl.itemID).update(update);
+    batch.update(watchlistRef.doc(server + itemID), update);
+
     return Object.assign(wl, update) as Watchlist;
   });
   await batch.commit();
@@ -61,31 +63,39 @@ export const updateWatchLists = async (list: Watchlist[]): Promise<Watchlist[]> 
 };
 
 export const addSub = async (list: List): Promise<boolean> => {
-  const {itemID, userID} = list;
-  const subsRef = watchlistRef.doc(itemID).collection('Subs');
+  const {itemID, userID, server} = list;
+  const subsRef = watchlistRef.doc(server + itemID).collection('Subs');
   const snap = await subsRef.doc(userID).get();
   let newSub = false;
   if (!snap.exists) {
-    await watchlistRef.doc(itemID).set({subs: FieldValue.increment(1)}, {merge: true});
+    await watchlistRef.doc(server + itemID).set({subs: FieldValue.increment(1)}, {merge: true});
     newSub = true;
   }
   await subsRef.doc(userID).set({...list});
   return newSub;
 };
 
-export const unSub = async (itemID: string, userID: string): Promise<void> => {
-  await watchlistRef.doc(itemID).collection('Subs').doc(userID).delete();
-  const snap = await watchlistRef.doc(itemID).get();
+export const unSub = async (itemID: string, userID: string, server: ServerName): Promise<void> => {
+  await watchlistRef
+    .doc(server + itemID)
+    .collection('Subs')
+    .doc(userID)
+    .delete();
+  const snap = await watchlistRef.doc(server + itemID).get();
   if (snap.exists) {
     const data = snap.data();
-    if (data && data.subs > 0) await watchlistRef.doc(itemID).set({subs: FieldValue.increment(-1)}, {merge: true});
+    if (data && data.subs > 0)
+      await watchlistRef.doc(server + itemID).set({subs: FieldValue.increment(-1)}, {merge: true});
   } else {
-    console.error('Unsubscribing a user not subscribed to:' + itemID);
+    console.error('Unsubscribing a user not subscribed to: ' + server + itemID);
   }
 };
 
-export const getSubs = async (itemID: string): Promise<QuerySnapshot | null> => {
-  const snap = await watchlistRef.doc(itemID).collection('Subs').get();
+export const getSubs = async (itemID: string, server: ServerName): Promise<QuerySnapshot | null> => {
+  const snap = await watchlistRef
+    .doc(server + itemID)
+    .collection('Subs')
+    .get();
   if (snap.empty) return null;
   return snap;
 };

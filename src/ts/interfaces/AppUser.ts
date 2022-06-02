@@ -3,7 +3,7 @@ import {List} from './List';
 export interface AppUser {
   userID: string;
   userName: string;
-  discriminator?: string;
+  discriminator: string;
   list?: {
     [key: string]: List;
   };

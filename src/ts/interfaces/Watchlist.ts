@@ -8,6 +8,6 @@ export interface Watchlist {
   setOn: number;
   nextOn: number;
   createdOn: number;
-  server?: ServerName;
+  server: ServerName;
   subs?: number;
 }

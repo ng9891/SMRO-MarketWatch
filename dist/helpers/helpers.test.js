@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const helpers = __importStar(require("./helpers"));
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
-describe.skip('Clean vend text', () => {
+describe('Clean vend text', () => {
     test('Empty card slots', () => {
         const text = helpers.cleanShopText('\nNone\n');
         expect(text).toBe('-');
@@ -75,8 +75,11 @@ describe.skip('Clean vend text', () => {
     test('With refinement and options', () => {
         expect(helpers.cleanShopText("\\n\\n+9 Cursed Knight's Shield\n[ Options ]\\nIncreases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3% ")).toBe("+9 Cursed Knight's Shield [ Options ] Increases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3%");
     });
+    test('Position string', () => {
+        expect(helpers.cleanShopText('prt_fild04 28, 133')).toBe('prt_fild04 28, 133');
+    });
 });
-describe.skip('Clean vend prices', () => {
+describe('Clean vend prices', () => {
     test('Empty price', () => {
         expect(helpers.cleanShopPrice('')).toBe(0);
     });
@@ -88,6 +91,9 @@ describe.skip('Clean vend prices', () => {
     });
     test('With linebreak', () => {
         expect(helpers.cleanShopPrice('\n250\\n,000,000\n z\\n')).toBe(250000000);
+    });
+    test('With spaces', () => {
+        expect(helpers.cleanShopPrice('\n250 000 000\n z\\n')).toBe(250000000);
     });
 });
 describe.skip('Parse string to numbers', () => {

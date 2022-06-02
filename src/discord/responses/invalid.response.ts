@@ -1,3 +1,7 @@
+export const getSelectFromAutocompleteMsg = () => {
+  return 'Invalid Server Option. Please use the autocomplete results';
+};
+
 export const getInvalidPriceFormatMsg = () => {
   return 'Invalid threshold. Please us the correct format. Example: `250m` or `1.5k` or `1500`';
 };

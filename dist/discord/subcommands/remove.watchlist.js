@@ -34,30 +34,44 @@ exports.remove = {
     data: new builders_1.SlashCommandSubcommandBuilder()
         .setName('remove')
         .setDescription('Remove an item from the watchlist.')
-        .addIntegerOption((option) => option.setName('itemid').setDescription('Item ID to remove from the watchlist').setRequired(true)),
+        .addStringOption((option) => option
+        .setName('server')
+        .setDescription('Decide which server to put the watchlist')
+        .setRequired(true)
+        .setAutocomplete(true))
+        .addStringOption((option) => option.setName('item-query').setDescription('Find the item.').setRequired(true).setAutocomplete(true)),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
         yield interaction.deferReply();
         const userID = interaction.user.id;
         const userName = interaction.user.username;
         const discriminator = interaction.user.discriminator;
-        const itemID = interaction.options.getInteger('itemid', true).toString();
+        const query = interaction.options.getString('item-query');
+        if (!query)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const [itemID, itemName] = query.split('=');
+        if (!itemID || !itemName)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const serverQuery = interaction.options.getString('server');
+        if (!serverQuery)
+            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
+        const server = serverQuery;
         const user = yield (0, users_action_1.getUserInfo)(userID, userName, discriminator);
         const id = itemID;
         const list = user.list ? user.list : undefined;
         if (!list)
             return (0, invalid_response_1.getItemNotOnListMsg)(itemID, list);
-        const _a = list, _b = id, delItem = _a[_b], rest = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
+        const _a = list, _b = server + id, delItem = _a[_b], rest = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
         if (!delItem)
             return (0, invalid_response_1.getItemNotOnListMsg)(itemID, list);
-        const newUser = Object.assign(user, { list: rest });
+        const newUser = Object.assign(Object.assign({}, user), { list: rest });
         yield (0, users_action_1.setUserInfo)(newUser);
-        yield (0, watchlist_action_1.unSub)(itemID, userID);
-        const wl = yield (0, watchlist_action_1.getWatchListInfo)(itemID);
+        yield (0, watchlist_action_1.unSub)(itemID, userID, server);
+        const wl = yield (0, watchlist_action_1.getWatchListInfo)(itemID, server);
         if (!wl)
             return 'Error. Deleted an item not in the Watchlist.';
         if (!(wl === null || wl === void 0 ? void 0 : wl.subs) || wl.subs === 0)
-            Scheduler_1.default.cancelJob(itemID);
-        const resp = (0, valid_response_1.getDefaultEmbed)('REMOVE', wl, list);
+            Scheduler_1.default.cancelJob(itemID, server);
+        const resp = (0, valid_response_1.getDefaultEmbed)('REMOVE', wl, user);
         yield interaction.editReply({ embeds: [resp] });
     }),
 };

@@ -35,15 +35,16 @@ const fakeWL = {
     nextOn: (0, getUnixTime_1.default)((0, addMinutes_1.default)(new Date(), 30)),
     createdOn: (0, getUnixTime_1.default)((0, subMinutes_1.default)(new Date(), 5 * 1440)),
     subs: 1,
+    server: 'HEL'
 };
-describe('Testing Scheduler', () => {
+describe.skip('Testing Scheduler', () => {
     beforeEach(() => {
         jest.useFakeTimers();
     });
     afterEach(() => {
         jest.clearAllTimers();
     });
-    test.skip('Called once in 59min with 30min reccurence', () => {
+    test('Called once in 59min with 30min reccurence', () => {
         const callbackMock = jest.fn(mock);
         Scheduler_1.default.createJob(fakeWL, callbackMock);
         expect(callbackMock).not.toBeCalled();

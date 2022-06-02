@@ -1,4 +1,5 @@
 // Entry to watchlist. A subscriber.
+import {ServerName} from '../types/ServerName';
 export interface List {
   itemID: string;
   itemName: string;
@@ -6,6 +7,7 @@ export interface List {
   userName: string;
   threshold: number;
   refinement?: string | null;
+  server: ServerName;
   timestamp: number;
   history?: string[];
 }

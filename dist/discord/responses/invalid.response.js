@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotInWatchlistMsg = exports.getNoPermissionMsg = exports.getItemNotOnListMsg = exports.getMaxListSizeMsg = exports.getInvalidMaxPriceMsg = exports.getInvalidPriceFormatMsg = void 0;
+exports.getNotInWatchlistMsg = exports.getNoPermissionMsg = exports.getItemNotOnListMsg = exports.getMaxListSizeMsg = exports.getInvalidMaxPriceMsg = exports.getInvalidPriceFormatMsg = exports.getSelectFromAutocompleteMsg = void 0;
+const getSelectFromAutocompleteMsg = () => {
+    return 'Invalid Server Option. Please use the autocomplete results';
+};
+exports.getSelectFromAutocompleteMsg = getSelectFromAutocompleteMsg;
 const getInvalidPriceFormatMsg = () => {
     return 'Invalid threshold. Please us the correct format. Example: `250m` or `1.5k` or `1500`';
 };

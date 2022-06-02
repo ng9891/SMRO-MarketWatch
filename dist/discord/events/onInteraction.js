@@ -14,7 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onInteraction = void 0;
 const _CommandList_1 = __importDefault(require("../commands/_CommandList"));
+const itemQuery_autocomplete_1 = require("../autocomplete/itemQuery.autocomplete");
+const serverQuery_autocomplete_1 = require("../autocomplete/serverQuery.autocomplete");
 const onInteraction = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    if (interaction.isAutocomplete()) {
+        const autoIteraction = interaction;
+        if (autoIteraction.commandName === 'watchlist') {
+            const focusedOption = autoIteraction.options.getFocused(true);
+            if (focusedOption.name === 'item-query')
+                return yield (0, itemQuery_autocomplete_1.itemQuery)(autoIteraction);
+            if (focusedOption.name === 'server')
+                return yield (0, serverQuery_autocomplete_1.serverQuery)(autoIteraction);
+        }
+        return;
+    }
     if (!interaction.isCommand())
         return;
     for (const Command of _CommandList_1.default) {

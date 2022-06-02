@@ -27,15 +27,16 @@ exports.setItemInfo = exports.getItemInfo = void 0;
 const firestore_1 = require("firebase-admin/firestore");
 const firebase_1 = __importDefault(require("../firebase"));
 const itemsRef = firebase_1.default.collection('Items');
-const getItemInfo = (itemID) => __awaiter(void 0, void 0, void 0, function* () {
-    const snap = yield itemsRef.doc(itemID).get();
+const getItemInfo = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {
+    const snap = yield itemsRef.doc(server + itemID).get();
     if (!snap.exists)
         return null;
     return snap.data();
 });
 exports.getItemInfo = getItemInfo;
 const setItemInfo = (scrape, userID) => __awaiter(void 0, void 0, void 0, function* () {
-    const { vends, timestamp, watchHistory, itemID } = scrape, rest = __rest(scrape, ["vends", "timestamp", "watchHistory", "itemID"]);
-    yield itemsRef.doc(itemID).set(Object.assign(Object.assign({ itemID }, rest), { watchHistory: firestore_1.FieldValue.arrayUnion(userID) }), { merge: true });
+    const { vends, timestamp, watchHistory, itemID, server } = scrape, rest = __rest(scrape, ["vends", "timestamp", "watchHistory", "itemID", "server"]);
+    yield itemsRef.doc(server + itemID).set(Object.assign(Object.assign({ itemID,
+        server }, rest), { watchHistory: firestore_1.FieldValue.arrayUnion(userID) }), { merge: true });
 });
 exports.setItemInfo = setItemInfo;

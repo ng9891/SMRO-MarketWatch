@@ -8,7 +8,6 @@ export const onInteraction = async (interaction: Interaction) => {
     const autoIteraction = interaction as AutocompleteInteraction;
     if (autoIteraction.commandName === 'watchlist') {
       const focusedOption = autoIteraction.options.getFocused(true);
-      console.log(focusedOption.name);
       if (focusedOption.name === 'item-query') return await itemQuery(autoIteraction);
       if (focusedOption.name === 'server') return await serverQuery(autoIteraction);
     }
