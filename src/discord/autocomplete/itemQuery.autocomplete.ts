@@ -13,7 +13,7 @@ export const itemQuery = async (interaction: AutocompleteInteraction) => {
   const filtered = choices
     .filter((choice) => {
       if (isNum) return choice.id.toString().startsWith(focusedValue);
-      return choice.name.toLowerCase().startsWith(focusedValue.toLowerCase());
+      return choice.name.toLowerCase().includes(focusedValue.toLowerCase());
     })
     .slice(0, 25);
 

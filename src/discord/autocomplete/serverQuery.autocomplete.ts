@@ -7,7 +7,7 @@ export const serverQuery = async (interaction: AutocompleteInteraction) => {
     {name: 'Niffleheim', value: 'NIF' as ServerName},
   ];
 
-  const filtered = choices.filter((choice) => choice.name.toLowerCase().startsWith(focusedValue.toLowerCase()));
+  const filtered = choices.filter((choice) => choice.name.toLowerCase().includes(focusedValue.toLowerCase()));
 
   await interaction.respond(filtered.map((choice) => ({name: choice.name, value: choice.value})));
 };
