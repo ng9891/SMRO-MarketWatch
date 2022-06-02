@@ -4,3 +4,4 @@ serviceAccount.json
 serviceAccount-prod.json
 src/wl.json
 src/save.json
+*.lua

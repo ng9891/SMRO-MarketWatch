@@ -19,7 +19,7 @@ const itemQuery = (interaction) => __awaiter(void 0, void 0, void 0, function* (
     const data = yield fs_1.promises.readFile(path_1.default.resolve(__dirname, '../../assets/iteminfo.json'), 'utf8');
     const choices = JSON.parse(data);
     const focusedValue = interaction.options.getFocused();
-    const isNum = !focusedValue || isNaN(Number(focusedValue)) ? false : true;
+    const isNum = !focusedValue || isNaN(Number(focusedValue)) || focusedValue.startsWith('+') ? false : true;
     const filtered = choices
         .filter((choice) => {
         if (isNum)

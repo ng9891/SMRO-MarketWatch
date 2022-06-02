@@ -9,7 +9,7 @@ export const itemQuery = async (interaction: AutocompleteInteraction) => {
 
   const focusedValue = interaction.options.getFocused() as string;
 
-  const isNum = !focusedValue || isNaN(Number(focusedValue)) ? false : true;
+  const isNum = !focusedValue || isNaN(Number(focusedValue)) || focusedValue.startsWith('+') ? false : true;
   const filtered = choices
     .filter((choice) => {
       if (isNum) return choice.id.toString().startsWith(focusedValue);
