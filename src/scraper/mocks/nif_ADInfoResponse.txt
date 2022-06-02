@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Shining Moon: Viewing Item (Abyss Dress)</title>
+<link rel="stylesheet" href="/themes/default/css/flux.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link rel="stylesheet" href="/themes/default/css/stalurz.css" type="text/css" media="screen" title="" charset="utf-8" />
+<link href="/themes/default/css/flux/unitip.css" rel="stylesheet" type="text/css" media="screen" title="" charset="utf-8" />
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/jquery-1.8.3.min.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/flux.datefields.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/flux.unitip.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/jquery.cycle2.min.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/jquery.jcountdown.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/jquery.easing.1.3.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript" src="/themes/default/js/eadev.js"></script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript">
+			$(document).ready(function(){
+				$('.money-input').keyup(function() {
+					var creditValue = parseInt($(this).val() / 0.00033, 10);
+					if (isNaN(creditValue))
+						$('.credit-input').val('?');
+					else
+						$('.credit-input').val(creditValue);
+				}).keyup();
+				$('.credit-input').keyup(function() {
+					var moneyValue = parseFloat($(this).val() * 0.00033);
+					if (isNaN(moneyValue))
+						$('.money-input').val('?');
+					else
+						$('.money-input').val(moneyValue.toFixed(2));
+				}).keyup();
+				processDateFields();
+			});
+			function reload(){
+				window.location.href = '/?module=item&action=view';
+			}
+		</script>
+<script type="0c7ab283afa4e6ca8db80f3d-text/javascript">
+			function updatePreferredServer(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_server_form.preferred_server.value = preferred;
+				document.preferred_server_form.submit();
+			}
+			function updatePreferredTheme(sel){
+				var preferred = sel.options[sel.selectedIndex].value;
+				document.preferred_theme_form.preferred_theme.value = preferred;
+				document.preferred_theme_form.submit();
+			}
+			var spinner = new Image();
+			spinner.src = '/themes/default/img/spinner.gif';
+			function refreshSecurityCode(imgSelector){
+				$(imgSelector).attr('src', spinner.src);
+				var clean = false;
+				var image = new Image();
+				image.src = "/?module=captcha"+(clean ? '?nocache=' : '&nocache=')+Math.random();
+				$(imgSelector).attr('src', image.src);
+			}
+			function toggleSearchForm()
+			{
+				$('.search-form').slideToggle('fast');
+			}
+		</script>
+</head>
+<body>
+<div id="wrapper">
+<div id="main">
+<div class="header">
+<a href="/?module=main" class="logo"></a>
+<div class="navigation">
+<ul>
+<li><a href="/?module=main">Home</a></li>
+<li><a href="https://discordapp.com/invite/8NuTZZZ" target="_blank">Discord</a></li>
+<li><a href="https://wiki.shining-moon.com/" target="_blank">Wikipedia</a></li>
+<li><a href="https://wiki.shining-moon.com/index.php/Features">Features</a></li>
+<li><a href="/?module=ranking&action=character">Rankings</a></li>
+<li><a href="https://www.shining-moon.com/vote/" target="_blank">Voting</a></li>
+<li><a href="https://www.shining-moon.com/hel/?module=paymethod">Donate</a></li>
+</ul>
+</div>
+</div>
+<div class="container">
+<div class="containerLeft">
+<div class="account-panel">
+<div class="loginInner">
+<form action="/?module=account&action=login&return_url=" method="post" autocomplete="off">
+<input type="hidden" name="server" value="Shining Moon RO">
+<div class="inputUsername">
+<label for="username">Username</label>
+<input type="text" name="username" id="username" class="textClass" placeholder="Username" />
+</div>
+<div class="inputPassword">
+<label for="password">Password</label>
+<input type="password" name="password" id="password" class="textClass password" placeholder="Password" />
+</div>
+<div class="account-buttons">
+<a href="/?module=account&action=resetpass">Forgot Password?</a>
+</div>
+<input type="submit" value=" " class="loginBtn" />
+</form>
+</div>
+</div> <div class="search-box">
+<form action="">
+<input type="hidden" name="module" value="monster">
+<input type="text" name="name">
+<button type="submit">&nbsp;</button>
+</form>
+<div class="search-type">
+<a href="monster" class="active"><img src="/themes/default/img/searchTerm.png" alt=""></a>
+<a href="item"><img src="/themes/default/img/searchTerm.png" alt=""></a>
+</div>
+</div>
+<div class="facebook">
+<iframe src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/Shining-Moon-RO-1827196544269018/%2F&tabs&width=224&height=296px&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true" width="224" height="296" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+</div>
+</div>
+<div class="containerMiddle">
+<div class="content">
+<div id="submenu"><b>Menu:</b>
+<a href="/?module=item" class="sub-menu-item">List Items</a> </div>
+<h2>Viewing Item</h2>
+<div align="center">
+<select name="forma" onchange="if (!window.__cfRLUnblockHandlers) return false; location = this.options[this.selectedIndex].value;" data-cf-modified-0c7ab283afa4e6ca8db80f3d-="">
+<option value="https://www.shining-moon.com/?module=item">Niflheim</option>
+<option value="https://www.shining-moon.com/?module=preitem">Helheim</option>
+</select></div><br>
+<h3>
+<img src="/data/items/icons/15204.png" /> #15204: Abyss Dress</h3>
+<div class="adjust">
+<div align="center">
+<div class="ro-item-container" style="">
+<div class="inner">
+<div class="ro-item-left">
+<table style="width:250px; margin-left: 10px;">
+<td>
+<img src="/data/items/images/15204.png" />
+</td>
+<td></td>
+<td>
+<br>
+<br>
+<font color=#ff0000>[jRO Equipment]</font><br>
+A dress that seems to be able to absorb all the light in the world.<br>
+------------------------<br>
+Adds immunity to the Knockback effect.<br>
+------------------------<br>
+If upgrade level is +5 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 10%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 10%.<br>
+------------------------<br>
+If upgrade level is +7 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 15%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 15%.<br>
+------------------------<br>
+If upgrade level is +9 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 15%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 15%.<br>
+------------------------<br>
+<font color=#663399>Indestructible</font><br>
+------------------------<br>
+Class:<font color=#6666CC> Armor</font><br>
+Defense:<font color=#0000ff> 120</font><br>
+Weight:<font color=#009900> 40</font><br>
+Element: <font color=#777777> Shadow</font><br>
+Level Requirement:<font color=#009900> 90</font><br>
+Jobs:<font color=#6666CC> All classes</font><br>
+<br>
+Item ID:<font color=#ff0000> 15204</font><br>
+<br>
+</td>
+</table>
+</div>
+<br><br><br>
+<div class="ro-item-right">
+</div>
+<div style="clear:both;"></div>
+</div>
+</div>
+</div>
+<br><br><br>
+<table class="vertical-table">
+<tr>
+<th>Item ID</th>
+<td>15204</td>
+<td rowspan="9" style="width: 150px; text-align: center; vertical-alignment: middle">
+<img src="/data/items/images/15204.png" />
+</td>
+<th>For Sale</th>
+<td>
+<span class="for-sale no">
+No
+</span>
+</td>
+</tr>
+<tr>
+<th>Identifier</th>
+<td>Abyss_Dress</td>
+<th>Credit Price</th>
+<td>
+<span class="not-applicable">Not For Sale</span>
+</td>
+</tr>
+<tr>
+<th>Name</th>
+<td>Abyss Dress</td>
+<th>Type</th>
+<td>Armor</td>
+</tr>
+<tr>
+<th>NPC Buy</th>
+<td>10</td>
+<th>Weight</th>
+<td>40</td>
+</tr>
+<tr>
+<th>NPC Sell</th>
+<td>
+5 </td>
+<th>Weapon Level</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>0</td>
+<th>Defense</th>
+<td>120</td>
+</tr>
+<tr>
+<th>Slots</th>
+<td>0</td>
+<th>Refineable</th>
+<td>
+Yes
+</td>
+</tr>
+<tr>
+<th>Attack</th>
+<td>0</td>
+<th>Min Equip Level</th>
+<td>90</td>
+</tr>
+<tr>
+<th>MATK</th>
+<td>0</td>
+<th>Max Equip Level</th>
+<td>
+<span class="not-applicable">None</span>
+</td>
+</tr>
+<tr>
+<th>Equip Locations</th>
+<td colspan="4">
+Armor </td>
+</tr>
+<tr>
+<th>Equip Upper</th>
+<td colspan="4">
+Normal / Upper / Baby / Third / Third Upper / Third Baby </td>
+</tr>
+<tr>
+<th>Equippable Jobs</th>
+<td colspan="4">
+All Jobs </td>
+</tr>
+<tr>
+<th>Equip Gender</th>
+<td colspan="4">
+Both (Male and Female)
+</td>
+</tr>
+<tr>
+<th>Description</th>
+<td colspan="4">
+<font color=#ff0000>[jRO Equipment]</font><br>
+A dress that seems to be able to absorb all the light in the world.<br>
+------------------------<br>
+Adds immunity to the Knockback effect.<br>
+------------------------<br>
+If upgrade level is +5 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 10%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 10%.<br>
+------------------------<br>
+If upgrade level is +7 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 15%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 15%.<br>
+------------------------<br>
+If upgrade level is +9 or higher,<br>
+increases physical and magical damage inflicted on <font color=#777777>Shadow</font> and <font color=#777777>Undead</font> property monsters by 15%.<br>
+Increases physical and magical damage inflicted on <font color=#6666CC>Demon</font> and <font color=#6666CC>Undead</font> race monsters by 15%.<br>
+------------------------<br>
+<font color=#663399>Indestructible</font><br>
+------------------------<br>
+Class:<font color=#6666CC> Armor</font><br>
+Defense:<font color=#0000ff> 120</font><br>
+Weight:<font color=#009900> 40</font><br>
+Element: <font color=#777777> Shadow</font><br>
+Level Requirement:<font color=#009900> 90</font><br>
+Jobs:<font color=#6666CC> All classes</font><br>
+<br>
+Item ID:<font color=#ff0000> 15204</font><br>
+<br>
+</td>
+</tr>
+</table>
+</div>
+</div> 
+<div class="contentBottom"></div>
+</div> 
+<div class="containerRight">
+<div class="serverStatus">
+<div class="onlineStatus">
+<img src="/themes/default/img/offline.png" alt="Offline"> <img src="/themes/default/img/offline.png" alt="Offline"> <img src="/themes/default/img/offline.png" alt="Offline"> </div>
+<div class="playerOnline"><p>0</p></div>
+<div class="serverTime">
+<iframe src="https://freesecure.timeanddate.com/clock/i6p3zrsi/n3922/fs12/fcfff/tct/pct" frameborder="0" width="73" height="23" allowTransparency="true"></iframe> </div>
+<div class="woe-start-time" data-offset="-7.00" data-time="Jun 04, 2022 07:00:00">
+<p>---</p>
+</div>
+<div class="woe-castles">
+<img src="/themes/default/img/emblem.png" alt="" title="Unocupied">
+<img src="/themes/default/img/emblem.png" alt="" title="Unocupied">
+<img src="/themes/default/img/emblem.png" alt="" title="Unocupied">
+<img src="/themes/default/img/emblem.png" alt="" title="Unocupied">
+</div>
+<div class="WorldBoss">
+<div class="WorldBossCounter">Remaining Monster Kills <span>74,709</span></div>
+</div>
+</div>
+<div class="quickLinks">
+<ul>
+<li><a href="https://www.shining-moon.com/ipb/" target="_blank"><img src="/themes/default/img/quickLinksBtn.png" alt=""></a></li>
+<li><a href="http://ratemyserver.net/index.php?page=detailedlistserver&serid=19647&url_sname=Shining%20Moon%20RO" target="_blank"><img src="/themes/default/img/quickLinksBtn.png" alt=""></a></li>
+<li><a href="https://www.shining-moon.com/ticket/" target="_blank"><img src="/themes/default/img/quickLinksBtn.png" alt=""></a></li>
+</ul>
+</div>
+</div>
+</div> 
+</div>
+<div id="footer">
+<div class="footer-inner">
+<div class="developers">
+<a href="//ea-dev.com" target="_blank"><img src="/themes/default/img/eadev.png" alt=""></a>
+<a href="/?module=main"><img src="/themes/default/img/logo-sm.png" alt=""></a>
+<a href="//ea-dev.com" target="_blank"><img src="/themes/default/img/rennc.png" alt=""></a>
+</div>
+<div class="copyrights">
+<div class="footer-nav">
+<ul>
+<li><a href="/?module=main&action=info">Features</a></li>
+<li><a href="https://discordapp.com/invite/8NuTZZZ" target="_blank">Discord</a></li>
+<li><a href="https://wiki.shining-moon.com/" target="_blank">Wiki</a></li>
+<li><a href="/?module=donate">Donate</a></li>
+</ul>
+</div>
+© Copyright 2022. All Registered Trademarks belong to their Respective<br /> Owners. Website Designed and Coded by <a href="//ea-dev.com" target="_blank">EADev</a>.
+</div>
+</div>
+</div>
+</div>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="0c7ab283afa4e6ca8db80f3d-|49" defer=""></script></body>
+</html>

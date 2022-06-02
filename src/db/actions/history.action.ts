@@ -7,6 +7,7 @@ import getUnixTime from 'date-fns/getUnixTime';
 const historyRef = db.collection('History');
 
 export const addToHistory = async (vends: VendInfo[], timestamp: number) => {
+  if(vends.length === 0) return;
   const batch = db.batch();
   for (const vend of vends) {
     const hash = vend?.hash ? vend.hash : calculateVendHash(vend);

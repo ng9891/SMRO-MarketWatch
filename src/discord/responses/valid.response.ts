@@ -90,7 +90,7 @@ export const getListingMsg = (user: AppUser) => {
   const len = Object.keys(user.list).length;
   const sizeStr = `Total of ${len} out of ${process.env.MAX_LIST_SIZE}.`;
 
-  return `[${user.userName}]'s list.\`\`\`${table}${sizeStr}\`\`\``;
+  return `[${user.userName}]'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
 };
 
 export const getRecurrenceMsg = (
@@ -132,6 +132,6 @@ export const getNotificationMsg = (userID: string, vends: VendInfo[], isEquip: b
   }
   const {itemID, itemName} = vends[0];
   const tab = table(data, tableConfig);
-  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}:${itemName}\n${tab}[@ws ${itemID}]\`\`\``;
+  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}:${itemName}\n${tab}@ws ${itemID}\`\`\``;
   return msg;
 };

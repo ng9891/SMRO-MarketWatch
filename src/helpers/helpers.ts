@@ -17,14 +17,7 @@ export const cleanShopText = (text: string): string => {
 };
 
 export const cleanShopPrice = (text: string): number => {
-  return Number(
-    text
-      .replace(/\( Enchant \)/, '')
-      .replace(/\\n/g, '')
-      .replace(/,/g, '')
-      .slice(0, -2)
-      .trim()
-  );
+  return Number(text.replace(/\( Enchant \)/, '').replace(/\\n|,|\s|z/g, ''));
 };
 
 export const convertToThousands = (num: number): number => {
@@ -76,9 +69,11 @@ export const formatPrice = (num: number): string => {
 };
 
 export const calculateVendHash = (vend: VendInfo): string => {
-  const {itemID, shopID, shopName, price, refinement} = vend;
+  const {itemID, shopID, shopName, price, refinement, merchant, position} = vend;
+  let vendor = '';
+  if (merchant) vendor = merchant?.replace(/\s/g, '') + position?.replace(/\s/g, '');
   const name = shopName ? shopName.split(' ').join('') : `${shopID}?${refinement}?${itemID}`;
-  return `${refinement}${itemID}${shopID}${name}${price}`;
+  return `${refinement}${itemID}${shopID}${name}${price}${vendor}`;
 };
 
 export const calculateNextExec = (start: number | Date, current: number | Date, recurrence: number): Date => {
@@ -99,7 +94,7 @@ export const isSameRefinement = (userRefine: string, vendRefine: string): boolea
 };
 
 export const isItemAnEquip = (itemType: string, equipLocation: string): boolean => {
-  if (itemType === 'Card' || equipLocation === '-') return false;
+  if (itemType === 'Card' || itemType === 'Etc' || equipLocation === '-') return false;
   return true;
 };
 

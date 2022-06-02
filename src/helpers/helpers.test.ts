@@ -2,7 +2,7 @@ import * as helpers from './helpers';
 import {promises as fs} from 'fs';
 import path from 'path';
 
-describe.skip('Clean vend text', () => {
+describe('Clean vend text', () => {
   test('Empty card slots', () => {
     const text = helpers.cleanShopText('\nNone\n');
     expect(text).toBe('-');
@@ -61,9 +61,13 @@ describe.skip('Clean vend text', () => {
       "+9 Cursed Knight's Shield [ Options ] Increases physical damage inflicted on Demon monster by 1%Increases physical damage inflicted on Brute monster by 3%"
     );
   });
+
+  test('Position string', ()=>{
+    expect(helpers.cleanShopText('prt_fild04 28, 133')).toBe('prt_fild04 28, 133')
+  })
 });
 
-describe.skip('Clean vend prices', () => {
+describe('Clean vend prices', () => {
   test('Empty price', () => {
     expect(helpers.cleanShopPrice('')).toBe(0);
   });
@@ -78,6 +82,10 @@ describe.skip('Clean vend prices', () => {
 
   test('With linebreak', () => {
     expect(helpers.cleanShopPrice('\n250\\n,000,000\n z\\n')).toBe(250000000);
+  });
+
+  test('With spaces', () => {
+    expect(helpers.cleanShopPrice('\n250 000 000\n z\\n')).toBe(250000000);
   });
 });
 

@@ -36,12 +36,13 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
 
 export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Promise<Watchlist> {
   const channelID = process.env.DISCORD_CHANNEL_ID;
+  const logMsg = process.env.LOG_RUNNING_MESSAGE && process.env.LOG_RUNNING_MESSAGE === 'true' ? true : false;
   try {
     if (!channelID) throw new Error('No channel ID found.');
 
     const {itemID, itemName} = wl;
 
-    if (process.env.LOG_RUNNING_MESSAGE) await sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
+    if (logMsg) await sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
 
     const subs = await getSubs(itemID);
     if (!subs) return wl;
@@ -63,7 +64,7 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
     await notifySubs(subs, newVends, isEquip);
     await addToHistory(newVends, scrape.timestamp);
 
-    if (process.env.LOG_RUNNING_MESSAGE) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
+    if (logMsg) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
 
     // Returning Watchlist for the next job.
     return {...wl, subs: subCount};

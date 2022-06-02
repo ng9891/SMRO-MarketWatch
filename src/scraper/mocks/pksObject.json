@@ -2,8 +2,9 @@
   "itemID": "28946",
   "name": "Purified Knight's Shield",
   "type": "Armor",
+  "server": "HEL",
   "equipLocation": "Off Hand",
-  "timestamp": 1653873696,
+  "timestamp": 1654125900,
   "vends": [
     {
       "hash": "-2894618571857?-?28946148888888",
