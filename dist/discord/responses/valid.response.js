@@ -33,7 +33,7 @@ const getDefaultEmbed = (status, wl, user) => {
         const refineStr = value.refinement ? `+${value.refinement} ` : '';
         listStr += `\n ${value.server} | **${value.itemID}**: ${refineStr}${value.itemName}`;
     }
-    const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + name;
+    const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encodeURIComponent(name);
     const embed = new discord_js_1.MessageEmbed()
         .setTitle(`${itemID}: ${refinement}${name}`)
         .setURL(`${url}`)

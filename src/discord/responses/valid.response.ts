@@ -29,7 +29,7 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser) =>
     listStr += `\n ${value.server} | **${value.itemID}**: ${refineStr}${value.itemName}`;
   }
 
-  const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + name;
+  const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encodeURIComponent(name);
 
   const embed = new MessageEmbed()
     .setTitle(`${itemID}: ${refinement}${name}`)
