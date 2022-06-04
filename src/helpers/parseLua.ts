@@ -24,7 +24,6 @@ export const parseLua = async () => {
   const fields = init.fields;
 
   const arr: Array<item> = [];
-
   for (const field of fields) {
     const item = field as TableKey;
     const itemKey = item.key as NumericLiteral;
@@ -45,4 +44,7 @@ export const parseLua = async () => {
   }
 
   await fs.writeFile(path.resolve(__dirname, '../assets/iteminfo.json'), JSON.stringify(arr));
+  console.log('Parsing lua with parser finished');
 };
+
+parseLua();

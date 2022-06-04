@@ -8,16 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkMarket = exports.notifySubs = void 0;
 const discord_1 = require("../discord/discord");
-const watchlist_action_1 = require("../db/actions/watchlist.action");
 const history_action_1 = require("../db/actions/history.action");
+const watchlist_action_1 = require("../db/actions/watchlist.action");
 const scraper_1 = require("../scraper/scraper");
 const firestore_1 = require("firebase-admin/firestore");
 const valid_response_1 = require("../discord/responses/valid.response");
 const helpers_1 = require("../helpers/helpers");
-const date_fns_1 = require("date-fns");
+const CacheHistory_1 = __importDefault(require("../db/cachers/CacheHistory"));
+const CacheSubs_1 = __importDefault(require("../db/cachers/CacheSubs"));
 const notifySubs = (subs, vends, isEquip = true) => __awaiter(void 0, void 0, void 0, function* () {
     const channelID = process.env.DISCORD_CHANNEL_ID;
     if (!channelID)
@@ -52,27 +56,36 @@ const checkMarket = function (wl) {
             const { itemID, itemName, server } = wl;
             if (logMsg)
                 yield (0, discord_1.sendMsgBot)(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
-            const subs = yield (0, watchlist_action_1.getSubs)(itemID, server);
-            if (!subs)
+            const currWl = yield (0, watchlist_action_1.getWatchListInfo)(itemID, server);
+            if (!currWl)
                 return wl;
-            const subCount = subs.size;
+            let subs = [];
+            if (currWl.lastSubChangeOn) {
+                subs = yield CacheSubs_1.default.getSubsCache(itemID, server, currWl.lastSubChangeOn);
+            }
+            if (subs.length === 0)
+                return currWl;
             const scrape = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
             const vends = scrape === null || scrape === void 0 ? void 0 : scrape.vends;
             if (!vends || vends.length === 0)
-                return Object.assign(Object.assign({}, wl), { subs: subCount });
-            const historyDays = Number(process.env.HISTORY_FROM_DAYS);
-            const daysDiff = isNaN(historyDays) || historyDays === 0 ? 30 : historyDays;
-            const fromDate = (0, date_fns_1.subDays)(new Date(), daysDiff);
-            const history = yield (0, history_action_1.getHistory)(itemID, fromDate, server);
-            const historyHashes = history ? history : [];
+                return currWl;
+            const stats = yield (0, history_action_1.getHistoryStats)(itemID);
+            let historyHashes = [];
+            if (stats && stats[server + 'lastUpdated']) {
+                const lastUpdated = stats[server + 'lastUpdated'];
+                historyHashes = yield CacheHistory_1.default.getHistoryCache(itemID, server, lastUpdated);
+            }
             const newVends = (0, helpers_1.vendsNotInHistory)(vends, historyHashes);
-            const isEquip = (0, helpers_1.isItemAnEquip)(scrape.type, scrape.equipLocation);
-            yield (0, exports.notifySubs)(subs, newVends, isEquip);
-            yield (0, history_action_1.addToHistory)(newVends, scrape.timestamp, server);
+            if (newVends.length > 0) {
+                const isEquip = (0, helpers_1.isItemAnEquip)(scrape.type, scrape.equipLocation);
+                yield (0, exports.notifySubs)(subs, newVends, isEquip);
+                yield (0, history_action_1.addToHistory)(newVends, scrape.timestamp, server);
+                CacheHistory_1.default.updateHistoryCache(itemID, server, newVends, scrape.timestamp);
+            }
             if (logMsg)
                 yield (0, discord_1.sendMsgBot)(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
             // Returning Watchlist for the next job.
-            return Object.assign(Object.assign({}, wl), { subs: subCount });
+            return currWl;
         }
         catch (error) {
             const err = error;

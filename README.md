@@ -44,6 +44,9 @@ If your Discord server has a lot of users with a watchlist, you might need to ma
 
 ## Technical Stuffs
 You are free to tweak some parameters in the `.env` configuration file. However, keep in mind that informations are queried by web scraping the SMRO website and `we are not responsible if you get banned`.
+
+Vendings histories and item subscribers are cached in order to reduce the amount of queries done to the Firestore. Thus, this application might take plenty amount of RAM to store the cache depending on your user base and tweaks.
+
 ### Commands
 - Add / Update list item for Nif and Hel
 - Delete an item from the list

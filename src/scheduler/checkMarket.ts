@@ -1,6 +1,6 @@
 import {sendMsgBot} from '../discord/discord';
-import {getSubs} from '../db/actions/watchlist.action';
-import {addToHistory, getHistory} from '../db/actions/history.action';
+import {addToHistory, getHistoryStats} from '../db/actions/history.action';
+import {getWatchListInfo} from '../db/actions/watchlist.action';
 import {scrapeItem} from '../scraper/scraper';
 import {QuerySnapshot, QueryDocumentSnapshot} from 'firebase-admin/firestore';
 import {Watchlist} from '../ts/interfaces/Watchlist';
@@ -9,7 +9,8 @@ import {List} from '../ts/interfaces/List';
 import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
 import {getNotificationMsg} from '../discord/responses/valid.response';
 import {isSameRefinement, isItemAnEquip, vendsNotInHistory} from '../helpers/helpers';
-import {subDays} from 'date-fns';
+import CacheHistory from '../db/cachers/CacheHistory';
+import CacheSubs from '../db/cachers/CacheSubs';
 
 export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[], isEquip = true) => {
   const channelID = process.env.DISCORD_CHANNEL_ID;
@@ -45,30 +46,41 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
 
     if (logMsg) await sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
 
-    const subs = await getSubs(itemID, server);
-    if (!subs) return wl;
-    const subCount = subs.size as number;
+    const currWl = await getWatchListInfo(itemID, server);
+    if (!currWl) return wl;
+
+    let subs = [] as List[];
+    if (currWl.lastSubChangeOn) {
+      subs = await CacheSubs.getSubsCache(itemID, server, currWl.lastSubChangeOn);
+    }
+
+    if (subs.length === 0) return currWl;
 
     const scrape = await scrapeItem(itemID, itemName, server);
     const vends = scrape?.vends;
-    if (!vends || vends.length === 0) return {...wl, subs: subCount};
+    if (!vends || vends.length === 0) return currWl;
 
-    const historyDays = Number(process.env.HISTORY_FROM_DAYS);
-    const daysDiff = isNaN(historyDays) || historyDays === 0 ? 30 : historyDays;
-    const fromDate = subDays(new Date(), daysDiff);
-    const history = await getHistory(itemID, fromDate, server);
-    const historyHashes = history ? history : [];
+    const stats = await getHistoryStats(itemID);
+    let historyHashes = [] as VendInfo[];
+
+    if (stats && stats[server + 'lastUpdated']) {
+      const lastUpdated = stats[server + 'lastUpdated'];
+      historyHashes = await CacheHistory.getHistoryCache(itemID, server, lastUpdated);
+    }
+
     const newVends = vendsNotInHistory(vends, historyHashes);
 
-    const isEquip = isItemAnEquip(scrape.type, scrape.equipLocation);
-
-    await notifySubs(subs, newVends, isEquip);
-    await addToHistory(newVends, scrape.timestamp, server);
+    if (newVends.length > 0) {
+      const isEquip = isItemAnEquip(scrape.type, scrape.equipLocation);
+      await notifySubs(subs, newVends, isEquip);
+      await addToHistory(newVends, scrape.timestamp, server);
+      CacheHistory.updateHistoryCache(itemID, server, newVends, scrape.timestamp);
+    }
 
     if (logMsg) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
 
     // Returning Watchlist for the next job.
-    return {...wl, subs: subCount};
+    return currWl;
   } catch (error) {
     const err = error as Error;
     console.log(err.message);

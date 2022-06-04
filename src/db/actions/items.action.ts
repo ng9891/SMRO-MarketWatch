@@ -7,8 +7,7 @@ const itemsRef = db.collection('Items');
 
 export const getItemInfo = async (itemID: string, server: ServerName): Promise<Scrape | null> => {
   const snap = await itemsRef.doc(server + itemID).get();
-  if (!snap.exists) return null;
-  return snap.data() as Scrape;
+  return snap.exists ? snap.data() as Scrape : null;
 };
 
 export const setItemInfo = async (scrape: Scrape, userID: string): Promise<void> => {

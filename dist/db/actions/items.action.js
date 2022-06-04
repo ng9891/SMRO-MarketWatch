@@ -29,9 +29,7 @@ const firebase_1 = __importDefault(require("../firebase"));
 const itemsRef = firebase_1.default.collection('Items');
 const getItemInfo = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {
     const snap = yield itemsRef.doc(server + itemID).get();
-    if (!snap.exists)
-        return null;
-    return snap.data();
+    return snap.exists ? snap.data() : null;
 });
 exports.getItemInfo = getItemInfo;
 const setItemInfo = (scrape, userID) => __awaiter(void 0, void 0, void 0, function* () {

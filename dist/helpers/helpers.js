@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.vendsNotInHistory = exports.checkHashInHistory = exports.isItemAnEquip = exports.isSameRefinement = exports.calculateNextExec = exports.calculateVendHash = exports.formatPrice = exports.displayInBillions = exports.displayInMillions = exports.displayInThousands = exports.parsePriceString = exports.checkValidPriceString = exports.convertToBillions = exports.convertToMillions = exports.convertToThousands = exports.cleanShopPrice = exports.cleanShopText = void 0;
+exports.isCacheOld = exports.vendsNotInHistory = exports.checkHashInHistory = exports.isItemAnEquip = exports.isSameRefinement = exports.calculateNextExec = exports.calculateVendHash = exports.formatPrice = exports.displayInBillions = exports.displayInMillions = exports.displayInThousands = exports.parsePriceString = exports.checkValidPriceString = exports.convertToBillions = exports.convertToMillions = exports.convertToThousands = exports.cleanShopPrice = exports.cleanShopText = void 0;
 const addMinutes_1 = __importDefault(require("date-fns/addMinutes"));
 const differenceInMinutes_1 = __importDefault(require("date-fns/differenceInMinutes"));
+const differenceInSeconds_1 = __importDefault(require("date-fns/differenceInSeconds"));
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const firestore_1 = require("firebase-admin/firestore");
 const cleanShopText = (text) => {
@@ -141,3 +142,9 @@ const vendsNotInHistory = (vend1, history) => {
     }, []);
 };
 exports.vendsNotInHistory = vendsNotInHistory;
+const isCacheOld = (lastUpdated, lastUpdatedCache, diffInSec) => {
+    const date1 = lastUpdated instanceof Date ? lastUpdated : (0, fromUnixTime_1.default)(lastUpdated);
+    const date2 = lastUpdatedCache instanceof Date ? lastUpdatedCache : (0, fromUnixTime_1.default)(lastUpdatedCache);
+    return (0, differenceInSeconds_1.default)(date1, date2, { roundingMethod: 'floor' }) > diffInSec;
+};
+exports.isCacheOld = isCacheOld;

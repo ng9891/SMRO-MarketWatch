@@ -1,6 +1,7 @@
 import {VendInfo} from '../ts/interfaces/VendInfo';
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
 import fromUnixTime from 'date-fns/fromUnixTime';
 import {QuerySnapshot} from 'firebase-admin/firestore';
 
@@ -119,4 +120,10 @@ export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | Query
     if (!isIn) prev.push(curr);
     return prev;
   }, []);
+};
+
+export const isCacheOld = (lastUpdated: Date | number, lastUpdatedCache: Date | number, diffInSec: number) => {
+  const date1 = lastUpdated instanceof Date ? lastUpdated : fromUnixTime(lastUpdated);
+  const date2 = lastUpdatedCache instanceof Date ? lastUpdatedCache : fromUnixTime(lastUpdatedCache);
+  return differenceInSeconds(date1, date2, {roundingMethod: 'floor'}) > diffInSec;
 };

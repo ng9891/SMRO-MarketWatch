@@ -20,9 +20,7 @@ const helpers_1 = require("../../helpers/helpers");
 const watchlistRef = firebase_1.default.collection('Watchlist');
 const getWatchListInfo = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {
     const snap = yield watchlistRef.doc(server + itemID).get();
-    if (!snap.exists)
-        return null;
-    return snap.data();
+    return snap.exists ? snap.data() : null;
 });
 exports.getWatchListInfo = getWatchListInfo;
 const getActiveWatchLists = (subs = 1) => __awaiter(void 0, void 0, void 0, function* () {
@@ -75,6 +73,7 @@ const addSub = (list) => __awaiter(void 0, void 0, void 0, function* () {
         yield watchlistRef.doc(server + itemID).set({ subs: firestore_1.FieldValue.increment(1) }, { merge: true });
         newSub = true;
     }
+    yield watchlistRef.doc(server + itemID).set({ lastSubChangeOn: (0, date_fns_1.getUnixTime)(new Date()) }, { merge: true });
     yield subsRef.doc(userID).set(Object.assign({}, list));
     return newSub;
 });
@@ -85,6 +84,7 @@ const unSub = (itemID, userID, server) => __awaiter(void 0, void 0, void 0, func
         .collection('Subs')
         .doc(userID)
         .delete();
+    yield watchlistRef.doc(server + itemID).set({ lastSubChangeOn: (0, date_fns_1.getUnixTime)(new Date()) }, { merge: true });
     const snap = yield watchlistRef.doc(server + itemID).get();
     if (snap.exists) {
         const data = snap.data();
@@ -101,8 +101,6 @@ const getSubs = (itemID, server) => __awaiter(void 0, void 0, void 0, function* 
         .doc(server + itemID)
         .collection('Subs')
         .get();
-    if (snap.empty)
-        return null;
-    return snap;
+    return snap.empty ? null : snap.docs.map((snapUser) => snapUser.data());
 });
 exports.getSubs = getSubs;

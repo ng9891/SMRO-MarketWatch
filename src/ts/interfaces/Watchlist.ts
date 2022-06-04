@@ -1,4 +1,5 @@
 import {ServerName} from '../types/ServerName';
+
 export interface Watchlist {
   itemID: string;
   itemName: string;
@@ -10,4 +11,5 @@ export interface Watchlist {
   createdOn: number;
   server: ServerName;
   subs?: number;
+  lastSubChangeOn?: number;
 }

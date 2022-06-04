@@ -51,7 +51,7 @@ export const remove: Subcommand = {
 
     const wl = await getWatchListInfo(itemID, server);
     if (!wl) return 'Error. Deleted an item not in the Watchlist.';
-    if (!wl?.subs || wl.subs === 0) Scheduler.cancelJob(itemID, server);
+    if (!wl?.subs || wl.subs === 0) Scheduler.cancelJob(itemID, server, true);
 
     const resp = getDefaultEmbed('REMOVE', wl, user);
     await interaction.editReply({embeds: [resp]});

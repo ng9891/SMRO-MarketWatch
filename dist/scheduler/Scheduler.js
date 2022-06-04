@@ -15,25 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const watchlist_action_1 = require("../db/actions/watchlist.action");
+const CacheHistory_1 = __importDefault(require("../db/cachers/CacheHistory"));
+const CacheSubs_1 = __importDefault(require("../db/cachers/CacheSubs"));
 const Scheduler = (() => {
     const schedulerMap = new Map();
     const rescheduleJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('\n*********************************');
-        console.log(`${wl.server} [${wl.itemID}:${wl.itemName}] Rescheduling...`);
         // Updating nextOn
         const updatedWl = yield (0, watchlist_action_1.updateWatchLists)([wl]);
         const newWl = updatedWl[0];
         createJob(newWl, cb);
+        console.log('\n*********************************');
+        console.log(`${wl.server} [${wl.itemID}:${wl.itemName}] Rescheduling to ${newWl.nextOn}`);
     });
     const _onJobSuccess = (wl, cb) => {
         rescheduleJob(wl, cb);
     };
-    const _onJobCanceled = (item) => {
-        const date = new Date();
-        console.log(`[${item}] cancelled on: ${date}`);
-    };
     const createJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
-        const { itemID, itemName, nextOn, setOn, recurrence, server } = wl;
+        const { itemID, itemName, nextOn, server } = wl;
         const nextJobDate = (0, fromUnixTime_1.default)(nextOn);
         const isCancelled = cancelJob(itemID, server);
         if (!isCancelled)
@@ -41,27 +39,27 @@ const Scheduler = (() => {
         const newJob = node_schedule_1.default.scheduleJob(nextJobDate, function () {
             return __awaiter(this, void 0, void 0, function* () {
                 const date = new Date();
-                console.log(`Running... [${itemID}:${itemName}] | now: ${date}`);
+                console.log(`*${server} [${itemID}:${itemName}] Running... ${date}`);
                 return yield cb(wl);
             });
         });
         if (!newJob)
             throw new Error(`***Failed to create Job for: ${server} | [${itemID}:${itemName}]***`);
-        console.log(`${server} | [${itemID}:${itemName}] Created:${(0, fromUnixTime_1.default)(setOn)} | Recur:${recurrence}min | jobOn:${nextJobDate}`);
         newJob.on('success', (wl) => {
             if (!wl)
                 return;
             _onJobSuccess(wl, cb);
         });
-        newJob.on('canceled', () => {
-            _onJobCanceled(`${server}${itemID}:${itemName}`);
-        });
         schedulerMap.set(server + itemID, { wl, job: newJob });
     });
-    const cancelJob = (itemID, server) => {
+    const cancelJob = (itemID, server, deleteCache = false) => {
         const item = schedulerMap.get(server + itemID);
         if (item) {
             schedulerMap.delete(server + itemID);
+            if (deleteCache) {
+                CacheHistory_1.default.deleteCache(itemID, server);
+                CacheSubs_1.default.deleteCache(itemID, server);
+            }
             return item.job.cancel();
         }
         return false;

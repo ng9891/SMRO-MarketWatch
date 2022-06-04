@@ -12,8 +12,7 @@ const watchlistRef = db.collection('Watchlist');
 
 export const getWatchListInfo = async (itemID: string, server: ServerName): Promise<Watchlist | null> => {
   const snap = await watchlistRef.doc(server + itemID).get();
-  if (!snap.exists) return null;
-  return snap.data() as Watchlist;
+  return snap.exists ? (snap.data() as Watchlist) : null;
 };
 
 export const getActiveWatchLists = async (subs = 1): Promise<QuerySnapshot> => {
@@ -71,6 +70,7 @@ export const addSub = async (list: List): Promise<boolean> => {
     await watchlistRef.doc(server + itemID).set({subs: FieldValue.increment(1)}, {merge: true});
     newSub = true;
   }
+  await watchlistRef.doc(server + itemID).set({lastSubChangeOn: getUnixTime(new Date())}, {merge: true});
   await subsRef.doc(userID).set({...list});
   return newSub;
 };
@@ -81,6 +81,7 @@ export const unSub = async (itemID: string, userID: string, server: ServerName):
     .collection('Subs')
     .doc(userID)
     .delete();
+  await watchlistRef.doc(server + itemID).set({lastSubChangeOn: getUnixTime(new Date())}, {merge: true});
   const snap = await watchlistRef.doc(server + itemID).get();
   if (snap.exists) {
     const data = snap.data();
@@ -91,11 +92,10 @@ export const unSub = async (itemID: string, userID: string, server: ServerName):
   }
 };
 
-export const getSubs = async (itemID: string, server: ServerName): Promise<QuerySnapshot | null> => {
+export const getSubs = async (itemID: string, server: ServerName): Promise<List[] | null> => {
   const snap = await watchlistRef
     .doc(server + itemID)
     .collection('Subs')
     .get();
-  if (snap.empty) return null;
-  return snap;
+  return snap.empty ? null : snap.docs.map((snapUser) => snapUser.data() as List);
 };

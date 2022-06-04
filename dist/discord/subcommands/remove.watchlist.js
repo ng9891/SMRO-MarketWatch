@@ -70,7 +70,7 @@ exports.remove = {
         if (!wl)
             return 'Error. Deleted an item not in the Watchlist.';
         if (!(wl === null || wl === void 0 ? void 0 : wl.subs) || wl.subs === 0)
-            Scheduler_1.default.cancelJob(itemID, server);
+            Scheduler_1.default.cancelJob(itemID, server, true);
         const resp = (0, valid_response_1.getDefaultEmbed)('REMOVE', wl, user);
         yield interaction.editReply({ embeds: [resp] });
     }),

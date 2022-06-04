@@ -40,5 +40,7 @@ const parseLua = () => __awaiter(void 0, void 0, void 0, function* () {
         arr.push({ id: key, name: itemName });
     }
     yield fs_1.promises.writeFile(path_1.default.resolve(__dirname, '../assets/iteminfo.json'), JSON.stringify(arr));
+    console.log('Parsing lua with parser finished');
 });
 exports.parseLua = parseLua;
+(0, exports.parseLua)();
