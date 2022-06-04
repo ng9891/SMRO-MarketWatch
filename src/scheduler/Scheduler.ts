@@ -16,8 +16,7 @@ const Scheduler = (() => {
     const updatedWl = await updateWatchLists([wl]);
     const newWl = updatedWl[0];
     createJob(newWl, cb);
-    console.log('\n*********************************');
-    console.log(`${wl.server} [${wl.itemID}:${wl.itemName}] Rescheduling to ${newWl.nextOn}`);
+    console.log(`\n${wl.server} [${wl.itemID}:${wl.itemName}] Reschedule to ${fromUnixTime(newWl.nextOn)}`);
   };
 
   const _onJobSuccess = (wl: Watchlist, cb: SchedulerCallBack) => {
@@ -27,16 +26,15 @@ const Scheduler = (() => {
   const createJob = async (wl: Watchlist, cb: SchedulerCallBack) => {
     const {itemID, itemName, nextOn, server} = wl;
     const nextJobDate = fromUnixTime(nextOn);
-    const isCancelled = cancelJob(itemID, server);
-    if (!isCancelled) console.log(`\n${server} | [${itemID}:${itemName}] Job is not running.`);
+    cancelJob(itemID, server);
 
     const newJob = schedule.scheduleJob(nextJobDate, async function () {
       const date = new Date();
-      console.log(`*${server} [${itemID}:${itemName}] Running... ${date}`);
+      console.log(`\n${server} [${itemID}:${itemName}] Running... ${date}`);
       return await cb(wl);
     });
 
-    if (!newJob) throw new Error(`***Failed to create Job for: ${server} | [${itemID}:${itemName}]***`);
+    if (!newJob) throw new Error(`***Failed to create Job for: ${server} [${itemID}:${itemName}]***`);
 
     newJob.on('success', (wl: Watchlist) => {
       if (!wl) return;

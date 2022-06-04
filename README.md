@@ -47,6 +47,8 @@ You are free to tweak some parameters in the `.env` configuration file. However,
 
 Vendings histories and item subscribers are cached in order to reduce the amount of queries done to the Firestore. Thus, this application might take plenty amount of RAM to store the cache depending on your user base and tweaks.
 
+Restarting the Bot can get expensive if you do it often as it erases the cache. I recommend to do it moderately only when it is needed.
+
 ### Commands
 - Add / Update list item for Nif and Hel
 - Delete an item from the list
@@ -78,7 +80,7 @@ To keep track of vending records, a hash is made for each unique listing using:
 - Shop Owner (if available)
 - Shop Location (if available)
 
-Note: In theory, this does not guarantee uniqueness. Thus, there is a low chance users will not get notified of new vendings as SMRO could recycle shop ID's. To put a bandaid on this problem, I put a limit on how many days the Bot could query the history collection, which could be tweaked on the `.env` file.
+Note: In theory, this does not guarantee uniqueness. Thus, there is a low chance users will not get notified of new vendings as SMRO could recycle shop ID's. To put a bandaid on this problem, I put a limit on how many days the Bot could query the history collection, which can be tweaked using the `.env` file.
 
 ### Example of Vending Info object
 ![scrape](https://storage.googleapis.com/picboi-39298.appspot.com/final/vv5gBs1B_1000x800)

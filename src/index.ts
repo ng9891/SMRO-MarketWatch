@@ -25,6 +25,8 @@ dotenv.config({path: './conf/.env'});
   if (!token) return console.error('No DISCORD_TOKEN found');
   if (!clientId) return console.error('No DISCORD_CLIENT_ID found');
   if (!guildId) return console.error('No DISCORD_GUILD_ID found');
+  if (!channelID) return console.error('No DISCORD_CHANNEL_ID found.');
+  if (!permission) return console.error('No DISCORD_PERMISSION found.');
   if (!maxThreshold) return console.error('No MAX_THRESHOLD found');
   if (!urlHel) return console.error('No URL_HEL found');
   if (!urlNif) return console.error('No URL_NIF found');
@@ -33,8 +35,6 @@ dotenv.config({path: './conf/.env'});
   if (!thumbURL) return console.error('No THUMBNAIL_URL found');
   if (!maxListSize) return console.error('No MAX_LIST_SIZE found');
   if (!recurr) return console.error('No DEFAULT_RECURRANCE_MINUTES found');
-  if (!channelID) return console.error('No channel ID found.');
-  if (!permission) return console.error('No channel ID found.');
 
   await deployDiscordBot(token);
 

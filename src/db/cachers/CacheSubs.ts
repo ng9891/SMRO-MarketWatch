@@ -24,10 +24,7 @@ const CacheSubs = (() => {
       return newCache;
     }
 
-    if (!isCacheOld(lastSubChangeOn, cache.lastSubChangeOn, 5)) {
-      console.log(`[${server} | ${itemID}] Subs are retrieved from cache`);
-      return cache.data;
-    }
+    if (!isCacheOld(lastSubChangeOn, cache.lastSubChangeOn, 5)) return cache.data;
 
     const newSubList = await getSubs(itemID, server);
     if (!newSubList) return cache.data;
