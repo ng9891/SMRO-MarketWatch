@@ -46,10 +46,8 @@ const CacheHistory = (() => {
             setHistoryCache(itemID, server, newCache, lastUpdated);
             return newCache;
         }
-        if (!(0, helpers_1.isCacheOld)(lastUpdated, cache.lastUpdated, 59)) {
-            console.log(`[${server} | ${itemID}] History is retrieved from cache`);
+        if (!(0, helpers_1.isCacheOld)(lastUpdated, cache.lastUpdated, 59))
             return cache.data;
-        }
         const newInHistory = yield (0, history_action_1.getHistory)(itemID, lastUpdated, server);
         if (!newInHistory)
             return cache.data;

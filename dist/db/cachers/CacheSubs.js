@@ -30,10 +30,8 @@ const CacheSubs = (() => {
             setSubsCache(itemID, server, newCache, lastSubChangeOn);
             return newCache;
         }
-        if (!(0, helpers_1.isCacheOld)(lastSubChangeOn, cache.lastSubChangeOn, 5)) {
-            console.log(`[${server} | ${itemID}] Subs are retrieved from cache`);
+        if (!(0, helpers_1.isCacheOld)(lastSubChangeOn, cache.lastSubChangeOn, 5))
             return cache.data;
-        }
         const newSubList = yield (0, watchlist_action_1.getSubs)(itemID, server);
         if (!newSubList)
             return cache.data;

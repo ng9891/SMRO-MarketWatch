@@ -38,6 +38,10 @@ dotenv_1.default.config({ path: './conf/.env' });
         return console.error('No DISCORD_CLIENT_ID found');
     if (!guildId)
         return console.error('No DISCORD_GUILD_ID found');
+    if (!channelID)
+        return console.error('No DISCORD_CHANNEL_ID found.');
+    if (!permission)
+        return console.error('No DISCORD_PERMISSION found.');
     if (!maxThreshold)
         return console.error('No MAX_THRESHOLD found');
     if (!urlHel)
@@ -54,10 +58,6 @@ dotenv_1.default.config({ path: './conf/.env' });
         return console.error('No MAX_LIST_SIZE found');
     if (!recurr)
         return console.error('No DEFAULT_RECURRANCE_MINUTES found');
-    if (!channelID)
-        return console.error('No channel ID found.');
-    if (!permission)
-        return console.error('No channel ID found.');
     yield (0, discord_1.deployDiscordBot)(token);
     // Rerunning all jobs.
     const watchlists = yield (0, watchlist_action_1.getActiveWatchLists)();

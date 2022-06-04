@@ -24,8 +24,7 @@ const Scheduler = (() => {
         const updatedWl = yield (0, watchlist_action_1.updateWatchLists)([wl]);
         const newWl = updatedWl[0];
         createJob(newWl, cb);
-        console.log('\n*********************************');
-        console.log(`${wl.server} [${wl.itemID}:${wl.itemName}] Rescheduling to ${newWl.nextOn}`);
+        console.log(`\n${wl.server} [${wl.itemID}:${wl.itemName}] Reschedule to ${(0, fromUnixTime_1.default)(newWl.nextOn)}`);
     });
     const _onJobSuccess = (wl, cb) => {
         rescheduleJob(wl, cb);
@@ -33,18 +32,16 @@ const Scheduler = (() => {
     const createJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {
         const { itemID, itemName, nextOn, server } = wl;
         const nextJobDate = (0, fromUnixTime_1.default)(nextOn);
-        const isCancelled = cancelJob(itemID, server);
-        if (!isCancelled)
-            console.log(`\n${server} | [${itemID}:${itemName}] Job is not running.`);
+        cancelJob(itemID, server);
         const newJob = node_schedule_1.default.scheduleJob(nextJobDate, function () {
             return __awaiter(this, void 0, void 0, function* () {
                 const date = new Date();
-                console.log(`*${server} [${itemID}:${itemName}] Running... ${date}`);
+                console.log(`\n${server} [${itemID}:${itemName}] Running... ${date}`);
                 return yield cb(wl);
             });
         });
         if (!newJob)
-            throw new Error(`***Failed to create Job for: ${server} | [${itemID}:${itemName}]***`);
+            throw new Error(`***Failed to create Job for: ${server} [${itemID}:${itemName}]***`);
         newJob.on('success', (wl) => {
             if (!wl)
                 return;
