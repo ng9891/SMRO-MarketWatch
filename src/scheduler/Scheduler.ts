@@ -5,8 +5,8 @@ import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
 import fromUnixTime from 'date-fns/fromUnixTime';
 import {updateWatchLists} from '../db/actions/watchlist.action';
 import {ServerName} from '../ts/types/ServerName';
-import CacheHistory from '../db/cachers/CacheHistory';
-import CacheSubs from '../db/cachers/CacheSubs';
+import CacheHistory from '../db/caching/CacheHistory';
+import CacheSubs from '../db/caching/CacheSubs';
 
 const Scheduler = (() => {
   const schedulerMap = new Map<string, JobInfo>();

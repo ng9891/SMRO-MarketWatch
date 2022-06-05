@@ -119,15 +119,12 @@ const isItemAnEquip = (itemType, equipLocation) => {
 };
 exports.isItemAnEquip = isItemAnEquip;
 const checkHashInHistory = (hash, hashesArr) => {
-    if (hashesArr instanceof firestore_1.QuerySnapshot)
-        return hashesArr.docs.some((scrape) => {
-            const data = scrape.data();
-            return data.hash && data.hash === hash;
-        });
-    return hashesArr.some((scrape) => {
-        if (typeof scrape === 'string')
-            return scrape === hash;
-        return scrape.hash && scrape.hash === hash;
+    const hashes = hashesArr instanceof firestore_1.QuerySnapshot ? hashesArr.docs : hashesArr;
+    return hashes.some((history) => {
+        const historyHash = history instanceof firestore_1.QueryDocumentSnapshot ? history.data() : history;
+        if (typeof historyHash === 'string')
+            return historyHash === hash;
+        return historyHash.hash && historyHash.hash === hash;
     });
 };
 exports.checkHashInHistory = checkHashInHistory;

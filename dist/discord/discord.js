@@ -31,6 +31,15 @@ const sendMsgBot = (msg, channelID) => __awaiter(void 0, void 0, void 0, functio
     if (channel.type !== 'GUILD_TEXT')
         throw new Error('Provided ChannelID is not a text channel,');
     const textChannel = channel;
-    yield textChannel.send(msg);
+    try {
+        if (!msg)
+            throw new Error('sendMsgBot was send empty message.');
+        yield textChannel.send(msg);
+    }
+    catch (error) {
+        const err = error;
+        console.log(err);
+        yield textChannel.send(err.message);
+    }
 });
 exports.sendMsgBot = sendMsgBot;

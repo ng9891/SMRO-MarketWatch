@@ -34,7 +34,7 @@ const getItemInfo = (itemID, server) => __awaiter(void 0, void 0, void 0, functi
 exports.getItemInfo = getItemInfo;
 const setItemInfo = (scrape, userID) => __awaiter(void 0, void 0, void 0, function* () {
     const { vends, timestamp, watchHistory, itemID, server } = scrape, rest = __rest(scrape, ["vends", "timestamp", "watchHistory", "itemID", "server"]);
-    yield itemsRef.doc(server + itemID).set(Object.assign(Object.assign({ itemID,
-        server }, rest), { watchHistory: firestore_1.FieldValue.arrayUnion(userID) }), { merge: true });
+    yield itemsRef.doc(server + itemID).set(Object.assign(Object.assign({}, rest), { itemID,
+        server, watchHistory: firestore_1.FieldValue.arrayUnion(userID) }), { merge: true });
 });
 exports.setItemInfo = setItemInfo;

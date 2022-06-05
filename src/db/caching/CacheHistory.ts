@@ -42,7 +42,6 @@ const CacheHistory = (() => {
     }
 
     if (!isCacheOld(lastUpdated, cache.lastUpdated, 59)) return cache.data;
-    
 
     const newInHistory = await getHistory(itemID, lastUpdated, server);
     if (!newInHistory) return cache.data;

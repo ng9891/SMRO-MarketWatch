@@ -90,7 +90,7 @@ const getListingMsg = (user) => {
         return 'List is empty.';
     const len = Object.keys(user.list).length;
     const sizeStr = `Total of ${len} out of ${process.env.MAX_LIST_SIZE}.`;
-    return `[\`${user.userName}]\`'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
+    return `\`[${user.userName}#${user.discriminator}]\`'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
 };
 exports.getListingMsg = getListingMsg;
 const getRecurrenceMsg = (jobs) => {
@@ -106,8 +106,8 @@ const getRecurrenceMsg = (jobs) => {
 };
 exports.getRecurrenceMsg = getRecurrenceMsg;
 const getRecurrenceUpdateMsg = (wl) => {
-    const { itemID, itemName, recurrence, subs, server } = wl;
-    return `\`\`\`Updated [${itemID}:${itemName}] in [${server}] with [${subs || 0} sub(s)] to check every ${recurrence} min.\`\`\``;
+    const { itemID, itemName, recurrence, subs, server, setByName } = wl;
+    return `\`\`\`${setByName} updated [${itemID}:${itemName}] in [${server}] with [${subs || 0} sub(s)] to check every ${recurrence} min.\`\`\``;
 };
 exports.getRecurrenceUpdateMsg = getRecurrenceUpdateMsg;
 const getHelpMsg = () => {
@@ -115,22 +115,24 @@ const getHelpMsg = () => {
 };
 exports.getHelpMsg = getHelpMsg;
 const getNotificationMsg = (userID, vends, server, isEquip) => {
-    const data = [];
+    if (vends.length === 0)
+        return 'Error. Empty vends in notification msg';
     // Header
-    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
+    const data = [];
+    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Name', 'Price', 'Amount']);
     for (const vend of vends) {
         if (isEquip) {
             const { shopID, price, refinement, card0, card1, card2, card3 } = vend;
             data.push([shopID, (0, helpers_1.formatPrice)(price), refinement, card0, card1, card2, card3]);
         }
         else {
-            const { shopID, price, amount } = vend;
-            data.push([shopID, (0, helpers_1.formatPrice)(price), amount]);
+            const { shopID, shopName, price, amount } = vend;
+            data.push([shopID, shopName, (0, helpers_1.formatPrice)(price), amount + '']);
         }
     }
     const { itemID, itemName } = vends[0];
     const tab = (0, table_1.table)(data, tableConfig);
-    const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${server} | ${itemID}:${itemName}\n${tab}@ws ${itemID}\`\`\``;
+    const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}: ${itemName} in ${server}\n${tab}@ws ${itemID}\`\`\``;
     return msg;
 };
 exports.getNotificationMsg = getNotificationMsg;

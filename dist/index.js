@@ -68,4 +68,5 @@ dotenv_1.default.config({ path: './conf/.env' });
     updatedBatch.forEach((wl) => {
         Scheduler_1.default.createJob(wl, checkMarket_1.checkMarket);
     });
+    console.log('All active watchlists are running again!');
 }))();

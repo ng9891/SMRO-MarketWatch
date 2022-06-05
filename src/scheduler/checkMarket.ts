@@ -9,8 +9,8 @@ import {List} from '../ts/interfaces/List';
 import {SchedulerCallBack} from '../ts/types/SchedulerCallback';
 import {getNotificationMsg} from '../discord/responses/valid.response';
 import {isSameRefinement, isItemAnEquip, vendsNotInHistory} from '../helpers/helpers';
-import CacheHistory from '../db/cachers/CacheHistory';
-import CacheSubs from '../db/cachers/CacheSubs';
+import CacheHistory from '../db/caching/CacheHistory';
+import CacheSubs from '../db/caching/CacheSubs';
 
 export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[], isEquip = true) => {
   const channelID = process.env.DISCORD_CHANNEL_ID;
@@ -28,9 +28,8 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
       notifArr.push(vend);
     }
 
-    const server = sub.server;
     if (notifArr.length > 0) {
-      const msg = getNotificationMsg(sub.userID, notifArr, server, isEquip);
+      const msg = getNotificationMsg(sub.userID, notifArr, sub.server, isEquip);
       await sendMsgBot(msg, channelID);
     }
   });
@@ -38,21 +37,16 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
 
 export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Promise<Watchlist> {
   const channelID = process.env.DISCORD_CHANNEL_ID;
-  const logMsg = process.env.LOG_RUNNING_MESSAGE && process.env.LOG_RUNNING_MESSAGE === 'true' ? true : false;
   try {
     if (!channelID) throw new Error('No channel ID found.');
 
     const {itemID, itemName, server} = wl;
 
-    if (logMsg) await sendMsgBot(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
-
     const currWl = await getWatchListInfo(itemID, server);
     if (!currWl) return wl;
 
     let subs = [] as List[];
-    if (currWl.lastSubChangeOn) {
-      subs = await CacheSubs.getSubsCache(itemID, server, currWl.lastSubChangeOn);
-    }
+    if (currWl.lastSubChangeOn) subs = await CacheSubs.getSubsCache(itemID, server, currWl.lastSubChangeOn);
 
     if (subs.length === 0) return currWl;
 
@@ -63,8 +57,9 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
     const stats = await getHistoryStats(itemID);
     let historyHashes = [] as VendInfo[];
 
-    if (stats && stats[server + 'lastUpdated']) {
-      const lastUpdated = stats[server + 'lastUpdated'];
+    const lastUpdatedKey = server + 'lastUpdated';
+    if (stats && stats[lastUpdatedKey]) {
+      const lastUpdated = stats[lastUpdatedKey];
       historyHashes = await CacheHistory.getHistoryCache(itemID, server, lastUpdated);
     }
 
@@ -77,13 +72,11 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
       CacheHistory.updateHistoryCache(itemID, server, newVends, scrape.timestamp);
     }
 
-    if (logMsg) await sendMsgBot(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
-
     // Returning Watchlist for the next job.
     return currWl;
   } catch (error) {
     const err = error as Error;
-    console.log(err.message);
+    console.error(err);
     if (channelID) await sendMsgBot(err.message, channelID);
     return wl;
   }

@@ -3,7 +3,7 @@ import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import fromUnixTime from 'date-fns/fromUnixTime';
-import {QuerySnapshot} from 'firebase-admin/firestore';
+import {QueryDocumentSnapshot, QuerySnapshot} from 'firebase-admin/firestore';
 
 export const cleanShopText = (text: string): string => {
   return text
@@ -100,19 +100,15 @@ export const isItemAnEquip = (itemType: string, equipLocation: string): boolean 
 };
 
 export const checkHashInHistory = (hash: string, hashesArr: VendInfo[] | QuerySnapshot | string[]): boolean => {
-  if (hashesArr instanceof QuerySnapshot)
-    return hashesArr.docs.some((scrape) => {
-      const data = scrape.data() as VendInfo;
-      return data.hash && data.hash === hash;
-    });
-
-  return hashesArr.some((scrape) => {
-    if (typeof scrape === 'string') return scrape === hash;
-    return scrape.hash && scrape.hash === hash;
+  const hashes = hashesArr instanceof QuerySnapshot ? hashesArr.docs : hashesArr;
+  return hashes.some((history) => {
+    const historyHash = history instanceof QueryDocumentSnapshot ? history.data() : history;
+    if (typeof historyHash === 'string') return historyHash === hash;
+    return historyHash.hash && historyHash.hash === hash;
   });
 };
 
-export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | QuerySnapshot | string[]) => {
+export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | QuerySnapshot | string[]): VendInfo[] => {
   return vend1.reduce<VendInfo[]>((prev, curr) => {
     const {hash} = curr;
     const checkedHash = hash ? hash : calculateVendHash(curr);
@@ -122,7 +118,7 @@ export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | Query
   }, []);
 };
 
-export const isCacheOld = (lastUpdated: Date | number, lastUpdatedCache: Date | number, diffInSec: number) => {
+export const isCacheOld = (lastUpdated: Date | number, lastUpdatedCache: Date | number, diffInSec: number): boolean => {
   const date1 = lastUpdated instanceof Date ? lastUpdated : fromUnixTime(lastUpdated);
   const date2 = lastUpdatedCache instanceof Date ? lastUpdatedCache : fromUnixTime(lastUpdatedCache);
   return differenceInSeconds(date1, date2, {roundingMethod: 'floor'}) > diffInSec;

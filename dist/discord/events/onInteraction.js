@@ -30,26 +30,23 @@ const onInteraction = (interaction) => __awaiter(void 0, void 0, void 0, functio
     }
     if (!interaction.isCommand())
         return;
-    for (const Command of _CommandList_1.default) {
-        if (interaction.commandName === Command.data.name) {
-            try {
+    try {
+        for (const Command of _CommandList_1.default) {
+            if (interaction.commandName === Command.data.name) {
                 const resp = yield Command.run(interaction);
                 if (resp) {
-                    if (interaction.deferred)
-                        yield interaction.editReply(resp);
-                    else
-                        yield interaction.reply(resp);
+                    interaction.deferred ? yield interaction.editReply(resp) : yield interaction.reply(resp);
                 }
             }
-            catch (error) {
-                const err = error;
-                console.log(err);
-                if (interaction.deferred)
-                    yield interaction.editReply(err.message);
-                else
-                    yield interaction.reply(err.message);
-            }
         }
+    }
+    catch (error) {
+        const err = error;
+        console.log(err);
+        if (interaction.deferred)
+            yield interaction.editReply(err.message);
+        else
+            yield interaction.reply(err.message);
     }
 });
 exports.onInteraction = onInteraction;

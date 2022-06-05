@@ -48,4 +48,7 @@ dotenv.config({path: './conf/.env'});
   updatedBatch.forEach((wl) => {
     Scheduler.createJob(wl, checkMarket);
   });
+
+  console.log('All active watchlists are running again!');
+
 })();

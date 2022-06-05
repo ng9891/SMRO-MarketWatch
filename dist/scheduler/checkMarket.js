@@ -20,8 +20,8 @@ const scraper_1 = require("../scraper/scraper");
 const firestore_1 = require("firebase-admin/firestore");
 const valid_response_1 = require("../discord/responses/valid.response");
 const helpers_1 = require("../helpers/helpers");
-const CacheHistory_1 = __importDefault(require("../db/cachers/CacheHistory"));
-const CacheSubs_1 = __importDefault(require("../db/cachers/CacheSubs"));
+const CacheHistory_1 = __importDefault(require("../db/caching/CacheHistory"));
+const CacheSubs_1 = __importDefault(require("../db/caching/CacheSubs"));
 const notifySubs = (subs, vends, isEquip = true) => __awaiter(void 0, void 0, void 0, function* () {
     const channelID = process.env.DISCORD_CHANNEL_ID;
     if (!channelID)
@@ -38,9 +38,8 @@ const notifySubs = (subs, vends, isEquip = true) => __awaiter(void 0, void 0, vo
                 continue;
             notifArr.push(vend);
         }
-        const server = sub.server;
         if (notifArr.length > 0) {
-            const msg = (0, valid_response_1.getNotificationMsg)(sub.userID, notifArr, server, isEquip);
+            const msg = (0, valid_response_1.getNotificationMsg)(sub.userID, notifArr, sub.server, isEquip);
             yield (0, discord_1.sendMsgBot)(msg, channelID);
         }
     }));
@@ -49,20 +48,16 @@ exports.notifySubs = notifySubs;
 const checkMarket = function (wl) {
     return __awaiter(this, void 0, void 0, function* () {
         const channelID = process.env.DISCORD_CHANNEL_ID;
-        const logMsg = process.env.LOG_RUNNING_MESSAGE && process.env.LOG_RUNNING_MESSAGE === 'true' ? true : false;
         try {
             if (!channelID)
                 throw new Error('No channel ID found.');
             const { itemID, itemName, server } = wl;
-            if (logMsg)
-                yield (0, discord_1.sendMsgBot)(`\`\`\`Running [${itemID}:${itemName}]\`\`\``, channelID);
             const currWl = yield (0, watchlist_action_1.getWatchListInfo)(itemID, server);
             if (!currWl)
                 return wl;
             let subs = [];
-            if (currWl.lastSubChangeOn) {
+            if (currWl.lastSubChangeOn)
                 subs = yield CacheSubs_1.default.getSubsCache(itemID, server, currWl.lastSubChangeOn);
-            }
             if (subs.length === 0)
                 return currWl;
             const scrape = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
@@ -71,8 +66,9 @@ const checkMarket = function (wl) {
                 return currWl;
             const stats = yield (0, history_action_1.getHistoryStats)(itemID);
             let historyHashes = [];
-            if (stats && stats[server + 'lastUpdated']) {
-                const lastUpdated = stats[server + 'lastUpdated'];
+            const lastUpdatedKey = server + 'lastUpdated';
+            if (stats && stats[lastUpdatedKey]) {
+                const lastUpdated = stats[lastUpdatedKey];
                 historyHashes = yield CacheHistory_1.default.getHistoryCache(itemID, server, lastUpdated);
             }
             const newVends = (0, helpers_1.vendsNotInHistory)(vends, historyHashes);
@@ -82,14 +78,12 @@ const checkMarket = function (wl) {
                 yield (0, history_action_1.addToHistory)(newVends, scrape.timestamp, server);
                 CacheHistory_1.default.updateHistoryCache(itemID, server, newVends, scrape.timestamp);
             }
-            if (logMsg)
-                yield (0, discord_1.sendMsgBot)(`\`\`\`Finished [${itemID}:${itemName}]\`\`\``, channelID);
             // Returning Watchlist for the next job.
             return currWl;
         }
         catch (error) {
             const err = error;
-            console.log(err.message);
+            console.error(err);
             if (channelID)
                 yield (0, discord_1.sendMsgBot)(err.message, channelID);
             return wl;

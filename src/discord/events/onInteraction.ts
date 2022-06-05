@@ -15,20 +15,19 @@ export const onInteraction = async (interaction: Interaction) => {
   }
 
   if (!interaction.isCommand()) return;
-  for (const Command of CommandList) {
-    if (interaction.commandName === Command.data.name) {
-      try {
+  try {
+    for (const Command of CommandList) {
+      if (interaction.commandName === Command.data.name) {
         const resp = await Command.run(interaction);
         if (resp) {
-          if (interaction.deferred) await interaction.editReply(resp);
-          else await interaction.reply(resp);
+          interaction.deferred ? await interaction.editReply(resp) : await interaction.reply(resp);
         }
-      } catch (error) {
-        const err = error as Error;
-        console.log(err);
-        if (interaction.deferred) await interaction.editReply(err.message);
-        else await interaction.reply(err.message);
       }
     }
+  } catch (error) {
+    const err = error as Error;
+    console.log(err);
+    if (interaction.deferred) await interaction.editReply(err.message);
+    else await interaction.reply(err.message);
   }
 };

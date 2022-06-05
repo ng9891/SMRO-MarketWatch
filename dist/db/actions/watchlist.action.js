@@ -85,15 +85,7 @@ const unSub = (itemID, userID, server) => __awaiter(void 0, void 0, void 0, func
         .doc(userID)
         .delete();
     yield watchlistRef.doc(server + itemID).set({ lastSubChangeOn: (0, date_fns_1.getUnixTime)(new Date()) }, { merge: true });
-    const snap = yield watchlistRef.doc(server + itemID).get();
-    if (snap.exists) {
-        const data = snap.data();
-        if (data && data.subs > 0)
-            yield watchlistRef.doc(server + itemID).set({ subs: firestore_1.FieldValue.increment(-1) }, { merge: true });
-    }
-    else {
-        console.error('Unsubscribing a user not subscribed to: ' + server + itemID);
-    }
+    yield watchlistRef.doc(server + itemID).set({ subs: firestore_1.FieldValue.increment(-1) }, { merge: true });
 });
 exports.unSub = unSub;
 const getSubs = (itemID, server) => __awaiter(void 0, void 0, void 0, function* () {

@@ -19,8 +19,6 @@ const isListFull = (listSize: number | undefined) => {
   return true;
 };
 
-const isItemInArr = (itemID: string, arr: List[]) => arr.some((list) => list.itemID === itemID);
-
 export const add: Subcommand = {
   data: new SlashCommandSubcommandBuilder()
     .setName('add')
@@ -67,15 +65,15 @@ export const add: Subcommand = {
 
     // Scraping item info
     const itemInfo = await scrapeItem(itemID, itemName, server);
-    const newList: List = {
+    const newList = {
       itemID,
-      threshold: validPrice,
-      itemName: itemInfo.name,
-      timestamp: itemInfo.timestamp,
       userID,
       userName,
       server,
-    };
+      itemName: itemInfo.name,
+      timestamp: itemInfo.timestamp,
+      threshold: validPrice,
+    } as List;
     if (refinement) newList.refinement = refinement;
 
     const user = await getUserInfo(userID, userName, discriminator);
@@ -105,8 +103,8 @@ export const add: Subcommand = {
     const nextOn = calculateNextExec(wl.setOn, new Date(), wl.recurrence).getTime() / 1000;
     const embed = getDefaultEmbed(action, {...wl, nextOn}, newUser);
 
-    if (!itemInfo.vends) itemInfo.vends = [];
     await interaction.editReply({embeds: [embed]});
-    await notifySubs([newList], itemInfo.vends, isItemAnEquip(itemInfo.type, itemInfo.equipLocation));
+    if (itemInfo.vends && itemInfo.vends.length > 0)
+      await notifySubs([newList], itemInfo.vends, isItemAnEquip(itemInfo.type, itemInfo.equipLocation));
   },
 };

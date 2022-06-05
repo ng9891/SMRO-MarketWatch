@@ -31,7 +31,6 @@ const isListFull = (listSize) => {
         return false;
     return true;
 };
-const isItemInArr = (itemID, arr) => arr.some((list) => list.itemID === itemID);
 exports.add = {
     data: new builders_1.SlashCommandSubcommandBuilder()
         .setName('add')
@@ -72,12 +71,12 @@ exports.add = {
         const itemInfo = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
         const newList = {
             itemID,
-            threshold: validPrice,
-            itemName: itemInfo.name,
-            timestamp: itemInfo.timestamp,
             userID,
             userName,
             server,
+            itemName: itemInfo.name,
+            timestamp: itemInfo.timestamp,
+            threshold: validPrice,
         };
         if (refinement)
             newList.refinement = refinement;
@@ -104,9 +103,8 @@ exports.add = {
         const action = isNewSub ? 'ADD' : 'UPDATE';
         const nextOn = (0, helpers_1.calculateNextExec)(wl.setOn, new Date(), wl.recurrence).getTime() / 1000;
         const embed = (0, valid_response_1.getDefaultEmbed)(action, Object.assign(Object.assign({}, wl), { nextOn }), newUser);
-        if (!itemInfo.vends)
-            itemInfo.vends = [];
         yield interaction.editReply({ embeds: [embed] });
-        yield (0, checkMarket_1.notifySubs)([newList], itemInfo.vends, (0, helpers_1.isItemAnEquip)(itemInfo.type, itemInfo.equipLocation));
+        if (itemInfo.vends && itemInfo.vends.length > 0)
+            yield (0, checkMarket_1.notifySubs)([newList], itemInfo.vends, (0, helpers_1.isItemAnEquip)(itemInfo.type, itemInfo.equipLocation));
     }),
 };

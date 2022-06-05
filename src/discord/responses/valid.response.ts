@@ -9,7 +9,7 @@ import {ListKey} from '../../ts/types/ListKey';
 import {VendInfo} from '../../ts/interfaces/VendInfo';
 import {ServerName} from '../../ts/types/ServerName';
 
-export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser) => {
+export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser): MessageEmbed => {
   const {itemID, itemName: name, nextOn, server} = wl;
   const id = (server + itemID) as ListKey;
   const list = user?.list || {};
@@ -78,7 +78,7 @@ const tableConfig = {
   singleLine: true,
 };
 
-export const getListAsTable = (list: {[key: string]: List} | undefined, header: string[]) => {
+export const getListAsTable = (list: {[key: string]: List} | undefined, header: string[]): string => {
   if (!list) return 'List is empty.';
   const data = [header];
   for (const [key, value] of Object.entries(list)) {
@@ -90,19 +90,19 @@ export const getListAsTable = (list: {[key: string]: List} | undefined, header: 
   return table(data, tableConfig);
 };
 
-export const getListingMsg = (user: AppUser) => {
+export const getListingMsg = (user: AppUser): string => {
   const header = ['SV', 'ID', 'Name', '<$', 'Added'];
   const table = getListAsTable(user.list, header);
   if (!user.list) return 'List is empty.';
   const len = Object.keys(user.list).length;
   const sizeStr = `Total of ${len} out of ${process.env.MAX_LIST_SIZE}.`;
 
-  return `[\`${user.userName}]\`'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
+  return `\`[${user.userName}#${user.discriminator}]\`'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
 };
 
 export const getRecurrenceMsg = (
   jobs: {itemID: string; itemName: string; subs: string; recurrence: number; nextOn: string; server: string}[]
-) => {
+): string => {
   let resp = '```';
   const data = [['SV', 'ID', 'Name', 'Recur', 'Next in', 'Sub']];
   jobs.forEach((job) => {
@@ -115,32 +115,33 @@ export const getRecurrenceMsg = (
 };
 
 export const getRecurrenceUpdateMsg = (wl: Watchlist) => {
-  const {itemID, itemName, recurrence, subs, server} = wl;
-  return `\`\`\`Updated [${itemID}:${itemName}] in [${server}] with [${
+  const {itemID, itemName, recurrence, subs, server, setByName} = wl;
+  return `\`\`\`${setByName} updated [${itemID}:${itemName}] in [${server}] with [${
     subs || 0
   } sub(s)] to check every ${recurrence} min.\`\`\``;
 };
 
-export const getHelpMsg = () => {
+export const getHelpMsg = (): string => {
   return "```The purpose of this Bot is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!```";
 };
 
-export const getNotificationMsg = (userID: string, vends: VendInfo[], server: ServerName, isEquip: boolean) => {
-  const data = [];
+export const getNotificationMsg = (userID: string, vends: VendInfo[], server: ServerName, isEquip: boolean): string => {
+  if (vends.length === 0) return 'Error. Empty vends in notification msg';
   // Header
-  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
+  const data: Array<string[]> = [];
+  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Name', 'Price', 'Amount']);
 
   for (const vend of vends) {
     if (isEquip) {
       const {shopID, price, refinement, card0, card1, card2, card3} = vend;
       data.push([shopID, formatPrice(price), refinement, card0, card1, card2, card3]);
     } else {
-      const {shopID, price, amount} = vend;
-      data.push([shopID, formatPrice(price), amount]);
+      const {shopID, shopName, price, amount} = vend;
+      data.push([shopID, shopName, formatPrice(price), amount + '']);
     }
   }
   const {itemID, itemName} = vends[0];
   const tab = table(data, tableConfig);
-  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${server} | ${itemID}:${itemName}\n${tab}@ws ${itemID}\`\`\``;
+  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}: ${itemName} in ${server}\n${tab}@ws ${itemID}\`\`\``;
   return msg;
 };

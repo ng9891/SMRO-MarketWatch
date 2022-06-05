@@ -14,5 +14,5 @@ export const onReady = async (BOT: Client) => {
     {body: commandData}
   );
   
-  console.log("Bot is ready!");
+  console.log("SMRO-MarketWatch Bot is ready!");
 };

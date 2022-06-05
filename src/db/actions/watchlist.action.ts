@@ -82,14 +82,7 @@ export const unSub = async (itemID: string, userID: string, server: ServerName):
     .doc(userID)
     .delete();
   await watchlistRef.doc(server + itemID).set({lastSubChangeOn: getUnixTime(new Date())}, {merge: true});
-  const snap = await watchlistRef.doc(server + itemID).get();
-  if (snap.exists) {
-    const data = snap.data();
-    if (data && data.subs > 0)
-      await watchlistRef.doc(server + itemID).set({subs: FieldValue.increment(-1)}, {merge: true});
-  } else {
-    console.error('Unsubscribing a user not subscribed to: ' + server + itemID);
-  }
+  await watchlistRef.doc(server + itemID).set({subs: FieldValue.increment(-1)}, {merge: true});
 };
 
 export const getSubs = async (itemID: string, server: ServerName): Promise<List[] | null> => {

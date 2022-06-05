@@ -1,7 +1,7 @@
 import {ServerName} from '../types/ServerName';
 
 export interface VendInfo {
-  shopID: string | undefined;
+  shopID: string;
   shopName: string;
   price: number;
   amount: number;

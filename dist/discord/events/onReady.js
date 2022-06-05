@@ -22,6 +22,6 @@ const onReady = (BOT) => __awaiter(void 0, void 0, void 0, function* () {
     const rest = new rest_1.REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
     const commandData = _CommandList_1.default.map((command) => command.data.toJSON());
     yield rest.put(v9_1.Routes.applicationGuildCommands(((_a = BOT.user) === null || _a === void 0 ? void 0 : _a.id) || 'missing id', process.env.DISCORD_GUILD_ID), { body: commandData });
-    console.log("Bot is ready!");
+    console.log("SMRO-MarketWatch Bot is ready!");
 });
 exports.onReady = onReady;

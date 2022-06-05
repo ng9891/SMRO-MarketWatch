@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const watchlist_action_1 = require("../db/actions/watchlist.action");
-const CacheHistory_1 = __importDefault(require("../db/cachers/CacheHistory"));
-const CacheSubs_1 = __importDefault(require("../db/cachers/CacheSubs"));
+const CacheHistory_1 = __importDefault(require("../db/caching/CacheHistory"));
+const CacheSubs_1 = __importDefault(require("../db/caching/CacheSubs"));
 const Scheduler = (() => {
     const schedulerMap = new Map();
     const rescheduleJob = (wl, cb) => __awaiter(void 0, void 0, void 0, function* () {

@@ -14,9 +14,9 @@ export const setItemInfo = async (scrape: Scrape, userID: string): Promise<void>
   const {vends, timestamp, watchHistory, itemID, server, ...rest} = scrape;
   await itemsRef.doc(server + itemID).set(
     {
+      ...rest,
       itemID,
       server,
-      ...rest,
       watchHistory: FieldValue.arrayUnion(userID),
     },
     {merge: true}
