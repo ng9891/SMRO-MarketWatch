@@ -1,5 +1,6 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
+import {ButtonInteraction} from 'discord.js';
 import Scheduler from '../../scheduler/Scheduler';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import fromUnixTime from 'date-fns/fromUnixTime';
@@ -9,6 +10,7 @@ import {JobInfo} from '../../ts/types/JobInfo';
 export const recurrenceList: Subcommand = {
   data: new SlashCommandSubcommandBuilder().setName('list').setDescription('List of running jobs.'),
   run: async (interaction) => {
+    if (interaction instanceof ButtonInteraction) return;
     await interaction.deferReply();
     const itemsMap = Scheduler.schedulerMap;
 

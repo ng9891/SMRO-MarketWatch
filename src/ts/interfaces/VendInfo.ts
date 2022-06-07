@@ -15,9 +15,9 @@ export interface VendInfo {
   option1: string;
   option2: string;
   option3: string;
-  hash?: string;
+  hash: string;
+  server: ServerName;
   timestamp?: number;
   merchant?: string;
   position?: string;
-  server?: ServerName;
 }

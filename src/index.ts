@@ -7,6 +7,11 @@ import {Watchlist} from './ts/interfaces/Watchlist';
 
 dotenv.config({path: './conf/.env'});
 
+process.on('uncaughtException', function (err, origin) {
+  console.error(typeof err, err, err.stack);
+  console.error(origin);
+});
+
 (async () => {
   const token = process.env.DISCORD_TOKEN;
   const clientId = process.env.DISCORD_CLIENT_ID;
@@ -50,5 +55,4 @@ dotenv.config({path: './conf/.env'});
   });
 
   console.log('All active watchlists are running again!');
-
 })();

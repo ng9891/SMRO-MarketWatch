@@ -11,8 +11,7 @@ export const addToHistory = async (vends: VendInfo[], timestamp: number, server:
   if (vends.length === 0) return;
   const batch = db.batch();
   for (const vend of vends) {
-    const hash = vend?.hash ? vend.hash : calculateVendHash(vend);
-    batch.set(historyRef.doc(vend.itemID).collection(server).doc(), {...vend, hash, timestamp, server});
+    batch.set(historyRef.doc(vend.itemID).collection(server).doc(), {...vend, timestamp, server});
     batch.set(historyRef.doc(vend.itemID), {[server + 'count']: FieldValue.increment(1)}, {merge: true});
   }
   const {itemID} = vends[0];

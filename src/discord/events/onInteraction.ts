@@ -1,16 +1,31 @@
-import {Interaction, AutocompleteInteraction} from 'discord.js';
+import {Interaction} from 'discord.js';
 import CommandList from '../commands/_CommandList';
 import {itemQuery} from '../autocomplete/itemQuery.autocomplete';
+import {btnIDArr, changeThreshold} from '../button/threshold.button';
 import {serverQuery} from '../autocomplete/serverQuery.autocomplete';
+import {listingSelectMenu, listingRun} from '../select/listing.select';
 
 export const onInteraction = async (interaction: Interaction) => {
   if (interaction.isAutocomplete()) {
-    const autoIteraction = interaction as AutocompleteInteraction;
-    if (autoIteraction.commandName === 'watchlist') {
-      const focusedOption = autoIteraction.options.getFocused(true);
-      if (focusedOption.name === 'item-query') return await itemQuery(autoIteraction);
-      if (focusedOption.name === 'server') return await serverQuery(autoIteraction);
+    if (interaction.commandName === 'watchlist') {
+      const focusedOption = interaction.options.getFocused(true);
+      if (focusedOption.name === 'item-query') return await itemQuery(interaction);
+      if (focusedOption.name === 'server') return await serverQuery(interaction);
     }
+  }
+
+  if (interaction.isButton()) {
+    for (const id of btnIDArr) {
+      if (interaction.customId === id) {
+        await changeThreshold(interaction);
+        break;
+      }
+    }
+    return;
+  }
+
+  if (interaction.isSelectMenu()) {
+    if (interaction.customId === listingSelectMenu.customId) await listingRun(interaction);
     return;
   }
 
@@ -22,12 +37,15 @@ export const onInteraction = async (interaction: Interaction) => {
         if (resp) {
           interaction.deferred ? await interaction.editReply(resp) : await interaction.reply(resp);
         }
+        break;
       }
     }
   } catch (error) {
-    const err = error as Error;
-    console.log(err);
-    if (interaction.deferred) await interaction.editReply(err.message);
-    else await interaction.reply(err.message);
+    console.error(error);
+    console.trace('trace' + error);
+    if (error instanceof Error) {
+      if (interaction.deferred) await interaction.editReply(error.message);
+      else await interaction.reply(error.message);
+    }
   }
 };

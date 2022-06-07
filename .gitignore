@@ -5,3 +5,4 @@ serviceAccount-prod.json
 src/wl.json
 src/save.json
 *.lua
+test.command.*

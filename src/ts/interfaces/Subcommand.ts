@@ -1,6 +1,8 @@
-import {CommandInteraction, WebhookEditMessageOptions} from 'discord.js';
+import {CommandInteraction, WebhookEditMessageOptions, ButtonInteraction, SelectMenuInteraction} from 'discord.js';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
 export interface Subcommand {
   data: SlashCommandSubcommandBuilder;
-  run: (interaction: CommandInteraction) => Promise<void | string | WebhookEditMessageOptions>;
+  run: (
+    interaction: CommandInteraction | ButtonInteraction | SelectMenuInteraction
+  ) => Promise<void | string | WebhookEditMessageOptions>;
 }

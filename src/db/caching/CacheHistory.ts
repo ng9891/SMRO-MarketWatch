@@ -23,8 +23,10 @@ const CacheHistory = (() => {
     const cache = historyCache.get(server + itemID);
     if (!cache) return false;
     const date = fromUnixTime(lastUpdated);
-    const fromDate = getUnixTime(subDays(new Date(), DAYS_KEEP_HISTORY));
-    const filteredCache = cache.data.filter((data) => (data.timestamp ? data.timestamp > fromDate : false));
+    const fromDate = subDays(date, DAYS_KEEP_HISTORY);
+    const filteredCache = cache.data.filter((data) =>
+      data.timestamp ? fromUnixTime(data.timestamp) > fromDate : false
+    );
     cache.data = [...vends, ...filteredCache];
     cache.lastUpdated = date;
     return true;
@@ -41,12 +43,16 @@ const CacheHistory = (() => {
       return newCache;
     }
 
-    if (!isCacheOld(lastUpdated, cache.lastUpdated, 59)) return cache.data;
+    if (!isCacheOld(lastUpdated, cache.lastUpdated, 59)) {
+      console.log('History is gotten from cache');
+      return cache.data;
+    }
 
     const newInHistory = await getHistory(itemID, lastUpdated, server);
     if (!newInHistory) return cache.data;
 
     updateHistoryCache(itemID, server, newInHistory, lastUpdated);
+    console.log('History is gotten from DB cause cache is old');
     return cache.data;
   };
 

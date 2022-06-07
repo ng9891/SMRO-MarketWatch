@@ -1,6 +1,6 @@
 import {Subcommand} from '../../ts/interfaces/Subcommand';
 import {SlashCommandSubcommandBuilder} from '@discordjs/builders';
-import {GuildMember, PermissionResolvable} from 'discord.js';
+import {GuildMember, PermissionResolvable, ButtonInteraction, SelectMenuInteraction} from 'discord.js';
 import {ServerName} from '../../ts/types/ServerName';
 import {getWatchListInfo, updateWatchLists, createNewWatchList} from '../../db/actions/watchlist.action';
 import {getRecurrenceUpdateMsg} from '../responses/valid.response';
@@ -28,6 +28,8 @@ export const recurrenceUpdate: Subcommand = {
       option.setName('recurrence').setDescription('New recurrence interval in minutes.').setRequired(true)
     ),
   run: async (interaction) => {
+    if (interaction instanceof ButtonInteraction) return;
+    if (interaction instanceof SelectMenuInteraction) return;
     await interaction.deferReply();
     const userID = interaction.user.id;
     const userName = interaction.user.username;

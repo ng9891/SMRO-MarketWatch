@@ -39,7 +39,7 @@ const notifySubs = (subs, vends, isEquip = true) => __awaiter(void 0, void 0, vo
             notifArr.push(vend);
         }
         if (notifArr.length > 0) {
-            const msg = (0, valid_response_1.getNotificationMsg)(sub.userID, notifArr, sub.server, isEquip);
+            const msg = (0, valid_response_1.getNotificationMsg)(sub.userID, sub.threshold, notifArr, isEquip, sub.refinement);
             yield (0, discord_1.sendMsgBot)(msg, channelID);
         }
     }));
@@ -82,10 +82,12 @@ const checkMarket = function (wl) {
             return currWl;
         }
         catch (error) {
-            const err = error;
-            console.error(err);
-            if (channelID)
-                yield (0, discord_1.sendMsgBot)(err.message, channelID);
+            console.error(error);
+            console.trace('Trace ' + error);
+            if (error instanceof Error) {
+                if (channelID)
+                    yield (0, discord_1.sendMsgBot)(error.message, channelID);
+            }
             return wl;
         }
     });

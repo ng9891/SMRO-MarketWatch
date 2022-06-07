@@ -18,6 +18,10 @@ const watchlist_action_1 = require("./db/actions/watchlist.action");
 const Scheduler_1 = __importDefault(require("./scheduler/Scheduler"));
 const checkMarket_1 = require("./scheduler/checkMarket");
 dotenv_1.default.config({ path: './conf/.env' });
+process.on('uncaughtException', function (err, origin) {
+    console.error(typeof err, err, err.stack);
+    console.error(origin);
+});
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const token = process.env.DISCORD_TOKEN;
     const clientId = process.env.DISCORD_CLIENT_ID;

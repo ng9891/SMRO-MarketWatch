@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.list = void 0;
 const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const users_action_1 = require("../../db/actions/users.action");
 const valid_response_1 = require("../responses/valid.response");
 exports.list = {
@@ -19,6 +20,10 @@ exports.list = {
         .setDescription('Display the watchlist of a user.')
         .addUserOption((option) => option.setName('user').setDescription('Optional. Specify the user.')),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+        if (interaction instanceof discord_js_1.ButtonInteraction)
+            return;
+        if (interaction instanceof discord_js_1.SelectMenuInteraction)
+            return;
         yield interaction.deferReply();
         const mention = interaction.options.getUser('user');
         const userID = mention && !mention.bot ? mention.id : interaction.user.id;

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.recurrenceList = void 0;
 const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const Scheduler_1 = __importDefault(require("../../scheduler/Scheduler"));
 const formatDistanceToNow_1 = __importDefault(require("date-fns/formatDistanceToNow"));
 const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
@@ -21,6 +22,8 @@ const valid_response_1 = require("../responses/valid.response");
 exports.recurrenceList = {
     data: new builders_1.SlashCommandSubcommandBuilder().setName('list').setDescription('List of running jobs.'),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+        if (interaction instanceof discord_js_1.ButtonInteraction)
+            return;
         yield interaction.deferReply();
         const itemsMap = Scheduler_1.default.schedulerMap;
         const data = Array.from(itemsMap).map(([key, val]) => {

@@ -31,8 +31,8 @@ const CacheHistory = (() => {
         if (!cache)
             return false;
         const date = (0, fromUnixTime_1.default)(lastUpdated);
-        const fromDate = (0, date_fns_1.getUnixTime)((0, subDays_1.default)(new Date(), DAYS_KEEP_HISTORY));
-        const filteredCache = cache.data.filter((data) => (data.timestamp ? data.timestamp > fromDate : false));
+        const fromDate = (0, subDays_1.default)(date, DAYS_KEEP_HISTORY);
+        const filteredCache = cache.data.filter((data) => data.timestamp ? (0, fromUnixTime_1.default)(data.timestamp) > fromDate : false);
         cache.data = [...vends, ...filteredCache];
         cache.lastUpdated = date;
         return true;
@@ -46,12 +46,15 @@ const CacheHistory = (() => {
             setHistoryCache(itemID, server, newCache, lastUpdated);
             return newCache;
         }
-        if (!(0, helpers_1.isCacheOld)(lastUpdated, cache.lastUpdated, 59))
+        if (!(0, helpers_1.isCacheOld)(lastUpdated, cache.lastUpdated, 59)) {
+            console.log('History is gotten from cache');
             return cache.data;
+        }
         const newInHistory = yield (0, history_action_1.getHistory)(itemID, lastUpdated, server);
         if (!newInHistory)
             return cache.data;
         updateHistoryCache(itemID, server, newInHistory, lastUpdated);
+        console.log('History is gotten from DB cause cache is old');
         return cache.data;
     });
     const deleteCache = (itemID, server) => {

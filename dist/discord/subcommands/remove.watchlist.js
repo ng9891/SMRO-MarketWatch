@@ -25,11 +25,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = void 0;
 const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const users_action_1 = require("../../db/actions/users.action");
 const watchlist_action_1 = require("../../db/actions/watchlist.action");
 const valid_response_1 = require("../responses/valid.response");
 const invalid_response_1 = require("../responses/invalid.response");
 const Scheduler_1 = __importDefault(require("../../scheduler/Scheduler"));
+const helpers_1 = require("../../helpers/helpers");
+const parseCommandIteraction = (interaction) => {
+    const query = interaction.options.getString('item-query');
+    if (!query)
+        return {};
+    const [itemID, itemName] = query.split('=');
+    const serverQuery = interaction.options.getString('server');
+    if (!serverQuery)
+        return {};
+    return { itemID, itemName, server: serverQuery };
+};
 exports.remove = {
     data: new builders_1.SlashCommandSubcommandBuilder()
         .setName('remove')
@@ -41,20 +53,16 @@ exports.remove = {
         .setAutocomplete(true))
         .addStringOption((option) => option.setName('item-query').setDescription('Find the item.').setRequired(true).setAutocomplete(true)),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-        yield interaction.deferReply();
+        if (interaction instanceof discord_js_1.ButtonInteraction)
+            return;
+        if (interaction instanceof discord_js_1.CommandInteraction)
+            yield interaction.deferReply();
         const userID = interaction.user.id;
         const userName = interaction.user.username;
         const discriminator = interaction.user.discriminator;
-        const query = interaction.options.getString('item-query');
-        if (!query)
+        const { itemID, itemName, server } = interaction instanceof discord_js_1.CommandInteraction ? parseCommandIteraction(interaction) : (0, helpers_1.parseListingEmbed)(interaction);
+        if (!itemID || !itemName || !server)
             return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
-        const [itemID, itemName] = query.split('=');
-        if (!itemID || !itemName)
-            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
-        const serverQuery = interaction.options.getString('server');
-        if (!serverQuery)
-            return (0, invalid_response_1.getSelectFromAutocompleteMsg)();
-        const server = serverQuery;
         const user = yield (0, users_action_1.getUserInfo)(userID, userName, discriminator);
         const id = itemID;
         const list = user.list ? user.list : undefined;
@@ -71,7 +79,9 @@ exports.remove = {
             return 'Error. Deleted an item not in the Watchlist.';
         if (!(wl === null || wl === void 0 ? void 0 : wl.subs) || wl.subs === 0)
             Scheduler_1.default.cancelJob(itemID, server, true);
-        const resp = (0, valid_response_1.getDefaultEmbed)('REMOVE', wl, user);
-        yield interaction.editReply({ embeds: [resp] });
+        const embed = (0, valid_response_1.getDefaultEmbed)('REMOVE', wl, user);
+        interaction instanceof discord_js_1.CommandInteraction
+            ? yield interaction.editReply({ embeds: [embed] })
+            : yield interaction.followUp({ embeds: [embed] });
     }),
 };

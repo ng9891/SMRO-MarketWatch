@@ -29,7 +29,7 @@ export const notifySubs = async (subs: QuerySnapshot | List[], vends: VendInfo[]
     }
 
     if (notifArr.length > 0) {
-      const msg = getNotificationMsg(sub.userID, notifArr, sub.server, isEquip);
+      const msg = getNotificationMsg(sub.userID, sub.threshold, notifArr, isEquip, sub.refinement);
       await sendMsgBot(msg, channelID);
     }
   });
@@ -75,9 +75,12 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
     // Returning Watchlist for the next job.
     return currWl;
   } catch (error) {
-    const err = error as Error;
-    console.error(err);
-    if (channelID) await sendMsgBot(err.message, channelID);
+    console.error(error);
+    console.trace('Trace ' + error);
+    if (error instanceof Error) {
+      if (channelID) await sendMsgBot(error.message, channelID);
+    }
+
     return wl;
   }
 };

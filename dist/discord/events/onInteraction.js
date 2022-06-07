@@ -15,17 +15,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.onInteraction = void 0;
 const _CommandList_1 = __importDefault(require("../commands/_CommandList"));
 const itemQuery_autocomplete_1 = require("../autocomplete/itemQuery.autocomplete");
+const threshold_button_1 = require("../button/threshold.button");
 const serverQuery_autocomplete_1 = require("../autocomplete/serverQuery.autocomplete");
+const listing_select_1 = require("../select/listing.select");
 const onInteraction = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     if (interaction.isAutocomplete()) {
-        const autoIteraction = interaction;
-        if (autoIteraction.commandName === 'watchlist') {
-            const focusedOption = autoIteraction.options.getFocused(true);
+        if (interaction.commandName === 'watchlist') {
+            const focusedOption = interaction.options.getFocused(true);
             if (focusedOption.name === 'item-query')
-                return yield (0, itemQuery_autocomplete_1.itemQuery)(autoIteraction);
+                return yield (0, itemQuery_autocomplete_1.itemQuery)(interaction);
             if (focusedOption.name === 'server')
-                return yield (0, serverQuery_autocomplete_1.serverQuery)(autoIteraction);
+                return yield (0, serverQuery_autocomplete_1.serverQuery)(interaction);
         }
+    }
+    if (interaction.isButton()) {
+        for (const id of threshold_button_1.btnIDArr) {
+            if (interaction.customId === id) {
+                yield (0, threshold_button_1.changeThreshold)(interaction);
+                break;
+            }
+        }
+        return;
+    }
+    if (interaction.isSelectMenu()) {
+        if (interaction.customId === listing_select_1.listingSelectMenu.customId)
+            yield (0, listing_select_1.listingRun)(interaction);
         return;
     }
     if (!interaction.isCommand())
@@ -37,16 +51,19 @@ const onInteraction = (interaction) => __awaiter(void 0, void 0, void 0, functio
                 if (resp) {
                     interaction.deferred ? yield interaction.editReply(resp) : yield interaction.reply(resp);
                 }
+                break;
             }
         }
     }
     catch (error) {
-        const err = error;
-        console.log(err);
-        if (interaction.deferred)
-            yield interaction.editReply(err.message);
-        else
-            yield interaction.reply(err.message);
+        console.error(error);
+        console.trace('trace' + error);
+        if (error instanceof Error) {
+            if (interaction.deferred)
+                yield interaction.editReply(error.message);
+            else
+                yield interaction.reply(error.message);
+        }
     }
 });
 exports.onInteraction = onInteraction;

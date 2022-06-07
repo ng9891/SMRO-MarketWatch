@@ -69,7 +69,7 @@ const parseTableHel = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] =>
     const option3 = cleanShopText(optContainer.eq(2).text()) || '-';
     const optionGroup = {option1, option2, option3};
     const hash = calculateVendHash({...itemGroup, ...shopGroup, ...cardGroup, ...optionGroup});
-    return {hash, ...shopGroup, ...itemGroup, ...cardGroup, ...optionGroup};
+    return {hash, server: 'HEL' as ServerName, ...shopGroup, ...itemGroup, ...cardGroup, ...optionGroup};
   });
   return vendInfo;
 };
@@ -109,7 +109,7 @@ const parseTableNif = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] =>
     const option3 = cleanShopText(optContainer.eq(2).text()) || '-';
     const optionGroup = {option1, option2, option3};
     const hash = calculateVendHash({...itemGroup, ...shopGroup, ...cardGroup, ...optionGroup});
-    return {hash, ...shopGroup, ...itemGroup, ...cardGroup, ...optionGroup};
+    return {hash, server: 'NIF' as ServerName, ...shopGroup, ...itemGroup, ...cardGroup, ...optionGroup};
   });
 
   return vendInfo;

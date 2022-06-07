@@ -1,9 +1,11 @@
 import {VendInfo} from '../ts/interfaces/VendInfo';
+import {ServerName} from '../ts/types/ServerName';
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import fromUnixTime from 'date-fns/fromUnixTime';
 import {QueryDocumentSnapshot, QuerySnapshot} from 'firebase-admin/firestore';
+import {SelectMenuInteraction, ButtonInteraction} from 'discord.js';
 
 export const cleanShopText = (text: string): string => {
   return text
@@ -69,7 +71,7 @@ export const formatPrice = (num: number): string => {
   return displayInBillions(num);
 };
 
-export const calculateVendHash = (vend: VendInfo): string => {
+export const calculateVendHash = (vend: Omit<VendInfo, 'hash' | 'server'>): string => {
   const {itemID, shopID, shopName, price, refinement, merchant, position} = vend;
   let vendor = '';
   if (merchant) vendor = merchant?.replace(/\s/g, '') + position?.replace(/\s/g, '');
@@ -108,18 +110,55 @@ export const checkHashInHistory = (hash: string, hashesArr: VendInfo[] | QuerySn
   });
 };
 
-export const vendsNotInHistory = (vend1: VendInfo[], history: VendInfo[] | QuerySnapshot | string[]): VendInfo[] => {
-  return vend1.reduce<VendInfo[]>((prev, curr) => {
+import {getUnixTime} from 'date-fns';
+export const vendsNotInHistory = (vend: VendInfo[], history: VendInfo[] | string[]): VendInfo[] => {
+  const filtered = vend.reduce<VendInfo[]>((prev, curr) => {
     const {hash} = curr;
     const checkedHash = hash ? hash : calculateVendHash(curr);
     const isIn = checkHashInHistory(checkedHash, history);
     if (!isIn) prev.push(curr);
     return prev;
   }, []);
+
+  const itemID = vend[0].itemID;
+  const itemName = vend[0].itemName;
+  const now = getUnixTime(new Date());
+  const vendLog = vend.map((v) => v.hash);
+  const resull = filtered.map((v) => v.hash);
+  const historyLog = history.map((h) => {
+    return typeof h === 'string' ? h : h.hash;
+  });
+
+  console.log(
+    `**${now} |${itemID}:${itemName}: vendScraped: ${JSON.stringify(vendLog)}\nhistory: ${JSON.stringify(
+      historyLog
+    )}\nResult: ${JSON.stringify(resull)}`
+  );
+
+  return filtered;
 };
 
 export const isCacheOld = (lastUpdated: Date | number, lastUpdatedCache: Date | number, diffInSec: number): boolean => {
   const date1 = lastUpdated instanceof Date ? lastUpdated : fromUnixTime(lastUpdated);
   const date2 = lastUpdatedCache instanceof Date ? lastUpdatedCache : fromUnixTime(lastUpdatedCache);
   return differenceInSeconds(date1, date2, {roundingMethod: 'floor'}) > diffInSec;
+};
+
+export const parseListingEmbed = (interaction: SelectMenuInteraction | ButtonInteraction) => {
+  const embed = interaction.message.embeds[0];
+  if (!embed || !embed.fields) return {};
+
+  const title = embed.title ? embed.title.split(':') : undefined;
+
+  const obj = {server: '' as ServerName, threshold: '', refinement: ''};
+  embed.fields.map(({name, value}) => {
+    if (name === 'Server') obj['server'] = value as ServerName;
+    if (name === 'Threshold') obj['threshold'] = value;
+    if (name === 'Refinement') obj['refinement'] = value;
+  });
+
+  const {server, threshold, refinement} = obj;
+  if (!server || !title) return {};
+
+  return {itemID: title[0].trim(), itemName: title[1].trim(), server, threshold, refinement};
 };

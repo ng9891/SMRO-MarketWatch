@@ -16,6 +16,7 @@ const discord_js_1 = require("discord.js");
 const table_1 = require("table");
 const date_fns_1 = require("date-fns");
 const helpers_1 = require("../../helpers/helpers");
+const listing_select_1 = require("../select/listing.select");
 const getDefaultEmbed = (status, wl, user) => {
     const { itemID, itemName: name, nextOn, server } = wl;
     const id = (server + itemID);
@@ -114,25 +115,29 @@ const getHelpMsg = () => {
     return "```The purpose of this Bot is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!```";
 };
 exports.getHelpMsg = getHelpMsg;
-const getNotificationMsg = (userID, vends, server, isEquip) => {
-    if (vends.length === 0)
-        return 'Error. Empty vends in notification msg';
+const getNotificationMsg = (userID, threshold, vends, isEquip, refine = '') => {
     // Header
     const data = [];
-    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Name', 'Price', 'Amount']);
+    data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
     for (const vend of vends) {
         if (isEquip) {
             const { shopID, price, refinement, card0, card1, card2, card3 } = vend;
             data.push([shopID, (0, helpers_1.formatPrice)(price), refinement, card0, card1, card2, card3]);
         }
         else {
-            const { shopID, shopName, price, amount } = vend;
-            data.push([shopID, shopName, (0, helpers_1.formatPrice)(price), amount + '']);
+            const { shopID, price, amount } = vend;
+            data.push([shopID, (0, helpers_1.formatPrice)(price), amount + '']);
         }
     }
-    const { itemID, itemName } = vends[0];
-    const tab = (0, table_1.table)(data, tableConfig);
-    const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}: ${itemName} in ${server}\n${tab}@ws ${itemID}\`\`\``;
-    return msg;
+    const { itemID, itemName, server } = vends[0];
+    const date = new Date();
+    const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encodeURIComponent(itemName);
+    const listing = `\`\`\`${(0, table_1.table)(data, tableConfig)}\`\`\``;
+    const embed = new discord_js_1.MessageEmbed().setTitle(`${itemID}: ${itemName}`).setURL(url).setTimestamp(date);
+    if (isEquip && refine)
+        embed.addField('Refinement', refine);
+    embed.addFields({ name: 'Server', value: server }, { name: 'Threshold', value: (0, helpers_1.formatPrice)(threshold) }, { name: 'Listing', value: listing }, { name: 'In-game command', value: `@ws ${itemID}` }, { name: 'Timestamp', value: `${(0, date_fns_1.getUnixTime)(date)}` });
+    const selectMenu = new discord_js_1.MessageActionRow().addComponents(listing_select_1.listingSelectMenu);
+    return { content: `<@${userID}>`, embeds: [embed], components: [selectMenu] };
 };
 exports.getNotificationMsg = getNotificationMsg;

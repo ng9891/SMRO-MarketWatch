@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHistoryStats = exports.getHistory = exports.addToHistory = void 0;
 const firebase_1 = __importDefault(require("../firebase"));
 const firestore_1 = require("firebase-admin/firestore");
-const helpers_1 = require("../../helpers/helpers");
 const getUnixTime_1 = __importDefault(require("date-fns/getUnixTime"));
 const historyRef = firebase_1.default.collection('History');
 const addToHistory = (vends, timestamp, server) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,8 +22,7 @@ const addToHistory = (vends, timestamp, server) => __awaiter(void 0, void 0, voi
         return;
     const batch = firebase_1.default.batch();
     for (const vend of vends) {
-        const hash = (vend === null || vend === void 0 ? void 0 : vend.hash) ? vend.hash : (0, helpers_1.calculateVendHash)(vend);
-        batch.set(historyRef.doc(vend.itemID).collection(server).doc(), Object.assign(Object.assign({}, vend), { hash, timestamp, server }));
+        batch.set(historyRef.doc(vend.itemID).collection(server).doc(), Object.assign(Object.assign({}, vend), { timestamp, server }));
         batch.set(historyRef.doc(vend.itemID), { [server + 'count']: firestore_1.FieldValue.increment(1) }, { merge: true });
     }
     const { itemID } = vends[0];

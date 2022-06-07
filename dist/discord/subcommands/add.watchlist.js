@@ -14,11 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.add = void 0;
 const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const scraper_1 = require("../../scraper/scraper");
 const watchlist_action_1 = require("../../db/actions/watchlist.action");
 const users_action_1 = require("../../db/actions/users.action");
 const items_action_1 = require("../../db/actions/items.action");
 const helpers_1 = require("../../helpers/helpers");
+const helpers_2 = require("../../helpers/helpers");
 const valid_response_1 = require("../responses/valid.response");
 const invalid_response_1 = require("../responses/invalid.response");
 const invalid_response_2 = require("../responses/invalid.response");
@@ -31,6 +33,29 @@ const isListFull = (listSize) => {
         return false;
     return true;
 };
+const parseCommandIteraction = (interaction) => {
+    const query = interaction.options.getString('item-query');
+    if (!query)
+        return {};
+    const [itemID, itemName] = query.split('=');
+    const serverQuery = interaction.options.getString('server');
+    if (!serverQuery)
+        return {};
+    const refine = interaction.options.getInteger('refinement');
+    const refinement = refine ? Math.abs(refine).toString() : null;
+    const threshold = interaction.options.getString('threshold', true);
+    return { itemID, itemName, server: serverQuery, threshold, refinement };
+};
+const getNewThresholdFromButton = (interaction, threshold) => {
+    if (!threshold)
+        return null;
+    const buttonID = interaction.customId;
+    const sign = buttonID.slice(0, 1);
+    const percent = Number(buttonID.slice(1)) / 100;
+    const amountToChange = threshold * percent;
+    const newThresh = sign === '+' ? threshold + amountToChange : threshold - amountToChange;
+    return (0, helpers_2.parsePriceString)((0, helpers_2.formatPrice)(newThresh));
+};
 exports.add = {
     data: new builders_1.SlashCommandSubcommandBuilder()
         .setName('add')
@@ -41,32 +66,33 @@ exports.add = {
         .setRequired(true)
         .setAutocomplete(true))
         .addStringOption((option) => option.setName('item-query').setDescription('Find item.').setRequired(true).setAutocomplete(true))
-        .addStringOption((option) => option.setName('threshold').setDescription('Price threshold for notifications. e.g 250m').setRequired(true))
+        .addStringOption((option) => option
+        .setName('threshold')
+        .setDescription('Price threshold for notifications. e.g 250m - Max of 2b')
+        .setRequired(true))
         .addIntegerOption((option) => option.setName('refinement').setDescription('Minimum refinement of the equipment if applicable. e.g 11 or 12')),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-        yield interaction.deferReply();
+        // Handling UX
+        if (interaction instanceof discord_js_1.SelectMenuInteraction)
+            return;
+        if (interaction instanceof discord_js_1.CommandInteraction)
+            yield interaction.deferReply();
+        const followUp = interaction instanceof discord_js_1.ButtonInteraction ? (yield interaction.followUp('Fetching...')) : null;
         const userID = interaction.user.id;
         const userName = interaction.user.username;
         const discriminator = interaction.user.discriminator;
-        const serverQuery = interaction.options.getString('server');
-        if (!serverQuery)
+        // If interaction comes from button, embed has to be parsed to get the Item info.
+        const { itemID, itemName, server, threshold, refinement } = interaction instanceof discord_js_1.CommandInteraction ? parseCommandIteraction(interaction) : (0, helpers_1.parseListingEmbed)(interaction);
+        if (!itemID || !itemName || !server)
             return (0, invalid_response_2.getSelectFromAutocompleteMsg)();
-        const server = serverQuery;
-        const query = interaction.options.getString('item-query');
-        if (!query)
-            return (0, invalid_response_2.getSelectFromAutocompleteMsg)();
-        const [itemID, itemName] = query.split('=');
-        if (!itemID || !itemName)
-            return (0, invalid_response_2.getSelectFromAutocompleteMsg)();
-        const threshold = interaction.options.getString('threshold', true);
-        const refine = interaction.options.getInteger('refinement');
-        const refinement = refine ? Math.abs(refine).toString() : null;
-        const validPrice = (0, helpers_1.parsePriceString)(threshold);
+        let validPrice = interaction instanceof discord_js_1.ButtonInteraction
+            ? getNewThresholdFromButton(interaction, (0, helpers_2.parsePriceString)(threshold))
+            : (0, helpers_2.parsePriceString)(threshold);
         if (!validPrice)
             return (0, invalid_response_1.getInvalidPriceFormatMsg)();
         const maxThreshold = Number(process.env.MAX_THRESHOLD);
-        if (validPrice >= maxThreshold)
-            return (0, invalid_response_1.getInvalidMaxPriceMsg)();
+        if (validPrice > maxThreshold)
+            validPrice = maxThreshold;
         // Scraping item info
         const itemInfo = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
         const newList = {
@@ -103,7 +129,16 @@ exports.add = {
         const action = isNewSub ? 'ADD' : 'UPDATE';
         const nextOn = (0, helpers_1.calculateNextExec)(wl.setOn, new Date(), wl.recurrence).getTime() / 1000;
         const embed = (0, valid_response_1.getDefaultEmbed)(action, Object.assign(Object.assign({}, wl), { nextOn }), newUser);
-        yield interaction.editReply({ embeds: [embed] });
+        // Handling how to respond depending on the interaction type.
+        if (interaction instanceof discord_js_1.CommandInteraction) {
+            yield interaction.editReply({ embeds: [embed] });
+        }
+        else if (followUp) {
+            yield followUp.edit({ content: action, embeds: [embed] });
+        }
+        else {
+            yield interaction.followUp({ embeds: [embed] });
+        }
         if (itemInfo.vends && itemInfo.vends.length > 0)
             yield (0, checkMarket_1.notifySubs)([newList], itemInfo.vends, (0, helpers_1.isItemAnEquip)(itemInfo.type, itemInfo.equipLocation));
     }),

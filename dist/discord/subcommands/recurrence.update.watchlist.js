@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.recurrenceUpdate = void 0;
 const builders_1 = require("@discordjs/builders");
+const discord_js_1 = require("discord.js");
 const watchlist_action_1 = require("../../db/actions/watchlist.action");
 const valid_response_1 = require("../responses/valid.response");
 const invalid_response_1 = require("../responses/invalid.response");
@@ -33,6 +34,10 @@ exports.recurrenceUpdate = {
         .addStringOption((option) => option.setName('item-query').setDescription('Find item.').setRequired(true).setAutocomplete(true))
         .addIntegerOption((option) => option.setName('recurrence').setDescription('New recurrence interval in minutes.').setRequired(true)),
     run: (interaction) => __awaiter(void 0, void 0, void 0, function* () {
+        if (interaction instanceof discord_js_1.ButtonInteraction)
+            return;
+        if (interaction instanceof discord_js_1.SelectMenuInteraction)
+            return;
         yield interaction.deferReply();
         const userID = interaction.user.id;
         const userName = interaction.user.username;

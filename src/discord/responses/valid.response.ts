@@ -1,13 +1,13 @@
 import {AppUser} from '../../ts/interfaces/AppUser';
 import {Watchlist} from '../../ts/interfaces/Watchlist';
-import {MessageEmbed} from 'discord.js';
+import {MessageEmbed, MessageActionRow, MessageOptions} from 'discord.js';
 import {table} from 'table';
-import {formatDistanceToNow, fromUnixTime} from 'date-fns';
+import {formatDistanceToNow, fromUnixTime, getUnixTime} from 'date-fns';
 import {formatPrice} from '../../helpers/helpers';
 import {List} from '../../ts/interfaces/List';
 import {ListKey} from '../../ts/types/ListKey';
 import {VendInfo} from '../../ts/interfaces/VendInfo';
-import {ServerName} from '../../ts/types/ServerName';
+import {listingSelectMenu} from '../select/listing.select';
 
 export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser): MessageEmbed => {
   const {itemID, itemName: name, nextOn, server} = wl;
@@ -125,23 +125,43 @@ export const getHelpMsg = (): string => {
   return "```The purpose of this Bot is to notify users of a sale/deal in the SMRO market. Players can focus on playing (or not to play) the game and won't have to worry about missing a deal for an item they want to buy ever!```";
 };
 
-export const getNotificationMsg = (userID: string, vends: VendInfo[], server: ServerName, isEquip: boolean): string => {
-  if (vends.length === 0) return 'Error. Empty vends in notification msg';
+export const getNotificationMsg = (
+  userID: string,
+  threshold: number,
+  vends: VendInfo[],
+  isEquip: boolean,
+  refine: undefined | null | string = ''
+) => {
   // Header
   const data: Array<string[]> = [];
-  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Name', 'Price', 'Amount']);
+  data.push(isEquip ? ['ID', 'Price', '+', 'Card', 'E1', 'E2', 'E3'] : ['ID', 'Price', 'Amount']);
 
   for (const vend of vends) {
     if (isEquip) {
       const {shopID, price, refinement, card0, card1, card2, card3} = vend;
       data.push([shopID, formatPrice(price), refinement, card0, card1, card2, card3]);
     } else {
-      const {shopID, shopName, price, amount} = vend;
-      data.push([shopID, shopName, formatPrice(price), amount + '']);
+      const {shopID, price, amount} = vend;
+      data.push([shopID, formatPrice(price), amount + '']);
     }
   }
-  const {itemID, itemName} = vends[0];
-  const tab = table(data, tableConfig);
-  const msg = `<@${userID}>\nNEW LISTING:\n\`\`\`${itemID}: ${itemName} in ${server}\n${tab}@ws ${itemID}\`\`\``;
-  return msg;
+  const {itemID, itemName, server} = vends[0];
+  const date = new Date();
+  const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encodeURIComponent(itemName);
+  const listing = `\`\`\`${table(data, tableConfig)}\`\`\``;
+
+  const embed = new MessageEmbed().setTitle(`${itemID}: ${itemName}`).setURL(url).setTimestamp(date);
+
+  if (isEquip && refine) embed.addField('Refinement', refine);
+
+  embed.addFields(
+    {name: 'Server', value: server},
+    {name: 'Threshold', value: formatPrice(threshold)},
+    {name: 'Listing', value: listing},
+    {name: 'In-game command', value: `@ws ${itemID}`},
+    {name: 'Timestamp', value: `${getUnixTime(date)}`}
+  );
+
+  const selectMenu = new MessageActionRow().addComponents(listingSelectMenu);
+  return {content: `<@${userID}>`, embeds: [embed], components: [selectMenu]} as MessageOptions;
 };

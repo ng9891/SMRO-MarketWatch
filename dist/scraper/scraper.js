@@ -98,7 +98,7 @@ const parseTableHel = ($, table) => {
         const option3 = (0, helpers_1.cleanShopText)(optContainer.eq(2).text()) || '-';
         const optionGroup = { option1, option2, option3 };
         const hash = (0, helpers_1.calculateVendHash)(Object.assign(Object.assign(Object.assign(Object.assign({}, itemGroup), shopGroup), cardGroup), optionGroup));
-        return Object.assign(Object.assign(Object.assign(Object.assign({ hash }, shopGroup), itemGroup), cardGroup), optionGroup);
+        return Object.assign(Object.assign(Object.assign(Object.assign({ hash, server: 'HEL' }, shopGroup), itemGroup), cardGroup), optionGroup);
     });
     return vendInfo;
 };
@@ -136,7 +136,7 @@ const parseTableNif = ($, table) => {
         const option3 = (0, helpers_1.cleanShopText)(optContainer.eq(2).text()) || '-';
         const optionGroup = { option1, option2, option3 };
         const hash = (0, helpers_1.calculateVendHash)(Object.assign(Object.assign(Object.assign(Object.assign({}, itemGroup), shopGroup), cardGroup), optionGroup));
-        return Object.assign(Object.assign(Object.assign(Object.assign({ hash }, shopGroup), itemGroup), cardGroup), optionGroup);
+        return Object.assign(Object.assign(Object.assign(Object.assign({ hash, server: 'NIF' }, shopGroup), itemGroup), cardGroup), optionGroup);
     });
     return vendInfo;
 };
