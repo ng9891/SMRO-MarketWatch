@@ -16,8 +16,6 @@ exports.recurrenceList = void 0;
 const builders_1 = require("@discordjs/builders");
 const discord_js_1 = require("discord.js");
 const Scheduler_1 = __importDefault(require("../../scheduler/Scheduler"));
-const formatDistanceToNow_1 = __importDefault(require("date-fns/formatDistanceToNow"));
-const fromUnixTime_1 = __importDefault(require("date-fns/fromUnixTime"));
 const valid_response_1 = require("../responses/valid.response");
 exports.recurrenceList = {
     data: new builders_1.SlashCommandSubcommandBuilder().setName('list').setDescription('List of running jobs.'),
@@ -28,12 +26,10 @@ exports.recurrenceList = {
         const itemsMap = Scheduler_1.default.schedulerMap;
         const data = Array.from(itemsMap).map(([key, val]) => {
             const { wl, job } = val;
-            const subs = wl.subs ? wl.subs.toString() : '1';
+            const subs = wl.subs ? wl.subs : 1;
             const time = job.nextInvocation();
             // formatDistanceToNow giving 'invalid time' error. Remaking Date.
-            const unix = time.getTime() / 1000;
-            const newTime = (0, fromUnixTime_1.default)(unix);
-            const nextOn = (0, formatDistanceToNow_1.default)(newTime, { addSuffix: false });
+            const nextOn = time.getTime() / 1000;
             return { itemID: wl.itemID, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn, server: wl.server };
         });
         const resp = (0, valid_response_1.getRecurrenceMsg)(data);

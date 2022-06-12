@@ -36,6 +36,7 @@ const getTableFromDOM = ($: cheerio.Root, server: ServerName) => {
 };
 
 const parseTableHel = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] => {
+  const timestamp = getUnixTime(new Date());
   const vendInfo = table.map((vend) => {
     const col = $(vend).find('td');
 
@@ -55,7 +56,7 @@ const parseTableHel = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] =>
     const shopID = matchShopID[0];
     const amount = Number(cleanShopText(col.eq(col.length - 2).text()));
     const price = cleanShopPrice(col.eq(col.length - 3).text());
-    const shopGroup = {shopID, shopName, amount, price};
+    const shopGroup = {shopID, shopName, amount, price, timestamp};
 
     const card3 = cleanShopText(col.eq(col.length - 4).text());
     const card2 = cleanShopText(col.eq(col.length - 5).text());
@@ -75,6 +76,7 @@ const parseTableHel = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] =>
 };
 
 const parseTableNif = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] => {
+  const timestamp = getUnixTime(new Date());
   const vendInfo = table.map((vend) => {
     const col = $(vend).find('td');
 
@@ -95,7 +97,7 @@ const parseTableNif = ($: cheerio.Root, table: cheerio.Element[]): VendInfo[] =>
     const price = cleanShopPrice(col.eq(8).text());
     const merchant = cleanShopText(col.eq(1).text());
     const position = cleanShopText(col.eq(2).text());
-    const shopGroup = {shopID, shopName, amount, price, merchant, position};
+    const shopGroup = {shopID, shopName, amount, price, merchant, position, timestamp};
 
     const card3 = cleanShopText(col.eq(7).text());
     const card2 = cleanShopText(col.eq(6).text());

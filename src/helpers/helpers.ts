@@ -71,7 +71,7 @@ export const formatPrice = (num: number): string => {
   return displayInBillions(num);
 };
 
-export const calculateVendHash = (vend: Omit<VendInfo, 'hash' | 'server'>): string => {
+export const calculateVendHash = (vend: Omit<VendInfo, 'hash' | 'server' | 'timestamp'>): string => {
   const {itemID, shopID, shopName, price, refinement, merchant, position} = vend;
   let vendor = '';
   if (merchant) vendor = merchant?.replace(/\s/g, '') + position?.replace(/\s/g, '');
@@ -111,6 +111,7 @@ export const checkHashInHistory = (hash: string, hashesArr: VendInfo[] | QuerySn
 };
 
 import {getUnixTime} from 'date-fns';
+import {AppUser} from '../ts/interfaces/AppUser';
 export const vendsNotInHistory = (vend: VendInfo[], history: VendInfo[] | string[]): VendInfo[] => {
   const filtered = vend.reduce<VendInfo[]>((prev, curr) => {
     const {hash} = curr;
@@ -130,8 +131,8 @@ export const vendsNotInHistory = (vend: VendInfo[], history: VendInfo[] | string
   });
 
   console.log(
-    `**${now} |${itemID}:${itemName}: vendScraped: ${JSON.stringify(vendLog)}\nhistory: ${JSON.stringify(
-      historyLog
+    `**${now} |${itemID}:${itemName}: history: ${JSON.stringify(historyLog)}\nvendScraped: ${JSON.stringify(
+      vendLog
     )}\nResult: ${JSON.stringify(resull)}`
   );
 
@@ -161,4 +162,13 @@ export const parseListingEmbed = (interaction: SelectMenuInteraction | ButtonInt
   if (!server || !title) return {};
 
   return {itemID: title[0].trim(), itemName: title[1].trim(), server, threshold, refinement};
+};
+
+export const sortUserWatchlist = (list: AppUser['list']) => {
+  if (!list) return [];
+  return Object.entries(list).sort(([k1, val1], [k2, val2]) => {
+    if (val1.server > val2.server) return 1;
+    if (val1.server < val2.server) return -1;
+    return Number(val1.itemID) - Number(val2.itemID);
+  });
 };

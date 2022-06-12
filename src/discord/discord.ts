@@ -24,6 +24,6 @@ export const sendMsgBot = async (msg: string | MessageOptions, channelID: string
     const sent = await textChannel.send(msg);
     setTimeout(() => {
       sent.edit({components: []});
-    }, 2 * 60 * 1000);
+    }, 10 * 60 * 1000);
   }
 };

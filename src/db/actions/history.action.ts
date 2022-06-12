@@ -1,7 +1,6 @@
 import {VendInfo} from '../../ts/interfaces/VendInfo';
 import db from '../firebase';
 import {DocumentData, FieldValue} from 'firebase-admin/firestore';
-import {calculateVendHash} from '../../helpers/helpers';
 import getUnixTime from 'date-fns/getUnixTime';
 import {ServerName} from '../../ts/types/ServerName';
 
@@ -11,7 +10,7 @@ export const addToHistory = async (vends: VendInfo[], timestamp: number, server:
   if (vends.length === 0) return;
   const batch = db.batch();
   for (const vend of vends) {
-    batch.set(historyRef.doc(vend.itemID).collection(server).doc(), {...vend, timestamp, server});
+    batch.set(historyRef.doc(vend.itemID).collection(server).doc(), {...vend, server});
     batch.set(historyRef.doc(vend.itemID), {[server + 'count']: FieldValue.increment(1)}, {merge: true});
   }
   const {itemID} = vends[0];

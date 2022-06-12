@@ -32,7 +32,7 @@ const CacheHistory = (() => {
             return false;
         const date = (0, fromUnixTime_1.default)(lastUpdated);
         const fromDate = (0, subDays_1.default)(date, DAYS_KEEP_HISTORY);
-        const filteredCache = cache.data.filter((data) => data.timestamp ? (0, fromUnixTime_1.default)(data.timestamp) > fromDate : false);
+        const filteredCache = cache.data.filter((data) => (0, fromUnixTime_1.default)(data.timestamp) > fromDate);
         cache.data = [...vends, ...filteredCache];
         cache.lastUpdated = date;
         return true;

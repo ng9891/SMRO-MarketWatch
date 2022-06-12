@@ -68,6 +68,7 @@ const getTableFromDOM = ($, server) => {
     return table;
 };
 const parseTableHel = ($, table) => {
+    const timestamp = (0, getUnixTime_1.default)(new Date());
     const vendInfo = table.map((vend) => {
         const col = $(vend).find('td');
         const itemNameCol = col.eq(col.length - 8);
@@ -86,7 +87,7 @@ const parseTableHel = ($, table) => {
         const shopID = matchShopID[0];
         const amount = Number((0, helpers_1.cleanShopText)(col.eq(col.length - 2).text()));
         const price = (0, helpers_1.cleanShopPrice)(col.eq(col.length - 3).text());
-        const shopGroup = { shopID, shopName, amount, price };
+        const shopGroup = { shopID, shopName, amount, price, timestamp };
         const card3 = (0, helpers_1.cleanShopText)(col.eq(col.length - 4).text());
         const card2 = (0, helpers_1.cleanShopText)(col.eq(col.length - 5).text());
         const card1 = (0, helpers_1.cleanShopText)(col.eq(col.length - 6).text());
@@ -103,6 +104,7 @@ const parseTableHel = ($, table) => {
     return vendInfo;
 };
 const parseTableNif = ($, table) => {
+    const timestamp = (0, getUnixTime_1.default)(new Date());
     const vendInfo = table.map((vend) => {
         var _a, _b;
         const col = $(vend).find('td');
@@ -124,7 +126,7 @@ const parseTableNif = ($, table) => {
         const price = (0, helpers_1.cleanShopPrice)(col.eq(8).text());
         const merchant = (0, helpers_1.cleanShopText)(col.eq(1).text());
         const position = (0, helpers_1.cleanShopText)(col.eq(2).text());
-        const shopGroup = { shopID, shopName, amount, price, merchant, position };
+        const shopGroup = { shopID, shopName, amount, price, merchant, position, timestamp };
         const card3 = (0, helpers_1.cleanShopText)(col.eq(7).text());
         const card2 = (0, helpers_1.cleanShopText)(col.eq(6).text());
         const card1 = (0, helpers_1.cleanShopText)(col.eq(5).text());

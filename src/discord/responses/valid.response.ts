@@ -3,8 +3,7 @@ import {Watchlist} from '../../ts/interfaces/Watchlist';
 import {MessageEmbed, MessageActionRow, MessageOptions} from 'discord.js';
 import {table} from 'table';
 import {formatDistanceToNow, fromUnixTime, getUnixTime} from 'date-fns';
-import {formatPrice} from '../../helpers/helpers';
-import {List} from '../../ts/interfaces/List';
+import {formatPrice, sortUserWatchlist} from '../../helpers/helpers';
 import {ListKey} from '../../ts/types/ListKey';
 import {VendInfo} from '../../ts/interfaces/VendInfo';
 import {listingSelectMenu} from '../select/listing.select';
@@ -16,19 +15,17 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser): M
   const {[id]: item, ...rest} = list;
   const threshold = item ? item.threshold : 0;
   const refinement = item?.refinement ? `+${item.refinement} ` : '';
-
   const newList = status === 'REMOVE' ? rest : list;
 
-  const listSize = Object.keys(newList).length;
-  const maxListSize = Number(process.env.MAX_LIST_SIZE);
-
   let listStr = 'Empty list';
-  if (listSize > 0) listStr = '';
-  for (const [key, value] of Object.entries(newList)) {
+  const sortedList = sortUserWatchlist(newList);
+  if (sortedList.length > 0) listStr = '';
+  for (const [key, value] of sortedList) {
     const refineStr = value.refinement ? `+${value.refinement} ` : '';
     listStr += `\n ${value.server} | **${value.itemID}**: ${refineStr}${value.itemName}`;
   }
 
+  const maxListSize = Number(process.env.MAX_LIST_SIZE);
   const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encodeURIComponent(name);
 
   const embed = new MessageEmbed()
@@ -40,7 +37,7 @@ export const getDefaultEmbed = (status: string, wl: Watchlist, user: AppUser): M
       {name: 'Server', value: `**${server}**`},
       {name: 'Price Threshold', value: threshold.toLocaleString('en-US') + ' z'},
       {
-        name: `Your list of ${listSize}/${maxListSize} (${maxListSize - listSize} left):`,
+        name: `Your list of ${sortedList.length}/${maxListSize} (${maxListSize - sortedList.length} left):`,
         value: listStr,
       },
       {
@@ -78,38 +75,39 @@ const tableConfig = {
   singleLine: true,
 };
 
-export const getListAsTable = (list: {[key: string]: List} | undefined, header: string[]): string => {
-  if (!list) return 'List is empty.';
+export const getListingMsg = (user: AppUser): string => {
+  const header = ['SV', 'ID', 'Name', '<$', 'Added'];
+  const sortedList = sortUserWatchlist(user.list);
+  if (sortedList.length === 0) return 'List is empty.';
+
   const data = [header];
-  for (const [key, value] of Object.entries(list)) {
+  for (const [key, value] of sortedList) {
     const {itemID, itemName, threshold, timestamp, refinement, server} = value;
     const refine = !refinement || refinement === '-' ? '' : `+${refinement} `;
     const added = formatDistanceToNow(fromUnixTime(timestamp));
     data.push([server, itemID, `${refine}${itemName}`, formatPrice(threshold), added]);
   }
-  return table(data, tableConfig);
+  const listTable = table(data, tableConfig);
+  const sizeStr = `Total of ${sortedList.length} out of ${process.env.MAX_LIST_SIZE}.`;
+  return `\`[${user.userName}#${user.discriminator}]\`'s list.\n\`\`\`${listTable}${sizeStr}\`\`\``;
 };
 
-export const getListingMsg = (user: AppUser): string => {
-  const header = ['SV', 'ID', 'Name', '<$', 'Added'];
-  const table = getListAsTable(user.list, header);
-  if (!user.list) return 'List is empty.';
-  const len = Object.keys(user.list).length;
-  const sizeStr = `Total of ${len} out of ${process.env.MAX_LIST_SIZE}.`;
-
-  return `\`[${user.userName}#${user.discriminator}]\`'s list.\n\`\`\`${table}${sizeStr}\`\`\``;
-};
-
-export const getRecurrenceMsg = (
-  jobs: {itemID: string; itemName: string; subs: string; recurrence: number; nextOn: string; server: string}[]
-): string => {
+export const getRecurrenceMsg = (jobs: Omit<Watchlist, 'setByID' | 'setByName' | 'setOn' | 'createdOn'>[]): string => {
   let resp = '```';
   const data = [['SV', 'ID', 'Name', 'Recur', 'Next in', 'Sub']];
-  jobs.forEach((job) => {
-    data.push([job.server, job.itemID, job.itemName, `${job.recurrence}min`, job.nextOn, job.subs]);
+  const sortedJobs = jobs.sort((a, b) => {
+    if (a.server > b.server) return 1;
+    if (a.server < b.server) return -1;
+    return Number(a.itemID) - Number(b.itemID);
   });
-  const tab = table(data, tableConfig);
-  resp += `${tab}Total of ${jobs.length} job(s).`;
+  sortedJobs.forEach((job) => {
+    const newTime = fromUnixTime(job.nextOn);
+    const nextOn = formatDistanceToNow(newTime, {addSuffix: false});
+    data.push([job.server, job.itemID, job.itemName, `${job.recurrence}min`, nextOn, job.subs + '']);
+  });
+
+  const jobsTable = table(data, tableConfig);
+  resp += `${jobsTable}Total of ${jobs.length} job(s).`;
   resp += '```';
   return resp;
 };

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseListingEmbed = exports.isCacheOld = exports.vendsNotInHistory = exports.checkHashInHistory = exports.isItemAnEquip = exports.isSameRefinement = exports.calculateNextExec = exports.calculateVendHash = exports.formatPrice = exports.displayInBillions = exports.displayInMillions = exports.displayInThousands = exports.parsePriceString = exports.checkValidPriceString = exports.convertToBillions = exports.convertToMillions = exports.convertToThousands = exports.cleanShopPrice = exports.cleanShopText = void 0;
+exports.sortUserWatchlist = exports.parseListingEmbed = exports.isCacheOld = exports.vendsNotInHistory = exports.checkHashInHistory = exports.isItemAnEquip = exports.isSameRefinement = exports.calculateNextExec = exports.calculateVendHash = exports.formatPrice = exports.displayInBillions = exports.displayInMillions = exports.displayInThousands = exports.parsePriceString = exports.checkValidPriceString = exports.convertToBillions = exports.convertToMillions = exports.convertToThousands = exports.cleanShopPrice = exports.cleanShopText = void 0;
 const addMinutes_1 = __importDefault(require("date-fns/addMinutes"));
 const differenceInMinutes_1 = __importDefault(require("date-fns/differenceInMinutes"));
 const differenceInSeconds_1 = __importDefault(require("date-fns/differenceInSeconds"));
@@ -146,7 +146,7 @@ const vendsNotInHistory = (vend, history) => {
     const historyLog = history.map((h) => {
         return typeof h === 'string' ? h : h.hash;
     });
-    console.log(`**${now} |${itemID}:${itemName}: vendScraped: ${JSON.stringify(vendLog)}\nhistory: ${JSON.stringify(historyLog)}\nResult: ${JSON.stringify(resull)}`);
+    console.log(`**${now} |${itemID}:${itemName}: history: ${JSON.stringify(historyLog)}\nvendScraped: ${JSON.stringify(vendLog)}\nResult: ${JSON.stringify(resull)}`);
     return filtered;
 };
 exports.vendsNotInHistory = vendsNotInHistory;
@@ -176,3 +176,15 @@ const parseListingEmbed = (interaction) => {
     return { itemID: title[0].trim(), itemName: title[1].trim(), server, threshold, refinement };
 };
 exports.parseListingEmbed = parseListingEmbed;
+const sortUserWatchlist = (list) => {
+    if (!list)
+        return [];
+    return Object.entries(list).sort(([k1, val1], [k2, val2]) => {
+        if (val1.server > val2.server)
+            return 1;
+        if (val1.server < val2.server)
+            return -1;
+        return Number(val1.itemID) - Number(val2.itemID);
+    });
+};
+exports.sortUserWatchlist = sortUserWatchlist;

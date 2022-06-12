@@ -22,7 +22,7 @@ const addToHistory = (vends, timestamp, server) => __awaiter(void 0, void 0, voi
         return;
     const batch = firebase_1.default.batch();
     for (const vend of vends) {
-        batch.set(historyRef.doc(vend.itemID).collection(server).doc(), Object.assign(Object.assign({}, vend), { timestamp, server }));
+        batch.set(historyRef.doc(vend.itemID).collection(server).doc(), Object.assign(Object.assign({}, vend), { server }));
         batch.set(historyRef.doc(vend.itemID), { [server + 'count']: firestore_1.FieldValue.increment(1) }, { merge: true });
     }
     const { itemID } = vends[0];

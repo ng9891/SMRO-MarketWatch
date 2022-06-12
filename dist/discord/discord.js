@@ -39,7 +39,7 @@ const sendMsgBot = (msg, channelID) => __awaiter(void 0, void 0, void 0, functio
         const sent = yield textChannel.send(msg);
         setTimeout(() => {
             sent.edit({ components: [] });
-        }, 2 * 60 * 1000);
+        }, 10 * 60 * 1000);
     }
 });
 exports.sendMsgBot = sendMsgBot;
