@@ -52,7 +52,7 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
 
     const scrape = await scrapeItem(itemID, itemName, server);
     const vends = scrape?.vends;
-    if (!vends || vends.length === 0) return currWl;
+    if (!vends || !Array.isArray(vends) || vends.length === 0) return currWl;
 
     const stats = await getHistoryStats(itemID);
     let historyHashes = [] as VendInfo[];
@@ -78,7 +78,9 @@ export const checkMarket: SchedulerCallBack = async function (wl: Watchlist): Pr
     console.error(error);
     console.trace('Trace ' + error);
     if (error instanceof Error) {
-      if (channelID) await sendMsgBot(error.message, channelID);
+      let msg = error.message;
+      if (!error.message) msg = error.toString();
+      if (channelID) await sendMsgBot(msg, channelID);
     }
 
     return wl;

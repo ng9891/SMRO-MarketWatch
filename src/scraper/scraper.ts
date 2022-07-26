@@ -165,7 +165,7 @@ export const scrapeItem = async (itemID: string, itemName: string, server: Serve
   const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encItem;
 
   const response = await fetch(url, {headers: fetchHeader});
-  if (!response.ok) throw new Error(response.statusText);
+  if (!response.ok) throw new Error(`[${getUnixTime(new Date())}] Scrapping Item: [${server}][${itemID}:${itemName}] resulted in a failed response.`);
 
   const $ = cheerio.load(await response.text());
 

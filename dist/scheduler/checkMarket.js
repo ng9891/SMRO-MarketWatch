@@ -62,7 +62,7 @@ const checkMarket = function (wl) {
                 return currWl;
             const scrape = yield (0, scraper_1.scrapeItem)(itemID, itemName, server);
             const vends = scrape === null || scrape === void 0 ? void 0 : scrape.vends;
-            if (!vends || vends.length === 0)
+            if (!vends || !Array.isArray(vends) || vends.length === 0)
                 return currWl;
             const stats = yield (0, history_action_1.getHistoryStats)(itemID);
             let historyHashes = [];
@@ -85,8 +85,11 @@ const checkMarket = function (wl) {
             console.error(error);
             console.trace('Trace ' + error);
             if (error instanceof Error) {
+                let msg = error.message;
+                if (!error.message)
+                    msg = error.toString();
                 if (channelID)
-                    yield (0, discord_1.sendMsgBot)(error.message, channelID);
+                    yield (0, discord_1.sendMsgBot)(msg, channelID);
             }
             return wl;
         }

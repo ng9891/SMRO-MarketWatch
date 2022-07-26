@@ -24,10 +24,14 @@ exports.recurrenceList = {
             return;
         yield interaction.deferReply();
         const itemsMap = Scheduler_1.default.schedulerMap;
-        const data = Array.from(itemsMap).map(([key, val]) => {
+        const data = yield Array.from(itemsMap).map(([key, val], idx) => {
             const { wl, job } = val;
             const subs = wl.subs ? wl.subs : 1;
-            const time = job.nextInvocation();
+            let time = job.nextInvocation();
+            if (!time) {
+                console.log(`No next invocation time found for itemID: ${wl.itemID} | ${itemsMap.size} jobs`);
+                time = new Date();
+            }
             // formatDistanceToNow giving 'invalid time' error. Remaking Date.
             const nextOn = time.getTime() / 1000;
             return { itemID: wl.itemID, itemName: wl.itemName, subs, recurrence: wl.recurrence, nextOn, server: wl.server };

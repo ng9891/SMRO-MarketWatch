@@ -189,7 +189,7 @@ const scrapeItem = (itemID, itemName, server) => __awaiter(void 0, void 0, void 
     const url = server === 'HEL' ? process.env.URL_HEL + itemID : process.env.URL_NIF + encItem;
     const response = yield fetch(url, { headers: fetchHeader });
     if (!response.ok)
-        throw new Error(response.statusText);
+        throw new Error(`[${(0, getUnixTime_1.default)(new Date())}] Scrapping Item: [${server}][${itemID}:${itemName}] resulted in a failed response.`);
     const $ = cheerio.load(yield response.text());
     const itemInfo = server === 'HEL' ? getItemInfoFromDOM($, server) : yield scrapeItemInfoNif(itemID);
     const { itemID: id, name, type, location } = itemInfo;

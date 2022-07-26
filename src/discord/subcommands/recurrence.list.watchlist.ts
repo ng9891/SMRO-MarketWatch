@@ -12,11 +12,15 @@ export const recurrenceList: Subcommand = {
     await interaction.deferReply();
     const itemsMap = Scheduler.schedulerMap;
 
-    const data = Array.from(itemsMap).map(([key, val]) => {
+    const data = await Array.from(itemsMap).map(([key, val], idx) => {
       const {wl, job} = val as JobInfo;
       const subs = wl.subs ? wl.subs : 1;
-      const time = job.nextInvocation();
+      let time = job.nextInvocation();
 
+      if (!time) {
+        console.log(`No next invocation time found for itemID: ${wl.itemID} | ${itemsMap.size} jobs`);
+        time = new Date();
+      }
       // formatDistanceToNow giving 'invalid time' error. Remaking Date.
       const nextOn = time.getTime() / 1000;
 
